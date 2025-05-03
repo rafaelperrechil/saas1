@@ -8,6 +8,8 @@ import { Toaster } from 'sonner';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
+import '../lib/i18n';
+import LanguageSelector from '@/components/LanguageSelector';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -23,6 +25,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SessionProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />
+            <div className="absolute top-4 right-4">
+              <LanguageSelector />
+            </div>
             {children}
           </ThemeProvider>
         </SessionProvider>

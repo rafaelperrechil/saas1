@@ -6,16 +6,18 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Image from 'next/image';
-
-const forgotPasswordSchema = z.object({
-  email: z.string().email('Email inválido'),
-});
-
-type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
+import { useTranslation } from 'react-i18next';
 
 export default function ForgotPasswordPage() {
+  const { t } = useTranslation();
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+
+  const forgotPasswordSchema = z.object({
+    email: z.string().email(t('auth.forgotPassword.error.invalidEmail')),
+  });
+
+  type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
   const {
     register,
@@ -36,15 +38,15 @@ export default function ForgotPasswordPage() {
       });
 
       if (response.ok) {
-        setMessage('Um email foi enviado com instruções para redefinir sua senha.');
+        setMessage(t('auth.forgotPassword.successMessage'));
         setError('');
       } else {
         const errorData = await response.json();
-        setError(errorData.message || 'Erro ao processar sua solicitação');
+        setError(errorData.message || t('auth.forgotPassword.error.generic'));
         setMessage('');
       }
     } catch (err) {
-      setError('Erro ao processar sua solicitação. Tente novamente.');
+      setError(t('auth.forgotPassword.error.generic'));
       setMessage('');
     }
   };
@@ -74,7 +76,10 @@ export default function ForgotPasswordPage() {
           }}
         >
           <Typography component="h1" variant="h5" fontWeight={700} gutterBottom>
-            Recuperar Senha
+            {t('auth.forgotPassword.title')}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
+            {t('auth.forgotPassword.subtitle')}
           </Typography>
           <Box component="form" onSubmit={handleSubmit(onSubmit)} sx={{ mt: 1, width: '100%' }}>
             <TextField
@@ -82,7 +87,7 @@ export default function ForgotPasswordPage() {
               required
               fullWidth
               id="email"
-              label="Email"
+              label={t('auth.forgotPassword.email')}
               autoComplete="email"
               autoFocus
               {...register('email')}
@@ -99,31 +104,13 @@ export default function ForgotPasswordPage() {
                 {error}
               </Typography>
             )}
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              sx={{
-                mt: 3,
-                mb: 2,
-                fontWeight: 600,
-                fontSize: 16,
-                py: 1.5,
-                boxShadow: 'none',
-                backgroundColor: '#9c27b0 !important',
-                color: '#fff !important',
-                '&:hover': {
-                  backgroundColor: '#7b1fa2 !important',
-                },
-              }}
-            >
-              Enviar instruções
+            <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2, p: 2 }}>
+              {t('auth.forgotPassword.submit')}
             </Button>
             <Box sx={{ textAlign: 'center' }}>
-              <Link href="/login" style={{ textDecoration: 'none' }}>
-                <Typography color="primary" variant="body2">
-                  Voltar
+              <Link href="/login" passHref>
+                <Typography variant="body2" color="primary" sx={{ cursor: 'pointer' }}>
+                  {t('auth.forgotPassword.backToLogin')}
                 </Typography>
               </Link>
             </Box>

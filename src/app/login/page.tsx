@@ -16,10 +16,12 @@ import {
 import Link from 'next/link';
 import Image from 'next/image';
 import GoogleIcon from '@mui/icons-material/Google';
+import { useTranslation } from 'react-i18next';
 
 export default function LoginPage() {
   const router = useRouter();
   const { status } = useSession();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -34,7 +36,7 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
-      setError('Por favor, preencha todos os campos');
+      setError(t('auth.login.error.required'));
       return;
     }
 
@@ -49,13 +51,13 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
-        setError('Email ou senha inválidos');
+        setError(t('auth.login.error.invalid'));
       } else if (result?.ok) {
         router.replace('/dashboard');
       }
     } catch (err) {
       console.error('Erro no login:', err);
-      setError('Erro ao fazer login. Tente novamente.');
+      setError(t('auth.login.error.generic'));
     } finally {
       setIsLoading(false);
     }
@@ -96,106 +98,83 @@ export default function LoginPage() {
           }}
         >
           <Typography component="h1" variant="h5" gutterBottom>
-            Login
+            {t('auth.login.title')}
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
+            {t('auth.login.subtitle')}
+          </Typography>
+
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
+
+          <form onSubmit={handleSubmit}>
             <TextField
               margin="normal"
               required
               fullWidth
               id="email"
-              label="Email"
+              label={t('auth.login.email')}
               name="email"
               autoComplete="email"
               autoFocus
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              disabled={isLoading}
-              error={!!error}
             />
             <TextField
               margin="normal"
               required
               fullWidth
               name="password"
-              label="Senha"
+              label={t('auth.login.password')}
               type="password"
               id="password"
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              disabled={isLoading}
-              error={!!error}
             />
-            {error && (
-              <Alert severity="error" sx={{ mt: 2 }}>
-                {error}
-              </Alert>
-            )}
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              color="primary"
-              sx={{
-                mt: 3,
-                mb: 2,
-                fontWeight: 600,
-                fontSize: 16,
-                py: 1.5,
-                boxShadow: 'none',
-                backgroundColor: '#9c27b0 !important',
-                color: '#fff !important',
-                '&:hover': {
-                  backgroundColor: '#7b1fa2 !important',
-                },
-              }}
+              sx={{ mt: 3, mb: 2, p: 2 }}
               disabled={isLoading}
             >
-              {isLoading ? <CircularProgress size={24} /> : 'Entrar'}
+              {isLoading ? <CircularProgress size={24} /> : t('auth.login.submit')}
             </Button>
-            {/* Botão Google */}
-            <Button
-              fullWidth
-              variant="outlined"
-              startIcon={<GoogleIcon />}
-              sx={{
-                mb: 2,
-                fontWeight: 600,
-                fontSize: 16,
-                py: 1.5,
-                color: '#333',
-                backgroundColor: '#fff',
-                borderColor: '#e0e0e0',
-                '&:hover': {
-                  backgroundColor: '#f5f5f5',
-                  borderColor: '#bdbdbd',
-                },
-              }}
-              onClick={() => signIn('google')}
-              disabled={isLoading}
-            >
-              Logar com Google
-            </Button>
-            <Box sx={{ textAlign: 'center' }}>
-              <Link href="/register" style={{ textDecoration: 'none' }}>
-                <Typography color="primary" variant="body2">
-                  Criar nova conta
+          </form>
+
+          <Box sx={{ textAlign: 'center', mt: 2 }}>
+            <Link href="/forgot-password" passHref>
+              <Typography variant="body2" color="primary" sx={{ cursor: 'pointer' }}>
+                {t('auth.login.forgotPassword')}
+              </Typography>
+            </Link>
+          </Box>
+
+          <Box sx={{ textAlign: 'center', mt: 4 }}>
+            <Typography variant="body2" color="text.secondary">
+              {t('auth.login.noAccount')}{' '}
+              <Link href="/register" passHref>
+                <Typography
+                  component="span"
+                  variant="body2"
+                  color="primary"
+                  sx={{ cursor: 'pointer' }}
+                >
+                  {t('auth.login.signUp')}
                 </Typography>
               </Link>
-              <Link href="/forgot-password" style={{ textDecoration: 'none' }}>
-                <Typography color="primary" variant="body2">
-                  Esqueceu sua senha?
-                </Typography>
-              </Link>
-            </Box>
+            </Typography>
           </Box>
         </Box>
         {/* Coluna da imagem/mensagem */}
         <Box
           sx={{
             flex: 1,
-            bgcolor: '#7b1fa2',
+            bgcolor: 'primary.main',
             color: '#fff',
             display: { xs: 'none', md: 'flex' },
             flexDirection: 'column',
@@ -207,9 +186,14 @@ export default function LoginPage() {
           }}
         >
           <Box sx={{ textAlign: 'left', px: 2, width: '100%', pt: 6, pl: 4 }}>
-            <Typography variant="h4" fontWeight={400} sx={{ mb: 3, lineHeight: 1.2 }}>
-              Soluções simples <br />
-              para manter <br />a excelência
+            <Typography component="h4" variant="h4" className="text-white font-bold mb-0">
+              {t('auth.login.hero.line1')}
+            </Typography>
+            <Typography component="h4" variant="h4" className="text-white font-bold mb-0">
+              {t('auth.login.hero.line2')}
+            </Typography>
+            <Typography component="h4" variant="h4" className="text-white font-bold">
+              {t('auth.login.hero.line3')}
             </Typography>
           </Box>
           <Box

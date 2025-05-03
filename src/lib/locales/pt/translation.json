@@ -1,0 +1,59 @@
+{
+  "auth": {
+    "login": {
+      "title": "Entrar",
+      "subtitle": "Bem-vindo de volta! Por favor, faça login na sua conta.",
+      "email": "E-mail",
+      "password": "Senha",
+      "forgotPassword": "Esqueceu sua senha?",
+      "noAccount": "Não tem uma conta?",
+      "signUp": "Cadastre-se",
+      "submit": "Entrar",
+      "error": {
+        "required": "Por favor, preencha todos os campos",
+        "invalid": "E-mail ou senha inválidos",
+        "generic": "Erro ao fazer login. Tente novamente."
+      },
+      "hero": {
+        "line1": "Soluções simples",
+        "line2": "para manter",
+        "line3": "a excelência"
+      }
+    },
+    "register": {
+      "title": "Criar Conta",
+      "subtitle": "Crie sua conta para começar a usar nossa plataforma.",
+      "name": "Nome",
+      "email": "E-mail",
+      "password": "Senha",
+      "confirmPassword": "Confirmar Senha",
+      "alreadyHaveAccount": "Já tem uma conta?",
+      "signIn": "Entrar",
+      "submit": "Cadastrar",
+      "error": {
+        "required": "Por favor, preencha todos os campos",
+        "passwordMismatch": "As senhas não coincidem",
+        "emailExists": "Já existe uma conta com este e-mail",
+        "generic": "Erro ao criar conta",
+        "loginAfterRegister": "Conta criada, mas erro ao logar. Faça login manualmente."
+      },
+      "hero": {
+        "line1": "Soluções simples",
+        "line2": "para manter",
+        "line3": "a excelência"
+      }
+    },
+    "forgotPassword": {
+      "title": "Recuperar Senha",
+      "subtitle": "Digite seu e-mail para receber instruções de recuperação de senha.",
+      "email": "E-mail",
+      "submit": "Enviar",
+      "backToLogin": "Voltar para o login",
+      "successMessage": "Enviamos um e-mail com instruções para redefinir sua senha.",
+      "error": {
+        "generic": "Erro ao processar sua solicitação. Tente novamente.",
+        "invalidEmail": "E-mail inválido"
+      }
+    }
+  }
+}

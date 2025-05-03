@@ -7,9 +7,11 @@ import Link from 'next/link';
 import Image from 'next/image';
 import GoogleIcon from '@mui/icons-material/Google';
 import { signIn } from 'next-auth/react';
+import { useTranslation } from 'react-i18next';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -21,11 +23,11 @@ export default function RegisterPage() {
     e.preventDefault();
     setError('');
     if (!name || !email || !password || !confirmPassword) {
-      setError('Preencha todos os campos');
+      setError(t('auth.register.error.required'));
       return;
     }
     if (password !== confirmPassword) {
-      setError('As senhas não coincidem');
+      setError(t('auth.register.error.passwordMismatch'));
       return;
     }
     setIsLoading(true);
@@ -38,7 +40,7 @@ export default function RegisterPage() {
       });
       const checkData = await checkRes.json();
       if (checkData.exists) {
-        setError('Já existe uma conta com este email');
+        setError(t('auth.register.error.emailExists'));
         setIsLoading(false);
         return;
       }
@@ -50,7 +52,7 @@ export default function RegisterPage() {
       });
       if (!res.ok) {
         const data = await res.json();
-        setError(data.message || 'Erro ao criar conta');
+        setError(data.message || t('auth.register.error.generic'));
         setIsLoading(false);
         return;
       }
@@ -63,10 +65,10 @@ export default function RegisterPage() {
       if (loginResult?.ok) {
         router.replace('/dashboard');
       } else {
-        setError('Conta criada, mas erro ao logar. Faça login manualmente.');
+        setError(t('auth.register.error.loginAfterRegister'));
       }
     } catch (err) {
-      setError('Erro ao criar conta.');
+      setError(t('auth.register.error.generic'));
     } finally {
       setIsLoading(false);
     }
@@ -97,101 +99,98 @@ export default function RegisterPage() {
           }}
         >
           <Typography component="h1" variant="h5" gutterBottom>
-            Criar Conta
+            {t('auth.register.title')}
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 4 }}>
+            {t('auth.register.subtitle')}
+          </Typography>
+
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
+
+          <form onSubmit={handleSubmit}>
             <TextField
               margin="normal"
               required
               fullWidth
               id="name"
-              label="Nome"
+              label={t('auth.register.name')}
               name="name"
               autoComplete="name"
               autoFocus
               value={name}
               onChange={(e) => setName(e.target.value)}
-              disabled={isLoading}
             />
             <TextField
               margin="normal"
               required
               fullWidth
               id="email"
-              label="Email"
+              label={t('auth.register.email')}
               name="email"
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              disabled={isLoading}
             />
             <TextField
               margin="normal"
               required
               fullWidth
               name="password"
-              label="Senha"
+              label={t('auth.register.password')}
               type="password"
               id="password"
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              disabled={isLoading}
             />
             <TextField
               margin="normal"
               required
               fullWidth
               name="confirmPassword"
-              label="Repetir Senha"
+              label={t('auth.register.confirmPassword')}
               type="password"
               id="confirmPassword"
               autoComplete="new-password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              disabled={isLoading}
             />
-            {error && (
-              <Alert severity="error" sx={{ mt: 2 }}>
-                {error}
-              </Alert>
-            )}
             <Button
               type="submit"
               fullWidth
               variant="contained"
-              color="primary"
-              sx={{
-                mt: 3,
-                mb: 2,
-                fontWeight: 600,
-                fontSize: 16,
-                py: 1.5,
-                boxShadow: 'none',
-                backgroundColor: '#9c27b0 !important',
-                color: '#fff !important',
-                '&:hover': {
-                  backgroundColor: '#7b1fa2 !important',
-                },
-              }}
+              sx={{ mt: 3, mb: 2, p: 2 }}
               disabled={isLoading}
             >
-              {isLoading ? <CircularProgress size={24} /> : 'Criar conta'}
+              {isLoading ? <CircularProgress size={24} /> : t('auth.register.submit')}
             </Button>
-            <Box sx={{ textAlign: 'center' }}>
-              <Link href="/login" style={{ textDecoration: 'none' }}>
-                <Typography color="primary" variant="body2">
-                  Já tem uma conta? Entrar
+          </form>
+
+          <Box sx={{ textAlign: 'center', mt: 4 }}>
+            <Typography variant="body2" color="text.secondary">
+              {t('auth.register.alreadyHaveAccount')}{' '}
+              <Link href="/login" passHref>
+                <Typography
+                  component="span"
+                  variant="body2"
+                  color="primary"
+                  sx={{ cursor: 'pointer' }}
+                >
+                  {t('auth.register.signIn')}
                 </Typography>
               </Link>
-            </Box>
+            </Typography>
           </Box>
         </Box>
         {/* Coluna da imagem/mensagem */}
         <Box
           sx={{
             flex: 1,
-            bgcolor: '#7b1fa2',
+            bgcolor: 'primary.main',
             color: '#fff',
             display: { xs: 'none', md: 'flex' },
             flexDirection: 'column',
@@ -203,9 +202,14 @@ export default function RegisterPage() {
           }}
         >
           <Box sx={{ textAlign: 'left', px: 2, width: '100%', pt: 6, pl: 4 }}>
-            <Typography variant="h4" fontWeight={400} sx={{ mb: 3, lineHeight: 1.2 }}>
-              Soluções simples <br />
-              para manter <br />a excelência
+            <Typography component="h4" variant="h4" className="text-white font-bold mb-0">
+              {t('auth.register.hero.line1')}
+            </Typography>
+            <Typography component="h4" variant="h4" className="text-white font-bold mb-0">
+              {t('auth.register.hero.line2')}
+            </Typography>
+            <Typography component="h4" variant="h4" className="text-white font-bold">
+              {t('auth.register.hero.line3')}
             </Typography>
           </Box>
           <Box

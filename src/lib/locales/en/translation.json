@@ -1,0 +1,59 @@
+{
+  "auth": {
+    "login": {
+      "title": "Sign In",
+      "subtitle": "Welcome back! Please sign in to your account.",
+      "email": "Email",
+      "password": "Password",
+      "forgotPassword": "Forgot your password?",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign Up",
+      "submit": "Sign In",
+      "error": {
+        "required": "Please fill in all fields",
+        "invalid": "Invalid email or password",
+        "generic": "Error signing in. Please try again."
+      },
+      "hero": {
+        "line1": "Simple solutions",
+        "line2": "to maintain",
+        "line3": "excellence"
+      }
+    },
+    "register": {
+      "title": "Create Account",
+      "subtitle": "Create your account to start using our platform.",
+      "name": "Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "alreadyHaveAccount": "Already have an account?",
+      "signIn": "Sign In",
+      "submit": "Register",
+      "error": {
+        "required": "Please fill in all fields",
+        "passwordMismatch": "Passwords do not match",
+        "emailExists": "An account with this email already exists",
+        "generic": "Error creating account",
+        "loginAfterRegister": "Account created but error signing in. Please sign in manually."
+      },
+      "hero": {
+        "line1": "Simple solutions",
+        "line2": "to maintain",
+        "line3": "excellence"
+      }
+    },
+    "forgotPassword": {
+      "title": "Recover Password",
+      "subtitle": "Enter your email to receive password recovery instructions.",
+      "email": "Email",
+      "submit": "Send",
+      "backToLogin": "Back to login",
+      "successMessage": "We have sent an email with instructions to reset your password.",
+      "error": {
+        "generic": "Error processing your request. Please try again.",
+        "invalidEmail": "Invalid email"
+      }
+    }
+  }
+}

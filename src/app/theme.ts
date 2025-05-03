@@ -43,6 +43,12 @@ const theme = createTheme({
         root: {
           textTransform: 'none',
         },
+        contained: {
+          backgroundColor: '#9c27b0 !important',
+          '&:hover': {
+            backgroundColor: '#7b1fa2 !important',
+          },
+        },
       },
     },
     MuiCard: {
