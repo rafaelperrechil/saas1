@@ -13,6 +13,8 @@ model Profile {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   users     User[]
+
+  @@map("profiles")
 }
 
 model User {
@@ -27,6 +29,8 @@ model User {
   loginLogs       LoginLog[]
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+  @@map("users")
 }
 
 model LoginLog {
@@ -36,4 +40,24 @@ model LoginLog {
   ip        String?
   userAgent String?
   createdAt DateTime @default(now())
+
+  @@map("login_logs")
+}
+
+model Plan {
+  id                String   @id @default(cuid())
+  name              String   @unique
+  price             Decimal
+  includedUnits     Int      @map("included_units")
+  maxUsers          Int      @map("max_users")
+  extraUserPrice    Decimal? @map("extra_user_price")
+  maxChecklists     Int?     @map("max_checklists")
+  extraUnitPrice    Decimal? @map("extra_unit_price")
+  isCustom          Boolean  @default(false) @map("is_custom")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@map("plans")
 } 
+
+

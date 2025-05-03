@@ -56,10 +56,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   const menuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/dashboard' },
-    { text: 'Usuários', icon: <PeopleIcon />, path: '/dashboard/users' },
-    { text: 'Perfis', icon: <SettingsIcon />, path: '/dashboard/profiles' },
-    { text: 'Histórico', icon: <HistoryIcon />, path: '/dashboard/history' },
+    { text: 'Dashboard', icon: <DashboardIcon />, path: '/panel/dashboard' },
+    { text: 'Usuários', icon: <PeopleIcon />, path: '/panel/users' },
+    { text: 'Perfis', icon: <SettingsIcon />, path: '/panel/profiles' },
+    { text: 'Planos', icon: <SettingsIcon />, path: '/panel/plans' },
+    { text: 'Histórico', icon: <HistoryIcon />, path: '/panel/history' },
   ];
 
   if (status === 'loading' || status === 'unauthenticated') {

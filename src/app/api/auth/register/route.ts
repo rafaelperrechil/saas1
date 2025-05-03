@@ -14,12 +14,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: 'Email já cadastrado.' }, { status: 400 });
   }
   const hashed = await bcrypt.hash(password, 10);
+  // Buscar o perfil de Administrador
+  const adminProfile = await prisma.profile.findFirst({ where: { name: 'Administrador' } });
+  if (!adminProfile) {
+    return NextResponse.json(
+      { message: 'Perfil de Administrador não encontrado.' },
+      { status: 500 }
+    );
+  }
   await prisma.user.create({
     data: {
       name,
       email,
       password: hashed,
-      profileId: '3',
+      profileId: adminProfile.id,
     },
   });
   return NextResponse.json({ success: true });

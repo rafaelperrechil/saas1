@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "create-admin": "ts-node src/scripts/createInitialUser.ts"
+    "create-admin": "ts-node src/scripts/createInitialUser.ts",
+    "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",

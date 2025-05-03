@@ -29,7 +29,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (status === 'authenticated') {
-      router.replace('/dashboard');
+      router.replace('/panel/dashboard');
     }
   }, [status, router]);
 
@@ -53,7 +53,7 @@ export default function LoginPage() {
       if (result?.error) {
         setError(t('auth.login.error.invalid'));
       } else if (result?.ok) {
-        router.replace('/dashboard');
+        router.replace('/panel/dashboard');
       }
     } catch (err) {
       console.error('Erro no login:', err);
@@ -85,7 +85,14 @@ export default function LoginPage() {
     >
       <Paper
         elevation={0}
-        sx={{ display: 'flex', borderRadius: 4, overflow: 'hidden', maxWidth: 900, width: '100%' }}
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          borderRadius: 4,
+          overflow: 'hidden',
+          maxWidth: 900,
+          width: '100%',
+        }}
       >
         {/* Coluna do formulário */}
         <Box
@@ -176,13 +183,18 @@ export default function LoginPage() {
             flex: 1,
             bgcolor: 'primary.main',
             color: '#fff',
-            display: { xs: 'none', md: 'flex' },
+            display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'flex-start',
             position: 'relative',
-            minHeight: 500,
+            minHeight: { xs: 300, md: 500 },
             overflow: 'hidden',
+            order: { xs: 2, md: 1 },
+            borderRadius: { xs: 4, md: 0 },
+            mt: { xs: 2, md: 0 },
+            mx: { xs: 2, md: 0 },
+            mb: { xs: 2, md: 0 },
           }}
         >
           <Box sx={{ textAlign: 'left', px: 2, width: '100%', pt: 6, pl: 4 }}>
@@ -197,7 +209,14 @@ export default function LoginPage() {
             </Typography>
           </Box>
           <Box
-            sx={{ position: 'absolute', right: 10, bottom: 0, width: 340, height: 350, zIndex: 1 }}
+            sx={{
+              position: 'absolute',
+              right: { xs: 0, md: 10 },
+              bottom: 0,
+              width: { xs: 280, md: 340 },
+              height: { xs: 280, md: 350 },
+              zIndex: 1,
+            }}
           >
             <Image
               src="/images/login-woman.png"
