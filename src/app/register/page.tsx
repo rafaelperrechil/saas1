@@ -1,75 +1,76 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { signIn, useSession } from 'next-auth/react';
-import {
-  Box,
-  Container,
-  TextField,
-  Button,
-  Typography,
-  Paper,
-  CircularProgress,
-  Alert,
-} from '@mui/material';
+import { Box, TextField, Button, Typography, Paper, CircularProgress, Alert } from '@mui/material';
 import Link from 'next/link';
 import Image from 'next/image';
 import GoogleIcon from '@mui/icons-material/Google';
+import { signIn } from 'next-auth/react';
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
-  const { status } = useSession();
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (status === 'authenticated') {
-      router.replace('/dashboard');
-    }
-  }, [status, router]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError('Por favor, preencha todos os campos');
+    setError('');
+    if (!name || !email || !password || !confirmPassword) {
+      setError('Preencha todos os campos');
       return;
     }
-
+    if (password !== confirmPassword) {
+      setError('As senhas não coincidem');
+      return;
+    }
     setIsLoading(true);
-    setError('');
-
     try {
-      const result = await signIn('credentials', {
+      // Verifica se já existe usuário
+      const checkRes = await fetch('/api/check-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const checkData = await checkRes.json();
+      if (checkData.exists) {
+        setError('Já existe uma conta com este email');
+        setIsLoading(false);
+        return;
+      }
+      // Cria usuário
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.message || 'Erro ao criar conta');
+        setIsLoading(false);
+        return;
+      }
+      // Login automático
+      const loginResult = await signIn('credentials', {
         email,
         password,
         redirect: false,
       });
-
-      if (result?.error) {
-        setError('Email ou senha inválidos');
-      } else if (result?.ok) {
+      if (loginResult?.ok) {
         router.replace('/dashboard');
+      } else {
+        setError('Conta criada, mas erro ao logar. Faça login manualmente.');
       }
     } catch (err) {
-      console.error('Erro no login:', err);
-      setError('Erro ao fazer login. Tente novamente.');
+      setError('Erro ao criar conta.');
     } finally {
       setIsLoading(false);
     }
   };
-
-  if (status === 'loading' || status === 'authenticated') {
-    return (
-      <Box
-        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
 
   return (
     <Box
@@ -96,9 +97,22 @@ export default function LoginPage() {
           }}
         >
           <Typography component="h1" variant="h5" gutterBottom>
-            Login
+            Criar Conta
           </Typography>
           <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="name"
+              label="Nome"
+              name="name"
+              autoComplete="name"
+              autoFocus
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              disabled={isLoading}
+            />
             <TextField
               margin="normal"
               required
@@ -107,11 +121,9 @@ export default function LoginPage() {
               label="Email"
               name="email"
               autoComplete="email"
-              autoFocus
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isLoading}
-              error={!!error}
             />
             <TextField
               margin="normal"
@@ -121,11 +133,23 @@ export default function LoginPage() {
               label="Senha"
               type="password"
               id="password"
-              autoComplete="current-password"
+              autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
-              error={!!error}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="confirmPassword"
+              label="Repetir Senha"
+              type="password"
+              id="confirmPassword"
+              autoComplete="new-password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              disabled={isLoading}
             />
             {error && (
               <Alert severity="error" sx={{ mt: 2 }}>
@@ -152,40 +176,12 @@ export default function LoginPage() {
               }}
               disabled={isLoading}
             >
-              {isLoading ? <CircularProgress size={24} /> : 'Entrar'}
-            </Button>
-            {/* Botão Google */}
-            <Button
-              fullWidth
-              variant="outlined"
-              startIcon={<GoogleIcon />}
-              sx={{
-                mb: 2,
-                fontWeight: 600,
-                fontSize: 16,
-                py: 1.5,
-                color: '#333',
-                backgroundColor: '#fff',
-                borderColor: '#e0e0e0',
-                '&:hover': {
-                  backgroundColor: '#f5f5f5',
-                  borderColor: '#bdbdbd',
-                },
-              }}
-              onClick={() => signIn('google')}
-              disabled={isLoading}
-            >
-              Logar com Google
+              {isLoading ? <CircularProgress size={24} /> : 'Criar conta'}
             </Button>
             <Box sx={{ textAlign: 'center' }}>
-              <Link href="/register" style={{ textDecoration: 'none' }}>
+              <Link href="/login" style={{ textDecoration: 'none' }}>
                 <Typography color="primary" variant="body2">
-                  Criar nova conta
-                </Typography>
-              </Link>
-              <Link href="/forgot-password" style={{ textDecoration: 'none' }}>
-                <Typography color="primary" variant="body2">
-                  Esqueceu sua senha?
+                  Já tem uma conta? Entrar
                 </Typography>
               </Link>
             </Box>

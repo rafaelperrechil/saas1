@@ -6,7 +6,7 @@ const nextConfig = {
     domains: ['localhost'],
   },
   server: {
-    port: 3002,
+    port: 3000,
   },
 };
 

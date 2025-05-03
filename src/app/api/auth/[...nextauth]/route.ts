@@ -3,8 +3,43 @@ import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import { headers } from 'next/headers';
 
 const prisma = new PrismaClient();
+
+// Função para obter o IP real do usuário
+function getClientIP(headersList: Headers): string {
+  // Se estiver em localhost, retorna 127.0.0.1
+  const host = headersList.get('host') || '';
+  if (host.includes('localhost') || host.includes('127.0.0.1')) {
+    return '127.0.0.1';
+  }
+
+  // Lista de headers que podem conter o IP
+  const ipHeaders = [
+    'x-real-ip',
+    'x-forwarded-for',
+    'x-client-ip',
+    'cf-connecting-ip',
+    'true-client-ip',
+    'x-cluster-client-ip',
+    'x-forwarded',
+    'forwarded-for',
+    'forwarded',
+  ];
+
+  // Tenta encontrar o IP em cada header
+  for (const header of ipHeaders) {
+    const ip = headersList.get(header);
+    if (ip) {
+      // Se houver múltiplos IPs (como em x-forwarded-for), pega o primeiro
+      return ip.split(',')[0].trim();
+    }
+  }
+
+  // Se não encontrar em nenhum header, retorna o host
+  return host.split(':')[0] || '127.0.0.1';
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -14,7 +49,7 @@ export const authOptions: NextAuthOptions = {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Senha', type: 'password' },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) {
           throw new Error('Email e senha são obrigatórios');
         }
@@ -34,6 +69,27 @@ export const authOptions: NextAuthOptions = {
           if (!isValidPassword) {
             throw new Error('Email ou senha inválidos');
           }
+
+          // Registrar o login
+          const headersList = headers();
+          const userAgent = headersList.get('user-agent') || '';
+          const ip = getClientIP(headersList);
+
+          console.log('Detalhes do login:', {
+            userId: user.id,
+            userAgent,
+            ip,
+            host: headersList.get('host'),
+            headers: Object.fromEntries(headersList.entries()),
+          });
+
+          await prisma.loginLog.create({
+            data: {
+              userId: user.id,
+              userAgent,
+              ip,
+            },
+          });
 
           return {
             id: user.id.toString(),
