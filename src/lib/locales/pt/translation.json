@@ -8,6 +8,12 @@
     "login": "Entrar",
     "getStarted": "Começar"
   },
+  "account": {
+    "myAccount": "Minha conta",
+    "myPlan": "Meu plano",
+    "goToPanel": "Acessar Painel",
+    "logout": "Sair"
+  },
   "auth": {
     "login": {
       "title": "Entrar",

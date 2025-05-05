@@ -12,6 +12,7 @@ import LanguageSelector from '@/components/LanguageSelector';
 import Link from 'next/link';
 import { AppBar, Toolbar, Typography, Button, Container, Box } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import Header from '@/components/Header';
 
 export const metadata: Metadata = {
   title: 'SaaS Platform',
@@ -19,7 +20,6 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const { t } = useTranslation();
   return (
     <html lang="en">
       <head>
@@ -33,49 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <Toaster position="top-right" />
-            {/* Header global */}
-            <AppBar position="static" elevation={0} sx={{ backgroundColor: 'common.white' }}>
-              <Container
-                maxWidth="lg"
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  py: 2,
-                }}
-              >
-                <Typography variant="h6" component="div">
-                  SaaS Platform
-                </Typography>
-                <Box>
-                  {['home', 'products', 'solutions', 'help', 'pricing'].map((key) => (
-                    <Button
-                      key={key}
-                      component={Link}
-                      href={`/${key}`}
-                      sx={{ color: 'text.primary', mx: 1 }}
-                    >
-                      {t(`nav.${key}`)}
-                    </Button>
-                  ))}
-                  <Button component={Link} href="/login" sx={{ color: 'text.primary', mx: 1 }}>
-                    {t('nav.login')}
-                  </Button>
-                  <Button
-                    component={Link}
-                    href="/register"
-                    variant="contained"
-                    color="warning"
-                    sx={{ ml: 2 }}
-                  >
-                    {t('nav.getStarted')}
-                  </Button>
-                  <Box sx={{ display: 'inline-block', ml: 2, mt: '10px' }}>
-                    <LanguageSelector />
-                  </Box>
-                </Box>
-              </Container>
-            </AppBar>
+            <Header />
             {children}
           </ThemeProvider>
         </SessionProvider>

@@ -8,6 +8,12 @@
     "login": "Log In",
     "getStarted": "Get Started"
   },
+  "account": {
+    "myAccount": "My Account",
+    "myPlan": "My Plan",
+    "goToPanel": "Go To Panel",
+    "logout": "Logout"
+  },
   "auth": {
     "login": {
       "title": "Sign In",

@@ -112,7 +112,7 @@ export default async function PricingPage() {
                       '&:hover': { backgroundColor: isFeatured ? 'success.dark' : 'primary.dark' },
                     }}
                   >
-                    Get Price Estimate
+                    Get Started
                   </Button>
                 </Box>
               </Card>

@@ -1,4 +1,19 @@
 {
+  "nav": {
+    "home": "Inicio",
+    "products": "Productos",
+    "solutions": "Soluciones",
+    "help": "Centro de ayuda",
+    "pricing": "Precios",
+    "login": "Iniciar sesión",
+    "getStarted": "Comenzar"
+  },
+  "account": {
+    "myAccount": "Mi cuenta",
+    "myPlan": "Mi plan",
+    "goToPanel": "Acceder al panel",
+    "logout": "Cerrar sesión"
+  },
   "auth": {
     "login": {
       "title": "Iniciar Sesión",
