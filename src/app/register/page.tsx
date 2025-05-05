@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Box, TextField, Button, Typography, Paper, CircularProgress, Alert } from '@mui/material';
@@ -28,6 +29,12 @@ export default function RegisterPage() {
     }
     if (password !== confirmPassword) {
       setError(t('auth.register.error.passwordMismatch'));
+      return;
+    }
+    // Validação de formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError(t('auth.register.error.invalidEmail'));
       return;
     }
     setIsLoading(true);
@@ -113,7 +120,7 @@ export default function RegisterPage() {
           </Typography>
 
           {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
+            <Alert severity="error" sx={{ mb: 2 }} role="alert">
               {error}
             </Alert>
           )}
@@ -130,6 +137,7 @@ export default function RegisterPage() {
               autoFocus
               value={name}
               onChange={(e) => setName(e.target.value)}
+              inputProps={{ 'data-testid': 'name' }}
             />
             <TextField
               margin="normal"
@@ -141,6 +149,7 @@ export default function RegisterPage() {
               autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              inputProps={{ 'data-testid': 'email' }}
             />
             <TextField
               margin="normal"
@@ -153,6 +162,7 @@ export default function RegisterPage() {
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              inputProps={{ 'data-testid': 'password' }}
             />
             <TextField
               margin="normal"
@@ -165,6 +175,7 @@ export default function RegisterPage() {
               autoComplete="new-password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              inputProps={{ 'data-testid': 'confirmPassword' }}
             />
             <Button
               type="submit"
