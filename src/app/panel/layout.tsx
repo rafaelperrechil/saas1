@@ -1,6 +1,5 @@
 'use client';
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import {
@@ -9,6 +8,7 @@ import {
   AppBar,
   Toolbar,
   List,
+  ListSubheader,
   Typography,
   Divider,
   IconButton,
@@ -16,6 +16,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Collapse,
   Avatar,
   Menu,
   MenuItem,
@@ -28,6 +29,8 @@ import {
   Settings as SettingsIcon,
   ExitToApp as ExitToAppIcon,
   History as HistoryIcon,
+  ExpandLess,
+  ExpandMore,
 } from '@mui/icons-material';
 
 const drawerWidth = 240;
@@ -36,6 +39,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter();
   const { data: session, status } = useSession();
   const [open, setOpen] = useState(true);
+  const [openAdmin, setOpenAdmin] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleDrawerToggle = () => {
@@ -54,14 +58,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     await signOut({ redirect: false });
     router.replace('/login');
   };
-
-  const menuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/panel/dashboard' },
-    { text: 'Usuários', icon: <PeopleIcon />, path: '/panel/users' },
-    { text: 'Perfis', icon: <SettingsIcon />, path: '/panel/profiles' },
-    { text: 'Planos', icon: <SettingsIcon />, path: '/panel/plans' },
-    { text: 'Histórico', icon: <HistoryIcon />, path: '/panel/history' },
-  ];
 
   if (status === 'loading' || status === 'unauthenticated') {
     return (
@@ -149,14 +145,67 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Toolbar />
           <Box>
             <List>
-              {menuItems.map((item) => (
-                <ListItem key={item.text} disablePadding>
-                  <ListItemButton onClick={() => router.push(item.path)}>
-                    <ListItemIcon>{item.icon}</ListItemIcon>
-                    <ListItemText primary={item.text} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => router.push('/panel/dashboard')}>
+                  <ListItemIcon>
+                    <DashboardIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Dashboard" />
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => router.push('/panel/settings')}>
+                  <ListItemIcon>
+                    <SettingsIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Configurações gerais" />
+                </ListItemButton>
+              </ListItem>
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => setOpenAdmin(!openAdmin)}>
+                  <ListItemIcon>
+                    <SettingsIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Administrativo" />
+                  {openAdmin ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
+              </ListItem>
+              <Collapse in={openAdmin} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem disablePadding>
+                    <ListItemButton sx={{ pl: 4 }} onClick={() => router.push('/panel/users')}>
+                      <ListItemIcon>
+                        <PeopleIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Usuários" />
+                    </ListItemButton>
+                  </ListItem>
+                  <ListItem disablePadding>
+                    <ListItemButton sx={{ pl: 4 }} onClick={() => router.push('/panel/profiles')}>
+                      <ListItemIcon>
+                        <SettingsIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Perfis" />
+                    </ListItemButton>
+                  </ListItem>
+                  <ListItem disablePadding>
+                    <ListItemButton sx={{ pl: 4 }} onClick={() => router.push('/panel/plans')}>
+                      <ListItemIcon>
+                        <SettingsIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Planos" />
+                    </ListItemButton>
+                  </ListItem>
+                  <ListItem disablePadding>
+                    <ListItemButton sx={{ pl: 4 }} onClick={() => router.push('/panel/history')}>
+                      <ListItemIcon>
+                        <HistoryIcon />
+                      </ListItemIcon>
+                      <ListItemText primary="Histórico" />
+                    </ListItemButton>
+                  </ListItem>
+                </List>
+              </Collapse>
             </List>
             <Divider />
           </Box>

@@ -1,4 +1,13 @@
 {
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "solutions": "Solutions",
+    "help": "Help Center",
+    "pricing": "Pricing",
+    "login": "Log In",
+    "getStarted": "Get Started"
+  },
   "auth": {
     "login": {
       "title": "Sign In",
