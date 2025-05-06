@@ -229,5 +229,29 @@
     "subtitle": "现在免费开始，或与我们的团队联系获取个性化演示。",
     "startFree": "免费开始",
     "talkToTeam": "与团队交谈"
+  },
+  "footer": {
+    "description": "为您的重要日子转变质量管理。我们的软件帮助您完美规划和执行您的婚礼。",
+    "product": "产品",
+    "features": "功能",
+    "plans": "计划",
+    "useCases": "使用案例",
+    "security": "安全",
+    "company": "公司",
+    "about": "关于我们",
+    "blog": "博客",
+    "careers": "职业机会",
+    "contact": "联系我们",
+    "resources": "资源",
+    "help": "帮助",
+    "docs": "文档",
+    "api": "API",
+    "tutorials": "教程",
+    "legal": "法律",
+    "terms": "条款",
+    "privacy": "隐私",
+    "cookies": "Cookie",
+    "compliance": "合规",
+    "copyright": "QualiSight. 版权所有。"
   }
 }

@@ -229,5 +229,29 @@
     "subtitle": "Commencez gratuitement maintenant ou parlez à notre équipe pour une démonstration personnalisée.",
     "startFree": "Commencer Gratuitement",
     "talkToTeam": "Parler à l'équipe"
+  },
+  "footer": {
+    "description": "Transformer la gestion de la qualité pour votre grand jour. Notre logiciel vous aide à planifier et à exécuter votre mariage à la perfection.",
+    "product": "Produit",
+    "features": "Fonctionnalités",
+    "plans": "Forfaits",
+    "useCases": "Cas d'Utilisation",
+    "security": "Sécurité",
+    "company": "Entreprise",
+    "about": "À Propos",
+    "blog": "Blog",
+    "careers": "Carrières",
+    "contact": "Contact",
+    "resources": "Ressources",
+    "help": "Aide",
+    "docs": "Documentation",
+    "api": "API",
+    "tutorials": "Tutoriels",
+    "legal": "Mentions Légales",
+    "terms": "Conditions",
+    "privacy": "Confidentialité",
+    "cookies": "Cookies",
+    "compliance": "Conformité",
+    "copyright": "QualiSight. Tous droits réservés."
   }
 }

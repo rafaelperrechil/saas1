@@ -228,5 +228,29 @@
     "subtitle": "Start free now or talk to our team for a personalized demonstration.",
     "startFree": "Start Free Now",
     "talkToTeam": "Talk to the team"
+  },
+  "footer": {
+    "description": "Transforming quality management for your big day. Our software helps you plan and execute your wedding perfectly.",
+    "product": "Product",
+    "features": "Features",
+    "plans": "Plans",
+    "useCases": "Use Cases",
+    "security": "Security",
+    "company": "Company",
+    "about": "About Us",
+    "blog": "Blog",
+    "careers": "Careers",
+    "contact": "Contact",
+    "resources": "Resources",
+    "help": "Help",
+    "docs": "Documentation",
+    "api": "API",
+    "tutorials": "Tutorials",
+    "legal": "Legal",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "cookies": "Cookies",
+    "compliance": "Compliance",
+    "copyright": "QualiSight. All rights reserved."
   }
 }

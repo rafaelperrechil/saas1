@@ -9,6 +9,7 @@ import type { Metadata } from 'next';
 import './globals.css';
 import '../lib/i18n';
 import Header from '@/components/Header';
+import Footer from '@/components/lp/weddings/Footer';
 
 export const metadata: Metadata = {
   title: 'QualiSight',
@@ -31,6 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Toaster position="top-right" />
             <Header />
             {children}
+            <Footer />
           </ThemeProvider>
         </SessionProvider>
       </body>
