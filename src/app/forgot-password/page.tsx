@@ -5,7 +5,6 @@ import { Box, TextField, Button, Typography, Paper, Link } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 
 export default function ForgotPasswordPage() {
@@ -45,7 +44,7 @@ export default function ForgotPasswordPage() {
         setError(errorData.message || t('auth.forgotPassword.error.generic'));
         setMessage('');
       }
-    } catch (err) {
+    } catch {
       setError(t('auth.forgotPassword.error.generic'));
       setMessage('');
     }
@@ -108,7 +107,7 @@ export default function ForgotPasswordPage() {
               {t('auth.forgotPassword.submit')}
             </Button>
             <Box sx={{ textAlign: 'center' }}>
-              <Link href="/login" passHref>
+              <Link href="/login">
                 <Typography variant="body2" color="primary" sx={{ cursor: 'pointer' }}>
                   {t('auth.forgotPassword.backToLogin')}
                 </Typography>

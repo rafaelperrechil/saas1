@@ -2,9 +2,8 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Box, Container, Typography, Button, CircularProgress, Paper } from '@mui/material';
+import { Box, Container, Typography, CircularProgress, Paper } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
-import HomeIcon from '@mui/icons-material/Home';
 
 export default function NotFound() {
   const router = useRouter();

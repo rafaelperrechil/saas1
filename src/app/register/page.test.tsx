@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import RegisterPage from './page';
 import '@testing-library/jest-dom';
 
@@ -428,7 +428,7 @@ describe('RegisterPage', () => {
     const mockRouter = {
       replace: jest.fn(),
     };
-    jest.spyOn(require('next/navigation'), 'useRouter').mockReturnValue(mockRouter);
+    jest.spyOn(jest.requireMock('next/navigation'), 'useRouter').mockReturnValue(mockRouter);
 
     // Mock das respostas da API
     (global.fetch as jest.Mock)

@@ -3,27 +3,20 @@
 import React, { useState, useEffect } from 'react';
 import {
   Card,
-  CardContent,
   Typography,
   Box,
-  Button,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
-  IconButton,
-  Checkbox,
   Chip,
 } from '@mui/material';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DownloadIcon from '@mui/icons-material/Download';
-import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { formatDistanceToNow, format } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 import { ptBR, enUS, es } from 'date-fns/locale';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 
@@ -49,7 +42,6 @@ interface BillingHistoryCardProps {
 }
 
 export default function BillingHistoryCard({ payments, translations }: BillingHistoryCardProps) {
-  const [selectedPayments, setSelectedPayments] = React.useState<string[]>([]);
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [activeRowId, setActiveRowId] = React.useState<string | null>(null);
   const [locale, setLocale] = useState(ptBR); // Padrão: português
@@ -90,32 +82,18 @@ export default function BillingHistoryCard({ payments, translations }: BillingHi
         addSuffix: true,
         locale,
       });
-    } catch (error) {
+    } catch {
       return 'Invalid date';
     }
   };
 
-  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>, id: string) => {
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>, id: string) => {
     setAnchorEl(event.currentTarget);
     setActiveRowId(id);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
-  };
-
-  const handleCheckboxChange = (id: string) => {
-    setSelectedPayments((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
-  };
-
-  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
-      setSelectedPayments(payments.map((p) => p.id));
-    } else {
-      setSelectedPayments([]);
-    }
   };
 
   const downloadInvoice = (id: string) => {
@@ -175,7 +153,11 @@ export default function BillingHistoryCard({ payments, translations }: BillingHi
           </TableHead>
           <TableBody>
             {displayPayments.map((payment) => (
-              <TableRow key={payment.id}>
+              <TableRow
+                key={payment.id}
+                onClick={(e) => handleMenuClick(e, payment.id)}
+                sx={{ cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
+              >
                 <TableCell>{formatDate(new Date(payment.createdAt))}</TableCell>
                 <TableCell>
                   {payment.description || payment.subscription?.plan?.name || 'N/A'}

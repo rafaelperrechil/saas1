@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, Typography, Button, Box, CircularProgress } from '@mui/material';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 
@@ -11,19 +11,13 @@ interface PaymentMethodCardProps {
   };
 }
 
-// Simulação de informações do cartão (em uma aplicação real seria buscado do Stripe)
-interface CardInfo {
-  brand: string;
-  last4: string;
-  expMonth: number;
-  expYear: number;
-}
+// Interface removida pois não está sendo utilizada atualmente
+// Será implementada quando a integração com Stripe estiver completa
 
 export default function PaymentMethodCard({
   stripeCustomerId,
   translations,
 }: PaymentMethodCardProps) {
-  const [cardInfo, setCardInfo] = useState<CardInfo | null>(null);
   const [loading, setLoading] = useState(false);
 
   const text = {

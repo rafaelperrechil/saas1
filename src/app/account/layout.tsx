@@ -7,13 +7,11 @@ import Link from 'next/link';
 import {
   Box,
   Container,
-  Typography,
   Paper,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  Divider,
   CircularProgress,
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';

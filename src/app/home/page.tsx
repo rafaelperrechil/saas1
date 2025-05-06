@@ -3,17 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Container,
-  Grid,
-  Box,
-  useTheme,
-  useMediaQuery,
-} from '@mui/material';
+import { Typography, Button, Container, Grid, Box, useTheme, useMediaQuery } from '@mui/material';
 
 export default function HomePage() {
   const theme = useTheme();

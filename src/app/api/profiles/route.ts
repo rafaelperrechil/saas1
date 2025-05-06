@@ -45,7 +45,8 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(profile, { status: 201 });
-  } catch (error) {
+  } catch (err) {
+    console.error('Erro ao criar perfil:', err);
     return NextResponse.json({ error: 'Erro ao criar perfil' }, { status: 500 });
   }
 }

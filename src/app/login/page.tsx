@@ -4,19 +4,9 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn, useSession } from 'next-auth/react';
-import {
-  Box,
-  Container,
-  TextField,
-  Button,
-  Typography,
-  Paper,
-  CircularProgress,
-  Alert,
-} from '@mui/material';
+import { Box, TextField, Button, Typography, Paper, CircularProgress, Alert } from '@mui/material';
 import Link from 'next/link';
 import Image from 'next/image';
-import GoogleIcon from '@mui/icons-material/Google';
 import { useTranslation } from 'react-i18next';
 
 export default function LoginPage() {
@@ -155,7 +145,7 @@ export default function LoginPage() {
           </form>
 
           <Box sx={{ textAlign: 'center', mt: 2 }}>
-            <Link href="/forgot-password" passHref>
+            <Link href="/forgot-password">
               <Typography variant="body2" color="primary" sx={{ cursor: 'pointer' }}>
                 {t('auth.login.forgotPassword')}
               </Typography>
@@ -165,7 +155,7 @@ export default function LoginPage() {
           <Box sx={{ textAlign: 'center', mt: 4 }}>
             <Typography variant="body2" color="text.secondary">
               {t('auth.login.noAccount')}{' '}
-              <Link href="/register" passHref>
+              <Link href="/register">
                 <Typography
                   component="span"
                   variant="body2"

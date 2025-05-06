@@ -4,10 +4,7 @@ import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 import Stripe from 'stripe';
 
-// @ts-ignore: stripe apiVersion type mismatch
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2022-11-15' as Stripe.StripeConfig['apiVersion'],
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 
 export async function POST(request: Request) {
   const { planId } = await request.json();
@@ -58,7 +55,7 @@ export async function POST(request: Request) {
 
   // Criar registro de pagamento com um ID temporário baseado na sessão
   // Em produção, este ID seria atualizado via webhook quando o pagamento for concluído
-  const payment = await (prisma as any).payment.create({
+  await (prisma as any).payment.create({
     data: {
       amount: plan.price,
       currency: 'BRL',

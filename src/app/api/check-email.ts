@@ -11,7 +11,8 @@ export async function POST(request: Request) {
     }
     const user = await prisma.user.findUnique({ where: { email } });
     return NextResponse.json({ exists: !!user });
-  } catch (error) {
+  } catch (err) {
+    console.error('Erro ao verificar e-mail:', err);
     return NextResponse.json(
       { exists: false, error: 'Erro ao verificar e-mail.' },
       { status: 500 }

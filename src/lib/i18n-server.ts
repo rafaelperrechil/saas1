@@ -8,14 +8,19 @@ import frTranslations from './locales/fr/translation.json';
 import deTranslations from './locales/de/translation.json';
 import zhTranslations from './locales/zh/translation.json';
 
+// Define o tipo da estrutura de tradução
+type TranslationResource = {
+  [key: string]: string | TranslationResource;
+};
+
 // Recursos de tradução
-const resources = {
-  pt: ptTranslations,
-  en: enTranslations,
-  es: esTranslations,
-  fr: frTranslations,
-  de: deTranslations,
-  zh: zhTranslations,
+const resources: Record<string, TranslationResource> = {
+  pt: ptTranslations as TranslationResource,
+  en: enTranslations as TranslationResource,
+  es: esTranslations as TranslationResource,
+  fr: frTranslations as TranslationResource,
+  de: deTranslations as TranslationResource,
+  zh: zhTranslations as TranslationResource,
 };
 
 // Função para ser usada em Server Components
@@ -44,11 +49,11 @@ export async function getTranslation() {
   // Função de tradução
   const t = (key: string) => {
     const keys = key.split('.');
-    let value = resources[lang as keyof typeof resources];
+    let value: TranslationResource = resources[lang] || resources.pt;
 
     for (const k of keys) {
       if (value && typeof value === 'object' && k in value) {
-        value = value[k as keyof typeof value];
+        value = value[k] as TranslationResource;
       } else {
         return key; // Retornar a chave se não encontrar a tradução
       }

@@ -1,16 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import {
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Box,
-  Chip,
-  Avatar,
-  AvatarGroup,
-} from '@mui/material';
+import React from 'react';
+import { Card, CardContent, Typography, Button, Box, Chip } from '@mui/material';
 import { Plan, Subscription } from '@prisma/client';
 import Link from 'next/link';
 

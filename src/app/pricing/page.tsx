@@ -2,7 +2,6 @@ import React from 'react';
 import prisma from '@/lib/prisma';
 import { Metadata } from 'next';
 import PricingPlans from '../../components/PricingPlans';
-import type { Prisma } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
@@ -10,19 +9,6 @@ export const metadata: Metadata = {
   title: 'Pricing',
   description: 'Confira nossos planos disponíveis',
 };
-
-interface Plan {
-  id: string;
-  name: string;
-  price: number;
-  includedUnits: number;
-  maxUsers: number;
-  maxChecklists: number;
-  extraUserPrice: number | null;
-  extraUnitPrice: number | null;
-  isCustom: boolean;
-  action?: 'current' | 'upgrade';
-}
 
 export default async function PricingPage() {
   // Buscar a sessão do usuário

@@ -42,7 +42,7 @@ const LanguageSelector = () => {
         onClick={handleMenuOpen}
         sx={{
           p: 0.5,
-          border: `2px solid ${Boolean(anchorEl) ? '#9c27b0' : 'transparent'}`,
+          border: `2px solid ${anchorEl ? '#9c27b0' : 'transparent'}`,
           borderRadius: '4px',
           transition: 'all 0.2s ease',
         }}
@@ -57,7 +57,7 @@ const LanguageSelector = () => {
 
       <Menu
         anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
+        open={!!anchorEl}
         onClose={handleMenuClose}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}

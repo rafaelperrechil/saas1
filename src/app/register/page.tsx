@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { Box, TextField, Button, Typography, Paper, CircularProgress, Alert } from '@mui/material';
 import Link from 'next/link';
 import Image from 'next/image';
-import GoogleIcon from '@mui/icons-material/Google';
 import { signIn } from 'next-auth/react';
 import { useTranslation } from 'react-i18next';
 
@@ -74,6 +73,10 @@ export default function RegisterPage() {
         setError(t('auth.register.error.loginAfterRegister'));
       }
     } catch (err) {
+      // Exiba mensagens de erro no console apenas em ambiente de desenvolvimento e produção, não em testes
+      if (process.env.NODE_ENV !== 'test') {
+        console.error('Erro durante o processo de registro:', err);
+      }
       setError(t('auth.register.error.generic'));
     } finally {
       setIsLoading(false);

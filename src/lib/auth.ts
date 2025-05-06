@@ -11,7 +11,7 @@ export const authOptions: NextAuthOptions = {
         email: { label: 'Email', type: 'text' },
         password: { label: 'Password', type: 'password' },
       },
-      async authorize(credentials) {
+      async authorize(credentials, _req) {
         try {
           if (!credentials?.email || !credentials?.password) {
             console.log('Credenciais faltando');
@@ -45,7 +45,7 @@ export const authOptions: NextAuthOptions = {
           return {
             id: user.id,
             email: user.email,
-            name: user.name,
+            name: user.name || '',
             profile: user.profile,
           };
         } catch (error) {

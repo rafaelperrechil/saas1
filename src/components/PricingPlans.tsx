@@ -29,7 +29,7 @@ export default function PricingPlans({
   userIsLoggedIn: boolean;
 }) {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const { t } = useTranslation();
   const theme = useTheme();
 

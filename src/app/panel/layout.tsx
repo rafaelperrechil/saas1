@@ -1,14 +1,12 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import {
   Box,
   Drawer,
   Toolbar,
   List,
-  ListSubheader,
-  Typography,
   Divider,
   IconButton,
   ListItem,
@@ -16,9 +14,6 @@ import {
   ListItemIcon,
   ListItemText,
   Collapse,
-  Avatar,
-  Menu,
-  MenuItem,
   CircularProgress,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
@@ -27,7 +22,6 @@ import {
   Dashboard as DashboardIcon,
   People as PeopleIcon,
   Settings as SettingsIcon,
-  ExitToApp as ExitToAppIcon,
   History as HistoryIcon,
   ExpandLess,
   ExpandMore,
@@ -38,27 +32,13 @@ const collapsedWidth = 60;
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [open, setOpen] = useState(false);
   const [openAdmin, setOpenAdmin] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const theme = useTheme();
 
   const handleDrawerToggle = () => {
     setOpen(!open);
-  };
-
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleLogout = async () => {
-    await signOut({ redirect: false });
-    router.replace('/login');
   };
 
   if (status === 'loading' || status === 'unauthenticated') {

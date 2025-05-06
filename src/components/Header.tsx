@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import LanguageSelector from '@/components/LanguageSelector';
 import {
   AppBar,
-  Toolbar,
   Typography,
   Button,
   Container,
@@ -20,7 +19,7 @@ import { useSession, signOut } from 'next-auth/react';
 import { useState, useEffect } from 'react';
 
 export default function Header() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { data: session, status } = useSession();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mounted, setMounted] = useState(false);

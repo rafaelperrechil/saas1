@@ -13,10 +13,14 @@ const mockUseSearchParamsWithToken = () => ({
 const mockUseSearchParamsNoToken = () => ({ get: () => null });
 
 // Mock global que retorna token válido por padrão
-jest.mock('next/navigation', () => ({
-  useRouter: () => mockUseRouter(),
-  useSearchParams: () => mockUseSearchParamsWithToken(),
-}));
+jest.mock('next/navigation', () => {
+  const actual = jest.requireActual('next/navigation');
+  return {
+    ...actual,
+    useRouter: () => mockUseRouter(),
+    useSearchParams: () => mockUseSearchParamsWithToken(),
+  };
+});
 
 global.fetch = jest.fn();
 
@@ -26,18 +30,18 @@ describe('ResetPasswordPage', () => {
     // Resetar mocks para garantir que cada teste começa limpo
     (push as jest.Mock).mockClear();
     // Resetar o mock de useSearchParams para o padrão (com token)
-    const navigation = require('next/navigation');
+    const mockInstance = jest.fn().mockImplementation(() => mockUseSearchParamsWithToken());
     jest
-      .spyOn(navigation, 'useSearchParams')
-      .mockImplementation(() => mockUseSearchParamsWithToken());
+      .spyOn(jest.requireMock('next/navigation'), 'useSearchParams')
+      .mockImplementation(mockInstance);
   });
 
   it('exibe mensagem de token inválido se não houver token', () => {
     // Mock dinâmico para simular ausência de token
-    const navigation = require('next/navigation');
+    const mockInstance = jest.fn().mockImplementation(() => mockUseSearchParamsNoToken());
     jest
-      .spyOn(navigation, 'useSearchParams')
-      .mockImplementation(() => mockUseSearchParamsNoToken());
+      .spyOn(jest.requireMock('next/navigation'), 'useSearchParams')
+      .mockImplementation(mockInstance);
     render(<ResetPasswordPage />);
     expect(screen.getByText(/token inválido/i)).toBeInTheDocument();
     expect(
@@ -126,10 +130,16 @@ describe('ResetPasswordPage', () => {
   });
 
   it('mostra loading no botão durante o envio', async () => {
-    let resolveFetch: any;
+    // Definindo um tipo específico para resolver a promessa
+    interface MockResponse {
+      ok: boolean;
+      json: () => Promise<{ success: boolean }>;
+    }
+
+    let resolveFetch: (value: MockResponse) => void;
     (global.fetch as jest.Mock).mockImplementationOnce(
       () =>
-        new Promise((resolve) => {
+        new Promise<MockResponse>((resolve) => {
           resolveFetch = resolve;
         })
     );

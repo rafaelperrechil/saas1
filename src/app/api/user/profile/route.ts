@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { Prisma } from '@prisma/client';
 
 // GET - Buscar dados do perfil do usuário
 export async function GET() {
@@ -55,7 +54,8 @@ export async function GET() {
           company: '',
           phone: '',
         });
-      } catch (fallbackError) {
+      } catch (fallbackErr) {
+        console.error('Erro no método fallback durante a consulta:', fallbackErr);
         return NextResponse.json(
           { error: `Erro na consulta ao banco de dados: ${dbError.message}` },
           { status: 500 }
@@ -153,7 +153,8 @@ export async function PUT(request: Request) {
           phone: phone || '',
           message: 'Apenas o nome foi atualizado. Ocorreu um erro ao atualizar empresa e telefone.',
         });
-      } catch (fallbackError) {
+      } catch (fallbackErr) {
+        console.error('Erro no método fallback durante a atualização:', fallbackErr);
         return NextResponse.json(
           { error: `Erro na atualização do banco de dados: ${dbError.message}` },
           { status: 500 }

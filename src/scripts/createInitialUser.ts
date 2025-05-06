@@ -5,14 +5,19 @@ const prisma = new PrismaClient();
 
 async function main() {
   try {
-    // Criar o perfil de Administrador se não existir
-    const adminProfile = await prisma.profile.upsert({
+    // Verificar se o perfil de Administrador já existe
+    const existingAdminProfile = await prisma.profile.findFirst({
       where: { name: 'Administrador' },
-      update: {},
-      create: {
-        name: 'Administrador',
-      },
     });
+
+    // Criar o perfil de Administrador se não existir
+    const adminProfile = existingAdminProfile
+      ? existingAdminProfile
+      : await prisma.profile.create({
+          data: {
+            name: 'Administrador',
+          },
+        });
 
     console.log('Perfil de Administrador criado:', adminProfile);
 

@@ -5,4 +5,8 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   setupFilesAfterEnv: ['@testing-library/jest-dom'],
+  testEnvironmentOptions: {
+    customExportConditions: [''],
+  },
+  setupFiles: ['<rootDir>/jest.setup.js'],
 };

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import {
   Box,
   Container,
@@ -17,7 +17,6 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import Link from 'next/link';
 
 export default function SuccessPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const paymentIntentId = searchParams.get('payment_intent_id');
@@ -82,7 +81,7 @@ export default function SuccessPage() {
           borderRadius: 2,
         }}
       >
-        <CheckCircleIcon color="success" sx={{ fontSize: 80, mb: 2 }} />
+        <CheckCircleIcon color={success ? 'success' : 'action'} sx={{ fontSize: 80, mb: 2 }} />
 
         <Typography variant="h4" gutterBottom>
           Pagamento confirmado!
