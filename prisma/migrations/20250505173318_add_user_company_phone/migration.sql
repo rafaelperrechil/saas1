@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE `users` ADD COLUMN `company` VARCHAR(191) NULL,
+    ADD COLUMN `emailVerified` DATETIME(3) NULL,
+    ADD COLUMN `image` VARCHAR(191) NULL,
+    ADD COLUMN `phone` VARCHAR(191) NULL;

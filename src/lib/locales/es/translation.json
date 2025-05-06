@@ -12,7 +12,37 @@
     "myAccount": "Mi cuenta",
     "myPlan": "Mi plan",
     "goToPanel": "Acceder al panel",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "billing": {
+      "title": "Planes y facturación",
+      "subtitle": "Administre los detalles de su plan y facturación",
+      "currentPlan": "Plan actual",
+      "paymentMethod": "Método de pago",
+      "billingHistory": "Historial de facturación",
+      "active": "ACTIVO",
+      "succeeded": "EXITOSO"
+    },
+    "profile": {
+      "title": "Mi Cuenta",
+      "subtitle": "Administre su información personal",
+      "personalInfo": "Información Personal",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
+      "company": "Empresa",
+      "phone": "Teléfono",
+      "email": "Correo electrónico",
+      "emailHelp": "El correo electrónico no puede ser cambiado",
+      "changePassword": "Cambiar Contraseña",
+      "currentPassword": "Contraseña Actual",
+      "newPassword": "Nueva Contraseña",
+      "confirmPassword": "Confirmar Nueva Contraseña",
+      "saveChanges": "Guardar Cambios",
+      "saving": "Guardando...",
+      "successMessage": "¡Datos actualizados con éxito!",
+      "errorMessage": "Error al actualizar datos. Inténtelo de nuevo.",
+      "passwordMismatch": "Las contraseñas no coinciden",
+      "statistics": "Estadísticas"
+    }
   },
   "auth": {
     "login": {
@@ -70,5 +100,19 @@
         "invalidEmail": "Correo electrónico inválido"
       }
     }
+  },
+  "pricing": {
+    "title": "Nuestros Planes",
+    "subtitle": "Elige el plan ideal para tu negocio",
+    "perMonth": "/mes",
+    "currentPlan": "Plan Actual",
+    "includedUnits": "Unidades incluidas",
+    "maxUsers": "Usuarios",
+    "maxChecklists": "Checklists",
+    "extraUserPrice": "Precio por usuario extra",
+    "extraUnitPrice": "Precio por unidad extra",
+    "signInToGetStarted": "Inicia sesión para comenzar",
+    "planActivated": "Plan Activado",
+    "upgradeNow": "Actualizar Ahora"
   }
 }

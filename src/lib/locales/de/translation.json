@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "products": "Produkte",
+    "solutions": "Lösungen",
+    "help": "Hilfe-Center",
+    "pricing": "Preise",
+    "login": "Anmelden",
+    "getStarted": "Loslegen"
+  },
+  "account": {
+    "myAccount": "Mein Konto",
+    "myPlan": "Mein Plan",
+    "goToPanel": "Zum Dashboard",
+    "logout": "Abmelden",
+    "billing": {
+      "title": "Pläne und Abrechnung",
+      "subtitle": "Verwalten Sie die Details Ihres Plans und Ihrer Abrechnung",
+      "currentPlan": "Aktueller Plan",
+      "paymentMethod": "Zahlungsmethode",
+      "billingHistory": "Abrechnungsverlauf",
+      "active": "AKTIV",
+      "succeeded": "ERFOLGREICH"
+    },
+    "profile": {
+      "title": "Mein Konto",
+      "subtitle": "Verwalten Sie Ihre persönlichen Informationen",
+      "personalInfo": "Persönliche Informationen",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "company": "Unternehmen",
+      "phone": "Telefon",
+      "email": "E-Mail",
+      "emailHelp": "Die E-Mail kann nicht geändert werden",
+      "changePassword": "Passwort ändern",
+      "currentPassword": "Aktuelles Passwort",
+      "newPassword": "Neues Passwort",
+      "confirmPassword": "Neues Passwort bestätigen",
+      "saveChanges": "Änderungen speichern",
+      "saving": "Speichern...",
+      "successMessage": "Daten erfolgreich aktualisiert!",
+      "errorMessage": "Fehler beim Aktualisieren der Daten. Bitte versuchen Sie es erneut.",
+      "passwordMismatch": "Passwörter stimmen nicht überein",
+      "statistics": "Statistiken"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Anmelden",
+      "subtitle": "Willkommen zurück! Bitte melden Sie sich in Ihrem Konto an.",
+      "email": "E-Mail",
+      "password": "Passwort",
+      "forgotPassword": "Passwort vergessen?",
+      "noAccount": "Noch kein Konto?",
+      "signUp": "Registrieren",
+      "submit": "Anmelden",
+      "error": {
+        "required": "Bitte füllen Sie alle Felder aus",
+        "invalid": "Ungültige E-Mail oder Passwort",
+        "generic": "Fehler beim Anmelden. Bitte versuchen Sie es erneut."
+      },
+      "hero": {
+        "line1": "Einfache Lösungen",
+        "line2": "um Exzellenz",
+        "line3": "zu erhalten"
+      }
+    },
+    "register": {
+      "title": "Konto erstellen",
+      "subtitle": "Erstellen Sie Ihr Konto, um unsere Plattform zu nutzen.",
+      "name": "Name",
+      "email": "E-Mail",
+      "password": "Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
+      "signIn": "Anmelden",
+      "submit": "Registrieren",
+      "error": {
+        "required": "Bitte füllen Sie alle Felder aus",
+        "passwordMismatch": "Passwörter stimmen nicht überein",
+        "emailExists": "Ein Konto mit dieser E-Mail existiert bereits",
+        "generic": "Fehler beim Erstellen des Kontos",
+        "loginAfterRegister": "Konto erstellt, aber Fehler beim Anmelden. Bitte melden Sie sich manuell an."
+      },
+      "hero": {
+        "line1": "Einfache Lösungen",
+        "line2": "um Exzellenz",
+        "line3": "zu erhalten"
+      }
+    },
+    "forgotPassword": {
+      "title": "Passwort wiederherstellen",
+      "subtitle": "Geben Sie Ihre E-Mail-Adresse ein, um Anweisungen zur Passwortwiederherstellung zu erhalten.",
+      "email": "E-Mail",
+      "submit": "Senden",
+      "backToLogin": "Zurück zur Anmeldung",
+      "successMessage": "Wir haben eine E-Mail mit Anweisungen zum Zurücksetzen Ihres Passworts gesendet.",
+      "error": {
+        "generic": "Fehler bei der Bearbeitung Ihrer Anfrage. Bitte versuchen Sie es erneut.",
+        "invalidEmail": "Ungültige E-Mail"
+      }
+    }
+  },
+  "pricing": {
+    "title": "Unsere Pläne",
+    "subtitle": "Wählen Sie den idealen Plan für Ihr Unternehmen",
+    "perMonth": "/Monat",
+    "currentPlan": "Aktueller Plan",
+    "includedUnits": "Enthaltene Einheiten",
+    "maxUsers": "Benutzer",
+    "maxChecklists": "Checklisten",
+    "extraUserPrice": "Preis pro zusätzlichem Benutzer",
+    "extraUnitPrice": "Preis pro zusätzlicher Einheit",
+    "signInToGetStarted": "Anmelden, um zu beginnen",
+    "planActivated": "Plan aktiviert",
+    "upgradeNow": "Jetzt upgraden"
+  }
+}

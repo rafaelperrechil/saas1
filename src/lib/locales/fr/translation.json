@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "products": "Produits",
+    "solutions": "Solutions",
+    "help": "Centre d'aide",
+    "pricing": "Tarifs",
+    "login": "Connexion",
+    "getStarted": "Commencer"
+  },
+  "account": {
+    "myAccount": "Mon compte",
+    "myPlan": "Mon forfait",
+    "goToPanel": "Accéder au panneau",
+    "logout": "Déconnexion",
+    "billing": {
+      "title": "Forfaits et facturation",
+      "subtitle": "Gérez les détails de votre forfait et de votre facturation",
+      "currentPlan": "Forfait actuel",
+      "paymentMethod": "Mode de paiement",
+      "billingHistory": "Historique de facturation",
+      "active": "ACTIF",
+      "succeeded": "RÉUSSI"
+    },
+    "profile": {
+      "title": "Mon Compte",
+      "subtitle": "Gérez vos informations personnelles",
+      "personalInfo": "Informations Personnelles",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "company": "Entreprise",
+      "phone": "Téléphone",
+      "email": "Email",
+      "emailHelp": "L'email ne peut pas être modifié",
+      "changePassword": "Changer le Mot de Passe",
+      "currentPassword": "Mot de Passe Actuel",
+      "newPassword": "Nouveau Mot de Passe",
+      "confirmPassword": "Confirmer le Nouveau Mot de Passe",
+      "saveChanges": "Enregistrer les Modifications",
+      "saving": "Enregistrement...",
+      "successMessage": "Données mises à jour avec succès!",
+      "errorMessage": "Erreur lors de la mise à jour des données. Veuillez réessayer.",
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "statistics": "Statistiques"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Connexion",
+      "subtitle": "Bienvenue! Veuillez vous connecter à votre compte.",
+      "email": "E-mail",
+      "password": "Mot de passe",
+      "forgotPassword": "Mot de passe oublié?",
+      "noAccount": "Vous n'avez pas de compte?",
+      "signUp": "S'inscrire",
+      "submit": "Se connecter",
+      "error": {
+        "required": "Veuillez remplir tous les champs",
+        "invalid": "E-mail ou mot de passe invalide",
+        "generic": "Erreur de connexion. Veuillez réessayer."
+      },
+      "hero": {
+        "line1": "Solutions simples",
+        "line2": "pour maintenir",
+        "line3": "l'excellence"
+      }
+    },
+    "register": {
+      "title": "Créer un compte",
+      "subtitle": "Créez votre compte pour commencer à utiliser notre plateforme.",
+      "name": "Nom",
+      "email": "E-mail",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "alreadyHaveAccount": "Vous avez déjà un compte?",
+      "signIn": "Se connecter",
+      "submit": "S'inscrire",
+      "error": {
+        "required": "Veuillez remplir tous les champs",
+        "passwordMismatch": "Les mots de passe ne correspondent pas",
+        "emailExists": "Un compte avec cet e-mail existe déjà",
+        "generic": "Erreur lors de la création du compte",
+        "loginAfterRegister": "Compte créé mais erreur de connexion. Veuillez vous connecter manuellement."
+      },
+      "hero": {
+        "line1": "Solutions simples",
+        "line2": "pour maintenir",
+        "line3": "l'excellence"
+      }
+    },
+    "forgotPassword": {
+      "title": "Récupérer le mot de passe",
+      "subtitle": "Entrez votre e-mail pour recevoir les instructions de récupération de mot de passe.",
+      "email": "E-mail",
+      "submit": "Envoyer",
+      "backToLogin": "Retour à la connexion",
+      "successMessage": "Nous avons envoyé un e-mail avec les instructions pour réinitialiser votre mot de passe.",
+      "error": {
+        "generic": "Erreur lors du traitement de votre demande. Veuillez réessayer.",
+        "invalidEmail": "E-mail invalide"
+      }
+    }
+  },
+  "pricing": {
+    "title": "Nos Forfaits",
+    "subtitle": "Choisissez le forfait idéal pour votre entreprise",
+    "perMonth": "/mois",
+    "currentPlan": "Forfait Actuel",
+    "includedUnits": "Unités incluses",
+    "maxUsers": "Utilisateurs",
+    "maxChecklists": "Checklists",
+    "extraUserPrice": "Prix par utilisateur supplémentaire",
+    "extraUnitPrice": "Prix par unité supplémentaire",
+    "signInToGetStarted": "Connectez-vous pour commencer",
+    "planActivated": "Forfait Activé",
+    "upgradeNow": "Mettre à Niveau"
+  }
+}

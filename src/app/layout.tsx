@@ -8,10 +8,6 @@ import { Toaster } from 'sonner';
 import type { Metadata } from 'next';
 import './globals.css';
 import '../lib/i18n';
-import LanguageSelector from '@/components/LanguageSelector';
-import Link from 'next/link';
-import { AppBar, Toolbar, Typography, Button, Container, Box } from '@mui/material';
-import { useTranslation } from 'react-i18next';
 import Header from '@/components/Header';
 
 export const metadata: Metadata = {

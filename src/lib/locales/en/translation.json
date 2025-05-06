@@ -12,7 +12,36 @@
     "myAccount": "My Account",
     "myPlan": "My Plan",
     "goToPanel": "Go To Panel",
-    "logout": "Logout"
+    "logout": "Logout",
+    "billing": {
+      "title": "Plans and billing",
+      "subtitle": "Manage your plan and billing details",
+      "currentPlan": "Current Plan",
+      "paymentMethod": "Payment Method",
+      "billingHistory": "Billing History",
+      "active": "ACTIVE",
+      "succeeded": "SUCCEEDED"
+    },
+    "profile": {
+      "title": "My Account",
+      "subtitle": "Manage your personal information",
+      "personalInfo": "Personal Information",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "company": "Company",
+      "email": "Email",
+      "emailHelp": "Email cannot be changed",
+      "changePassword": "Change Password",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm New Password",
+      "saveChanges": "Save Changes",
+      "saving": "Saving...",
+      "successMessage": "Data updated successfully!",
+      "errorMessage": "Error updating data. Please try again.",
+      "passwordMismatch": "Passwords do not match",
+      "statistics": "Statistics"
+    }
   },
   "auth": {
     "login": {
@@ -70,5 +99,19 @@
         "invalidEmail": "Invalid email"
       }
     }
+  },
+  "pricing": {
+    "title": "Our Plans",
+    "subtitle": "Choose the ideal plan for your business",
+    "perMonth": "/month",
+    "currentPlan": "Current Plan",
+    "includedUnits": "Included units",
+    "maxUsers": "Users",
+    "maxChecklists": "Checklists",
+    "extraUserPrice": "Price per extra user",
+    "extraUnitPrice": "Price per extra unit",
+    "signInToGetStarted": "Sign in to get started",
+    "planActivated": "Plan Activated",
+    "upgradeNow": "Upgrade Now"
   }
 }

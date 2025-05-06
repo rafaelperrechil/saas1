@@ -21,6 +21,7 @@ import {
   MenuItem,
   CircularProgress,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import {
   Menu as MenuIcon,
   Dashboard as DashboardIcon,
@@ -33,13 +34,15 @@ import {
 } from '@mui/icons-material';
 
 const drawerWidth = 240;
+const collapsedWidth = 60;
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [openAdmin, setOpenAdmin] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const theme = useTheme();
 
   const handleDrawerToggle = () => {
     setOpen(!open);
@@ -75,37 +78,51 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-      <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
+      <Box component="nav" sx={{ flexShrink: 0 }}>
         <Drawer
           variant="permanent"
+          open={open}
           sx={{
-            display: { xs: 'none', sm: 'block' },
+            width: open ? drawerWidth : collapsedWidth,
+            flexShrink: 0,
+            whiteSpace: 'nowrap',
+            boxSizing: 'border-box',
             '& .MuiDrawer-paper': {
-              boxSizing: 'border-box',
-              width: drawerWidth,
+              width: open ? drawerWidth : collapsedWidth,
+              transition: theme.transitions.create('width', {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.enteringScreen,
+              }),
+              overflowX: 'hidden',
             },
           }}
-          open
         >
-          <Toolbar />
+          <Toolbar sx={{ justifyContent: open ? 'flex-end' : 'center', px: [1] }}>
+            <IconButton onClick={handleDrawerToggle} size="small">
+              <MenuIcon />
+            </IconButton>
+          </Toolbar>
           <Box>
             <List>
-              <ListItem disablePadding>
-                <ListItemButton onClick={() => router.push('/panel/dashboard')}>
-                  <ListItemIcon>
-                    <DashboardIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Dashboard" />
-                </ListItemButton>
-              </ListItem>
-              <ListItem disablePadding>
-                <ListItemButton onClick={() => router.push('/panel/settings')}>
-                  <ListItemIcon>
-                    <SettingsIcon />
-                  </ListItemIcon>
-                  <ListItemText primary="Configurações gerais" />
-                </ListItemButton>
-              </ListItem>
+              {[
+                { text: 'Dashboard', icon: <DashboardIcon />, path: '/panel/dashboard' },
+                { text: 'Configurações gerais', icon: <SettingsIcon />, path: '/panel/settings' },
+              ].map(({ text, icon, path }) => (
+                <ListItem
+                  key={text}
+                  disablePadding
+                  sx={{ justifyContent: open ? 'initial' : 'center' }}
+                >
+                  <ListItemButton onClick={() => router.push(path)} sx={{ px: 2.5 }}>
+                    <ListItemIcon
+                      sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}
+                    >
+                      {icon}
+                    </ListItemIcon>
+                    <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                  </ListItemButton>
+                </ListItem>
+              ))}
               <ListItem disablePadding>
                 <ListItemButton onClick={() => setOpenAdmin(!openAdmin)}>
                   <ListItemIcon>

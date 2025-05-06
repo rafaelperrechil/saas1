@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "home": "首页",
+    "products": "产品",
+    "solutions": "解决方案",
+    "help": "帮助中心",
+    "pricing": "价格",
+    "login": "登录",
+    "getStarted": "开始使用"
+  },
+  "account": {
+    "myAccount": "我的账户",
+    "myPlan": "我的计划",
+    "goToPanel": "进入控制面板",
+    "logout": "退出登录",
+    "billing": {
+      "title": "计划和账单",
+      "subtitle": "管理您的计划和账单详情",
+      "currentPlan": "当前计划",
+      "paymentMethod": "支付方式",
+      "billingHistory": "账单历史",
+      "active": "激活",
+      "succeeded": "成功"
+    },
+    "profile": {
+      "title": "我的账户",
+      "subtitle": "管理您的个人信息",
+      "personalInfo": "个人信息",
+      "firstName": "名字",
+      "lastName": "姓氏",
+      "company": "公司",
+      "phone": "电话",
+      "email": "电子邮件",
+      "emailHelp": "电子邮件不能更改",
+      "changePassword": "更改密码",
+      "currentPassword": "当前密码",
+      "newPassword": "新密码",
+      "confirmPassword": "确认新密码",
+      "saveChanges": "保存更改",
+      "saving": "保存中...",
+      "successMessage": "数据更新成功！",
+      "errorMessage": "更新数据时出错。请重试。",
+      "passwordMismatch": "密码不匹配",
+      "statistics": "统计"
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "登录",
+      "subtitle": "欢迎回来！请登录您的账户。",
+      "email": "电子邮件",
+      "password": "密码",
+      "forgotPassword": "忘记密码？",
+      "noAccount": "没有账户？",
+      "signUp": "注册",
+      "submit": "登录",
+      "error": {
+        "required": "请填写所有字段",
+        "invalid": "电子邮件或密码无效",
+        "generic": "登录时出错。请重试。"
+      },
+      "hero": {
+        "line1": "简单的解决方案",
+        "line2": "保持",
+        "line3": "卓越"
+      }
+    },
+    "register": {
+      "title": "创建账户",
+      "subtitle": "创建您的账户以开始使用我们的平台。",
+      "name": "姓名",
+      "email": "电子邮件",
+      "password": "密码",
+      "confirmPassword": "确认密码",
+      "alreadyHaveAccount": "已有账户？",
+      "signIn": "登录",
+      "submit": "注册",
+      "error": {
+        "required": "请填写所有字段",
+        "passwordMismatch": "密码不匹配",
+        "emailExists": "此电子邮件已存在账户",
+        "generic": "创建账户时出错",
+        "loginAfterRegister": "账户已创建，但登录时出错。请手动登录。"
+      },
+      "hero": {
+        "line1": "简单的解决方案",
+        "line2": "保持",
+        "line3": "卓越"
+      }
+    },
+    "forgotPassword": {
+      "title": "恢复密码",
+      "subtitle": "输入您的电子邮件以接收密码恢复说明。",
+      "email": "电子邮件",
+      "submit": "发送",
+      "backToLogin": "返回登录",
+      "successMessage": "我们已发送一封电子邮件，其中包含重置密码的说明。",
+      "error": {
+        "generic": "处理您的请求时出错。请重试。",
+        "invalidEmail": "电子邮件无效"
+      }
+    }
+  },
+  "pricing": {
+    "title": "我们的套餐",
+    "subtitle": "为您的业务选择理想的套餐",
+    "perMonth": "/月",
+    "currentPlan": "当前套餐",
+    "includedUnits": "包含单位",
+    "maxUsers": "最大用户数",
+    "maxChecklists": "最大清单数",
+    "extraUserPrice": "额外用户价格",
+    "extraUnitPrice": "额外单位价格",
+    "signInToGetStarted": "登录以开始",
+    "planActivated": "套餐已激活",
+    "upgradeNow": "立即升级"
+  }
+}

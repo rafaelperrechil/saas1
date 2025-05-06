@@ -7,8 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
+    "test:webhook": "node scripts/test-webhook.js",
     "create-admin": "ts-node src/scripts/createInitialUser.ts",
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node --compiler-options {\\\"module\\\":\\\"CommonJS\\\"} prisma/seed.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -36,6 +37,7 @@
     "react-i18next": "^15.5.1",
     "resend": "^4.4.0",
     "sonner": "^2.0.3",
+    "stripe": "^18.1.0",
     "swr": "^2.3.3",
     "tailwind-merge": "^3.2.0",
     "zod": "^3.22.2"
@@ -62,6 +64,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "postcss": "8.4.29",
     "prisma": "^5.2.0",
+    "stripe-cli": "^0.1.0",
     "tailwindcss": "3.3.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.1.6"

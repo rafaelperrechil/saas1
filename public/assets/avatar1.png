@@ -1,0 +1,12 @@
+Este arquivo é uma imagem PNG, não pode ser editado diretamente por este editor.
+
+Para criar avatares, você precisará:
+1. Gerar imagens PNG ou SVG de avatares
+2. Salvá-las na pasta public/assets/
+3. Certifique-se de criar avatar1.png, avatar2.png, etc. 
+
+Você pode usar serviços como:
+- Avataaars (https://avataaars.com/)
+- Gravatar
+- UI Faces
+- Ou qualquer outro gerador de avatares 
