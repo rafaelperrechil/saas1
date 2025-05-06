@@ -102,8 +102,8 @@
     }
   },
   "pricing": {
-    "title": "Nos Forfaits",
-    "subtitle": "Choisissez le forfait idéal pour votre entreprise",
+    "title": "Choisissez le plan idéal pour garder votre entreprise sous contrôle total!",
+    "subtitle": "Listes de contrôle automatisées, inspections organisées et fonctionnement impeccable.",
     "perMonth": "/mois",
     "currentPlan": "Forfait Actuel",
     "includedUnits": "Unités incluses",
@@ -114,5 +114,120 @@
     "signInToGetStarted": "Connectez-vous pour commencer",
     "planActivated": "Forfait Activé",
     "upgradeNow": "Mettre à Niveau"
+  },
+  "niches": {
+    "title": "Au-delà de l'hôtellerie – une solution pour divers secteurs",
+    "subtitle": "Listes de contrôle numériques qui s'adaptent à toute opération avec des routines d'inspection",
+    "sectors": {
+      "clinics": {
+        "title": "Cliniques et cabinets médicaux",
+        "description": "Inspections de biosécurité, nettoyage et équipements"
+      },
+      "restaurants": {
+        "title": "Restaurants et cuisines industrielles",
+        "description": "Contrôle d'hygiène, validité des aliments et équipements"
+      },
+      "offices": {
+        "title": "Bureaux et espaces de coworking",
+        "description": "Vérification des salles, réseau et équipements"
+      },
+      "industries": {
+        "title": "Industries",
+        "description": "Inspection des machines, EPI et procédures opérationnelles"
+      },
+      "construction": {
+        "title": "Chantiers et construction",
+        "description": "Sécurité au travail et utilisation des équipements"
+      },
+      "schools": {
+        "title": "Écoles et crèches",
+        "description": "Nettoyage, sécurité et service alimentaire"
+      },
+      "stores": {
+        "title": "Magasins et franchises",
+        "description": "Organisation, vitrines, inventaire"
+      },
+      "cleaning": {
+        "title": "Entreprises de nettoyage",
+        "description": "Contrôle des tâches effectuées chez les clients"
+      },
+      "fleet": {
+        "title": "Flottes de véhicules",
+        "description": "Liste de contrôle de maintenance et fonctionnement"
+      }
+    }
+  },
+  "testimonials": {
+    "title": "Ce que disent nos clients",
+    "subtitle": "Les professionnels du secteur transforment leur gestion avec notre plateforme",
+    "items": [
+      {
+        "name": "Carla Menezes",
+        "role": "Directrice Générale – Hôtel Vista Mar",
+        "testimonial": "Avec les checklists numériques, nous parvenons à garder toutes les chambres 100% prêtes avant l'arrivée des clients. Nous avons gagné en agilité et réduit les erreurs."
+      },
+      {
+        "name": "Felipe Rocha",
+        "role": "Superviseur – Auberge Refúgio das Águas",
+        "testimonial": "Avant, nous utilisions du papier pour tout. Maintenant, nous avons des rapports quotidiens, des alertes de maintenance et beaucoup plus de contrôle. Cela a complètement changé notre routine."
+      },
+      {
+        "name": "Ana Gabriela Freitas",
+        "role": "Coordinatrice – Clinique Bem Viver",
+        "testimonial": "Les checklists de biosécurité aident à maintenir la norme de la clinique et à assurer la conformité réglementaire. Simple et efficace pour toute l'équipe."
+      },
+      {
+        "name": "Rafael Silva",
+        "role": "Propriétaire – Chalets Montanha Azul",
+        "testimonial": "Nous avons peu d'employés et l'outil nous aide à garder tout en ordre, même à distance. Utilisation quotidienne, super pratique et direct."
+      },
+      {
+        "name": "Letícia Barreto",
+        "role": "Responsable Nettoyage – Réseau LimpeMais",
+        "testimonial": "Nos employés enregistrent maintenant tout via mobile. Le gestionnaire le voit en temps réel et nous avons réduit les appels pour défauts de nettoyage de 70%."
+      },
+      {
+        "name": "Eduardo Lins",
+        "role": "Coordinateur de Maintenance – Spa Naturalle",
+        "testimonial": "Nous avons créé des routines personnalisées pour chaque environnement. Nous avons gagné en cohérence dans les inspections et en rapidité de résolution des problèmes."
+      }
+    ]
+  },
+  "units": {
+    "title": "Gérez plusieurs unités sur une seule plateforme",
+    "paragraph1": "Dans tous les forfaits QualiSight, vous commencez avec une unité incluse pour gérer vos opérations sans complications. Même si vous avez plusieurs succursales ou environnements dispersés, utilisez simplement le même compte pour ajouter facilement de nouvelles unités.",
+    "paragraph2": "De cette façon, vous gardez tout organisé dans un tableau de bord unique, en suivant les listes de contrôle, les rapports et les demandes de service de chaque emplacement sans avoir à basculer entre différents comptes ou systèmes."
+  },
+  "faq": {
+    "title": "Questions Fréquentes",
+    "subtitle": "Obtenez des réponses à vos questions avant de commencer",
+    "items": [
+      {
+        "question": "La version gratuite a-t-elle une date d'expiration ou puis-je l'utiliser indéfiniment?",
+        "answer": "Non! La version gratuite peut être utilisée indéfiniment, avec des limitations sur les listes de contrôle et les utilisateurs."
+      },
+      {
+        "question": "Puis-je ajouter plus d'utilisateurs ou d'unités à mesure que mon entreprise se développe?",
+        "answer": "Oui! Vous pouvez mettre à niveau votre forfait ou ajouter des utilisateurs supplémentaires selon vos besoins."
+      },
+      {
+        "question": "Dois-je installer une application pour utiliser la plateforme?",
+        "answer": "Aucune installation nécessaire. La plateforme fonctionne directement depuis votre navigateur, y compris sur mobile et tablette."
+      },
+      {
+        "question": "Mon équipe de nettoyage peut-elle l'utiliser sans formation technique?",
+        "answer": "Oui! Le système est simple et intuitif, avec un langage clair et accessible pour tout employé."
+      },
+      {
+        "question": "Et si je perds ma connexion Internet? Les inspections fonctionnent-elles hors ligne?",
+        "answer": "Certaines fonctionnalités nécessitent une connexion, mais nous développons le mode hors ligne. Contactez-nous pour en savoir plus."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Prêt à transformer votre opération?",
+    "subtitle": "Commencez gratuitement maintenant ou parlez à notre équipe pour une démonstration personnalisée.",
+    "startFree": "Commencer Gratuitement",
+    "talkToTeam": "Parler à l'équipe"
   }
 }

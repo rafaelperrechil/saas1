@@ -102,8 +102,8 @@
     }
   },
   "pricing": {
-    "title": "我们的套餐",
-    "subtitle": "为您的业务选择理想的套餐",
+    "title": "选择理想的计划，让您的业务完全掌控！",
+    "subtitle": "自动化清单、有组织的检查和完美运营。",
     "perMonth": "/月",
     "currentPlan": "当前套餐",
     "includedUnits": "包含单位",
@@ -114,5 +114,120 @@
     "signInToGetStarted": "登录以开始",
     "planActivated": "套餐已激活",
     "upgradeNow": "立即升级"
+  },
+  "niches": {
+    "title": "超越酒店业 – 适用于各行各业的解决方案",
+    "subtitle": "可适应任何检查例程操作的数字化清单",
+    "sectors": {
+      "clinics": {
+        "title": "诊所和医疗办公室",
+        "description": "生物安全检查、清洁和设备"
+      },
+      "restaurants": {
+        "title": "餐厅和工业厨房",
+        "description": "卫生控制、食品有效期和设备"
+      },
+      "offices": {
+        "title": "办公室和共享工作空间",
+        "description": "房间、网络和设备检查"
+      },
+      "industries": {
+        "title": "工业",
+        "description": "机器、个人防护设备和操作程序检查"
+      },
+      "construction": {
+        "title": "建筑工地",
+        "description": "工作安全和设备使用"
+      },
+      "schools": {
+        "title": "学校和托儿所",
+        "description": "清洁、安全和食品服务"
+      },
+      "stores": {
+        "title": "商店和特许经营店",
+        "description": "组织、展示和库存"
+      },
+      "cleaning": {
+        "title": "清洁公司",
+        "description": "客户处执行任务的控制"
+      },
+      "fleet": {
+        "title": "车队",
+        "description": "维护清单和车辆操作"
+      }
+    }
+  },
+  "testimonials": {
+    "title": "客户怎么说",
+    "subtitle": "行业专业人士正在使用我们的平台转变他们的管理方式",
+    "items": [
+      {
+        "name": "Carla Menezes",
+        "role": "总经理 – Vista Mar 酒店",
+        "testimonial": "通过数字检查清单，我们能够在客人到达前使所有房间100%准备就绪。我们提高了敏捷性并减少了错误。"
+      },
+      {
+        "name": "Felipe Rocha",
+        "role": "主管 – Refúgio das Águas 旅馆",
+        "testimonial": "我们以前所有事情都用纸。现在我们有每日报告、维护警报和更多控制。它完全改变了我们的日常工作。"
+      },
+      {
+        "name": "Ana Gabriela Freitas",
+        "role": "协调员 – Bem Viver 诊所",
+        "testimonial": "生物安全检查清单有助于维持诊所的标准并确保符合法规。对整个团队简单有效。"
+      },
+      {
+        "name": "Rafael Silva",
+        "role": "所有者 – Montanha Azul 小屋",
+        "testimonial": "我们的员工很少，这个工具帮助我们保持一切有序，即使是远程操作。日常使用，超级实用直接。"
+      },
+      {
+        "name": "Letícia Barreto",
+        "role": "清洁主管 – LimpeMais 网络",
+        "testimonial": "我们的员工现在通过手机记录所有内容。管理者实时查看，我们减少了70%的清洁失误投诉。"
+      },
+      {
+        "name": "Eduardo Lins",
+        "role": "维护协调员 – Naturalle 水疗中心",
+        "testimonial": "我们为每个环境创建了定制例程。我们在检查中获得了一致性并加快了问题解决速度。"
+      }
+    ]
+  },
+  "units": {
+    "title": "在单一平台上管理多个单位",
+    "paragraph1": "在所有QualiSight计划中，您开始时就包含一个单位，无需复杂操作即可管理您的业务。即使您有多个分支机构或分散的环境，只需使用同一账户即可轻松添加新单位。",
+    "paragraph2": "这样，您可以在单一仪表板中保持一切井然有序，跟踪每个位置的检查清单、报告和服务请求，而无需在不同的账户或系统之间切换。"
+  },
+  "faq": {
+    "title": "常见问题",
+    "subtitle": "在开始之前解答您的疑问",
+    "items": [
+      {
+        "question": "免费版本有使用期限吗，还是可以永久使用？",
+        "answer": "不！免费版本可以无限期使用，但对清单和用户数量有限制。"
+      },
+      {
+        "question": "随着业务增长，我可以添加更多用户或单位吗？",
+        "answer": "是的！您可以根据需要升级计划或添加额外用户。"
+      },
+      {
+        "question": "使用平台需要安装任何应用程序吗？",
+        "answer": "不需要安装任何东西。平台直接通过浏览器运行，包括在手机和平板电脑上。"
+      },
+      {
+        "question": "我的清洁团队无需技术培训就能使用吗？",
+        "answer": "是的！系统简单直观，为任何员工提供清晰易懂的语言。"
+      },
+      {
+        "question": "如果我断网了怎么办？检查功能可以离线工作吗？",
+        "answer": "某些功能需要连接，但我们正在开发离线模式。请联系我们了解更多信息。"
+      }
+    ]
+  },
+  "cta": {
+    "title": "准备好转变您的运营方式了吗？",
+    "subtitle": "现在免费开始，或与我们的团队联系获取个性化演示。",
+    "startFree": "免费开始",
+    "talkToTeam": "与团队交谈"
   }
 }

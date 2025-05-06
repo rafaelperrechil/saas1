@@ -1,4 +1,4 @@
-# SaaS Platform
+# QualiSight
 
 Uma plataforma SaaS moderna construída com Next.js, Material-UI e Prisma.
 

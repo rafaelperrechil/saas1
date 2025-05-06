@@ -11,8 +11,8 @@ import '../lib/i18n';
 import Header from '@/components/Header';
 
 export const metadata: Metadata = {
-  title: 'SaaS Platform',
-  description: 'SaaS Platform',
+  title: 'QualiSight',
+  description: 'QualiSight',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

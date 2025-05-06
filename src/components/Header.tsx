@@ -46,7 +46,7 @@ export default function Header() {
           sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 2 }}
         >
           <Typography variant="h6" component="div" color="primary.dark">
-            SaaS Platform
+            QualiSight
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             {/* Espaços reservados simples para os botões */}
@@ -64,7 +64,7 @@ export default function Header() {
         sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', py: 2 }}
       >
         <Typography variant="h6" component="div" color="primary.dark">
-          SaaS Platform
+          QualiSight
         </Typography>
         <Box>
           {['home', 'products', 'solutions', 'help', 'pricing'].map((key) => (

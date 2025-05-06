@@ -61,7 +61,7 @@ export default function PricingPlans({
   };
 
   return (
-    <Box sx={{ py: 8 }}>
+    <Box sx={{ py: 4 }}>
       <Typography variant="h4" component="h1" textAlign="center" gutterBottom>
         {t('pricing.title')}
       </Typography>

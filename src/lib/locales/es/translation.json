@@ -102,8 +102,8 @@
     }
   },
   "pricing": {
-    "title": "Nuestros Planes",
-    "subtitle": "Elige el plan ideal para tu negocio",
+    "title": "¡Elija el plan ideal para mantener su negocio bajo control total!",
+    "subtitle": "Listas de verificación automatizadas, inspecciones organizadas y operación impecable.",
     "perMonth": "/mes",
     "currentPlan": "Plan Actual",
     "includedUnits": "Unidades incluidas",
@@ -114,5 +114,120 @@
     "signInToGetStarted": "Inicia sesión para comenzar",
     "planActivated": "Plan Activado",
     "upgradeNow": "Actualizar Ahora"
+  },
+  "niches": {
+    "title": "Más allá de la hostelería – una solución para diversos sectores",
+    "subtitle": "Listas de verificación digitales que se adaptan a cualquier operación con rutinas de inspección",
+    "sectors": {
+      "clinics": {
+        "title": "Clínicas y consultorios",
+        "description": "Inspecciones de bioseguridad, limpieza y equipos"
+      },
+      "restaurants": {
+        "title": "Restaurantes y cocinas industriales",
+        "description": "Control de higiene, validez de alimentos y equipos"
+      },
+      "offices": {
+        "title": "Oficinas y coworkings",
+        "description": "Verificación de salas, red y equipos"
+      },
+      "industries": {
+        "title": "Industrias",
+        "description": "Inspección de máquinas, EPIs y procedimientos operativos"
+      },
+      "construction": {
+        "title": "Obras y construcción civil",
+        "description": "Seguridad laboral y uso de equipos"
+      },
+      "schools": {
+        "title": "Escuelas y guarderías",
+        "description": "Limpieza, seguridad y servicio de comidas"
+      },
+      "stores": {
+        "title": "Tiendas y franquicias",
+        "description": "Organización, escaparates, inventario"
+      },
+      "cleaning": {
+        "title": "Empresas de limpieza",
+        "description": "Control de tareas realizadas en clientes"
+      },
+      "fleet": {
+        "title": "Flotas de vehículos",
+        "description": "Lista de verificación de mantenimiento y funcionamiento"
+      }
+    }
+  },
+  "testimonials": {
+    "title": "Lo que dicen nuestros clientes",
+    "subtitle": "Profesionales del sector están transformando la gestión con nuestra plataforma",
+    "items": [
+      {
+        "name": "Carla Menezes",
+        "role": "Gerente General – Hotel Vista Mar",
+        "testimonial": "Con las listas de verificación digitales, logramos mantener todas las habitaciones 100% listas antes de la llegada de los huéspedes. Ganamos agilidad y reducimos errores."
+      },
+      {
+        "name": "Felipe Rocha",
+        "role": "Supervisor – Posada Refúgio das Águas",
+        "testimonial": "Antes usábamos papel para todo. Ahora tenemos informes diarios, alertas de mantenimiento y mucho más control. Cambió completamente nuestra rutina."
+      },
+      {
+        "name": "Ana Gabriela Freitas",
+        "role": "Coordinadora – Clínica Bem Viver",
+        "testimonial": "Las listas de verificación de bioseguridad ayudan a mantener el estándar de la clínica y garantizar el cumplimiento normativo. Simple y eficaz para todo el equipo."
+      },
+      {
+        "name": "Rafael Silva",
+        "role": "Propietario – Chalés Montanha Azul",
+        "testimonial": "Tenemos pocos empleados y la herramienta nos ayuda a mantener todo en orden, incluso a distancia. Uso diario, súper práctico y directo al punto."
+      },
+      {
+        "name": "Letícia Barreto",
+        "role": "Líder de Limpieza – Red LimpeMais",
+        "testimonial": "Nuestros colaboradores ahora registran todo vía móvil. El gerente lo ve en tiempo real y hemos reducido las llamadas por fallas de limpieza en un 70%."
+      },
+      {
+        "name": "Eduardo Lins",
+        "role": "Coordinador de Mantenimiento – Spa Naturalle",
+        "testimonial": "Creamos rutinas personalizadas para cada ambiente. Ganamos consistencia en las inspecciones y mayor rapidez en la resolución de problemas."
+      }
+    ]
+  },
+  "units": {
+    "title": "Gestione múltiples unidades en una sola plataforma",
+    "paragraph1": "En todos los planes de QualiSight, ya comienza con una unidad incluida para gestionar sus operaciones sin complicaciones. Incluso si tiene múltiples sucursales o entornos dispersos, simplemente use la misma cuenta para agregar nuevas unidades con facilidad.",
+    "paragraph2": "De esta manera, mantiene todo organizado en un solo panel, rastreando listas de verificación, informes y solicitudes de servicio de cada ubicación sin tener que cambiar entre diferentes cuentas o sistemas."
+  },
+  "faq": {
+    "title": "Preguntas Frecuentes",
+    "subtitle": "Resuelva sus dudas antes de comenzar",
+    "items": [
+      {
+        "question": "¿La versión gratuita tiene fecha de caducidad o puedo usarla para siempre?",
+        "answer": "¡No! La versión gratuita puede usarse indefinidamente, con limitaciones de listas de verificación y usuarios."
+      },
+      {
+        "question": "¿Puedo agregar más usuarios o unidades a medida que mi negocio crece?",
+        "answer": "¡Sí! Puede actualizar su plan o agregar usuarios adicionales según sus necesidades."
+      },
+      {
+        "question": "¿Necesito instalar alguna aplicación para usar la plataforma?",
+        "answer": "No es necesario instalar nada. La plataforma funciona directamente desde el navegador, incluso en móviles y tablets."
+      },
+      {
+        "question": "¿Mi equipo de limpieza puede usarlo incluso sin capacitación técnica?",
+        "answer": "¡Sí! El sistema es simple e intuitivo, con un lenguaje claro y accesible para cualquier colaborador."
+      },
+      {
+        "question": "¿Y si me quedo sin internet? ¿Las inspecciones funcionan sin conexión?",
+        "answer": "Algunas funcionalidades requieren conexión, pero estamos desarrollando el modo sin conexión. Contáctenos para saber más."
+      }
+    ]
+  },
+  "cta": {
+    "title": "¿Listo para transformar su operación?",
+    "subtitle": "Comience gratis ahora mismo o hable con nuestro equipo para una demostración personalizada.",
+    "startFree": "Comenzar Gratis",
+    "talkToTeam": "Hablar con el equipo"
   }
 }

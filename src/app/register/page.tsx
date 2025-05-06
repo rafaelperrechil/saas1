@@ -86,7 +86,7 @@ export default function RegisterPage() {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        py: 8,
         bgcolor: '#f7f8fa',
         display: 'flex',
         alignItems: 'center',

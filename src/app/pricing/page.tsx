@@ -2,6 +2,11 @@ import React from 'react';
 import prisma from '@/lib/prisma';
 import { Metadata } from 'next';
 import PricingPlans from '../../components/PricingPlans';
+import MarketNichesSection from '../../components/MarketNichesSection';
+import UnitsSection from '../../components/UnitsSection';
+import TestimonialsSection from '../../components/TestimonialsSection';
+import FAQSection from '../../components/FAQSection';
+import CTASection from '../../components/CTASection';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
@@ -69,6 +74,11 @@ export default async function PricingPage() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       <PricingPlans plans={plans} userIsLoggedIn={!!userId} />
+      <MarketNichesSection />
+      <UnitsSection />
+      <TestimonialsSection />
+      <FAQSection />
+      <CTASection />
     </div>
   );
 }

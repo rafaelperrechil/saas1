@@ -101,8 +101,8 @@
     }
   },
   "pricing": {
-    "title": "Our Plans",
-    "subtitle": "Choose the ideal plan for your business",
+    "title": "Choose the ideal plan to keep your business under total control!",
+    "subtitle": "Automated checklists, organized inspections and flawless operation.",
     "perMonth": "/month",
     "currentPlan": "Current Plan",
     "includedUnits": "Included units",
@@ -113,5 +113,120 @@
     "signInToGetStarted": "Sign in to get started",
     "planActivated": "Plan Activated",
     "upgradeNow": "Upgrade Now"
+  },
+  "niches": {
+    "title": "Beyond hospitality – a solution for various sectors",
+    "subtitle": "Digital checklists that adapt to any operation with inspection routines",
+    "sectors": {
+      "clinics": {
+        "title": "Clinics and medical offices",
+        "description": "Biosafety inspections, cleaning and equipment"
+      },
+      "restaurants": {
+        "title": "Restaurants and industrial kitchens",
+        "description": "Hygiene control, food validity and equipment"
+      },
+      "offices": {
+        "title": "Offices and coworking spaces",
+        "description": "Room verification, network and equipment"
+      },
+      "industries": {
+        "title": "Industries",
+        "description": "Inspection of machines, PPE and operational procedures"
+      },
+      "construction": {
+        "title": "Construction sites",
+        "description": "Work safety and equipment use"
+      },
+      "schools": {
+        "title": "Schools and daycare centers",
+        "description": "Cleaning, safety and food service"
+      },
+      "stores": {
+        "title": "Stores and franchises",
+        "description": "Organization, displays, inventory"
+      },
+      "cleaning": {
+        "title": "Cleaning companies",
+        "description": "Control of tasks performed for clients"
+      },
+      "fleet": {
+        "title": "Vehicle fleets",
+        "description": "Maintenance checklist and vehicle operation"
+      }
+    }
+  },
+  "testimonials": {
+    "title": "What our customers say",
+    "subtitle": "Industry professionals are transforming management with our platform",
+    "items": [
+      {
+        "name": "Carla Menezes",
+        "role": "General Manager – Vista Mar Hotel",
+        "testimonial": "With digital checklists, we manage to keep all rooms 100% ready before guests arrive. We've gained agility and reduced errors."
+      },
+      {
+        "name": "Felipe Rocha",
+        "role": "Supervisor – Refúgio das Águas Inn",
+        "testimonial": "We used to use paper for everything. Now we have daily reports, maintenance alerts and much more control. It completely changed our routine."
+      },
+      {
+        "name": "Ana Gabriela Freitas",
+        "role": "Coordinator – Bem Viver Clinic",
+        "testimonial": "Biosafety checklists help maintain the clinic's standard and ensure compliance with regulations. Simple and effective for the entire team."
+      },
+      {
+        "name": "Rafael Silva",
+        "role": "Owner – Montanha Azul Chalets",
+        "testimonial": "We have few employees and the tool helps us keep everything in order, even remotely. Daily use, super practical and straight to the point."
+      },
+      {
+        "name": "Letícia Barreto",
+        "role": "Cleaning Leader – LimpeMais Network",
+        "testimonial": "Our employees now record everything via mobile. The manager sees it in real time and we've reduced cleaning failure calls by 70%."
+      },
+      {
+        "name": "Eduardo Lins",
+        "role": "Maintenance Coordinator – Naturalle Spa",
+        "testimonial": "We created customized routines for each environment. We gained consistency in inspections and faster problem resolution."
+      }
+    ]
+  },
+  "units": {
+    "title": "Manage multiple units in a single platform",
+    "paragraph1": "In all QualiSight plans, you start with one included unit to manage your operations without complications. Even if you have multiple branches or scattered environments, simply use the same account to easily add new units.",
+    "paragraph2": "This way, you keep everything organized in a single dashboard, tracking checklists, reports, and service requests from each location without having to switch between different accounts or systems."
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Get your questions answered before you start",
+    "items": [
+      {
+        "question": "Does the free version have an expiration date or can I use it forever?",
+        "answer": "No! The free version can be used indefinitely, with limitations on checklists and users."
+      },
+      {
+        "question": "Can I add more users or units as my business grows?",
+        "answer": "Yes! You can upgrade your plan or add extra users according to your needs."
+      },
+      {
+        "question": "Do I need to install any app to use the platform?",
+        "answer": "No installation needed. The platform works directly from your browser, including on mobile and tablet."
+      },
+      {
+        "question": "Can my cleaning team use it even without technical training?",
+        "answer": "Yes! The system is simple and intuitive, with clear and accessible language for any employee."
+      },
+      {
+        "question": "What if I lose internet connection? Do inspections work offline?",
+        "answer": "Some features require a connection, but we're developing offline mode. Contact us to learn more."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Ready to transform your operation?",
+    "subtitle": "Start free now or talk to our team for a personalized demonstration.",
+    "startFree": "Start Free Now",
+    "talkToTeam": "Talk to the team"
   }
 }

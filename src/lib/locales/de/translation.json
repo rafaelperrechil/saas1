@@ -102,8 +102,8 @@
     }
   },
   "pricing": {
-    "title": "Unsere Pläne",
-    "subtitle": "Wählen Sie den idealen Plan für Ihr Unternehmen",
+    "title": "Wählen Sie den idealen Plan, um Ihr Unternehmen unter voller Kontrolle zu halten!",
+    "subtitle": "Automatisierte Checklisten, organisierte Inspektionen und einwandfreier Betrieb.",
     "perMonth": "/Monat",
     "currentPlan": "Aktueller Plan",
     "includedUnits": "Enthaltene Einheiten",
@@ -114,5 +114,120 @@
     "signInToGetStarted": "Anmelden, um zu beginnen",
     "planActivated": "Plan aktiviert",
     "upgradeNow": "Jetzt upgraden"
+  },
+  "niches": {
+    "title": "Jenseits des Gastgewerbes – eine Lösung für verschiedene Sektoren",
+    "subtitle": "Digitale Checklisten, die sich an jeden Betrieb mit Inspektionsroutinen anpassen",
+    "sectors": {
+      "clinics": {
+        "title": "Kliniken und Arztpraxen",
+        "description": "Biosicherheitsinspektionen, Reinigung und Ausrüstung"
+      },
+      "restaurants": {
+        "title": "Restaurants und Großküchen",
+        "description": "Hygienekontrolle, Lebensmittelgültigkeit und Ausrüstung"
+      },
+      "offices": {
+        "title": "Büros und Coworking-Spaces",
+        "description": "Überprüfung von Räumen, Netzwerk und Ausrüstung"
+      },
+      "industries": {
+        "title": "Industrien",
+        "description": "Inspektion von Maschinen, PSA und Betriebsabläufen"
+      },
+      "construction": {
+        "title": "Baustellen und Baugewerbe",
+        "description": "Arbeitssicherheit und Verwendung von Ausrüstung"
+      },
+      "schools": {
+        "title": "Schulen und Kindergärten",
+        "description": "Reinigung, Sicherheit und Verpflegungsdienst"
+      },
+      "stores": {
+        "title": "Geschäfte und Franchisen",
+        "description": "Organisation, Schaufenster, Bestand"
+      },
+      "cleaning": {
+        "title": "Reinigungsunternehmen",
+        "description": "Kontrolle der bei Kunden durchgeführten Aufgaben"
+      },
+      "fleet": {
+        "title": "Fahrzeugflotten",
+        "description": "Wartungscheckliste und Fahrzeugbetrieb"
+      }
+    }
+  },
+  "testimonials": {
+    "title": "Was unsere Kunden sagen",
+    "subtitle": "Branchenprofis transformieren ihr Management mit unserer Plattform",
+    "items": [
+      {
+        "name": "Carla Menezes",
+        "role": "Generaldirektorin – Hotel Vista Mar",
+        "testimonial": "Mit digitalen Checklisten schaffen wir es, alle Zimmer zu 100% vor der Ankunft der Gäste vorzubereiten. Wir haben an Agilität gewonnen und Fehler reduziert."
+      },
+      {
+        "name": "Felipe Rocha",
+        "role": "Aufseher – Pension Refúgio das Águas",
+        "testimonial": "Früher haben wir für alles Papier verwendet. Jetzt haben wir tägliche Berichte, Wartungsalarme und viel mehr Kontrolle. Es hat unsere Routine komplett verändert."
+      },
+      {
+        "name": "Ana Gabriela Freitas",
+        "role": "Koordinatorin – Klinik Bem Viver",
+        "testimonial": "Biosicherheits-Checklisten helfen, den Standard der Klinik aufrechtzuerhalten und die Einhaltung von Vorschriften zu gewährleisten. Einfach und effektiv für das gesamte Team."
+      },
+      {
+        "name": "Rafael Silva",
+        "role": "Eigentümer – Chalets Montanha Azul",
+        "testimonial": "Wir haben wenige Mitarbeiter und das Tool hilft uns, alles in Ordnung zu halten, auch aus der Ferne. Tägliche Nutzung, super praktisch und auf den Punkt gebracht."
+      },
+      {
+        "name": "Letícia Barreto",
+        "role": "Reinigungsleitung – LimpeMais Netzwerk",
+        "testimonial": "Unsere Mitarbeiter erfassen jetzt alles über Mobilgeräte. Der Manager sieht es in Echtzeit und wir haben die Anrufe wegen Reinigungsfehlern um 70% reduziert."
+      },
+      {
+        "name": "Eduardo Lins",
+        "role": "Wartungskoordinator – Naturalle Spa",
+        "testimonial": "Wir haben maßgeschneiderte Routinen für jede Umgebung erstellt. Wir haben Konsistenz bei Inspektionen und schnellere Problemlösung gewonnen."
+      }
+    ]
+  },
+  "units": {
+    "title": "Verwalten Sie mehrere Einheiten auf einer einzigen Plattform",
+    "paragraph1": "In allen QualiSight-Plänen beginnen Sie mit einer enthaltenen Einheit, um Ihre Abläufe ohne Komplikationen zu verwalten. Selbst wenn Sie mehrere Filialen oder verteilte Umgebungen haben, verwenden Sie einfach dasselbe Konto, um neue Einheiten problemlos hinzuzufügen.",
+    "paragraph2": "Auf diese Weise behalten Sie alles in einem einzigen Dashboard organisiert und verfolgen Checklisten, Berichte und Serviceanfragen von jedem Standort, ohne zwischen verschiedenen Konten oder Systemen wechseln zu müssen."
+  },
+  "faq": {
+    "title": "Häufig gestellte Fragen",
+    "subtitle": "Lassen Sie Ihre Fragen beantworten, bevor Sie beginnen",
+    "items": [
+      {
+        "question": "Hat die kostenlose Version ein Ablaufdatum oder kann ich sie für immer nutzen?",
+        "answer": "Nein! Die kostenlose Version kann unbegrenzt genutzt werden, mit Einschränkungen bei Checklisten und Benutzern."
+      },
+      {
+        "question": "Kann ich mehr Benutzer oder Einheiten hinzufügen, wenn mein Unternehmen wächst?",
+        "answer": "Ja! Sie können Ihren Plan upgraden oder zusätzliche Benutzer nach Bedarf hinzufügen."
+      },
+      {
+        "question": "Muss ich eine App installieren, um die Plattform zu nutzen?",
+        "answer": "Keine Installation erforderlich. Die Plattform funktioniert direkt über Ihren Browser, auch auf Mobilgeräten und Tablets."
+      },
+      {
+        "question": "Kann mein Reinigungsteam die Plattform auch ohne technische Schulung nutzen?",
+        "answer": "Ja! Das System ist einfach und intuitiv, mit klarer und zugänglicher Sprache für jeden Mitarbeiter."
+      },
+      {
+        "question": "Was passiert bei Internetausfall? Funktionieren die Inspektionen offline?",
+        "answer": "Einige Funktionen erfordern eine Verbindung, aber wir entwickeln gerade den Offline-Modus. Kontaktieren Sie uns, um mehr zu erfahren."
+      }
+    ]
+  },
+  "cta": {
+    "title": "Bereit, Ihren Betrieb zu transformieren?",
+    "subtitle": "Starten Sie jetzt kostenlos oder sprechen Sie mit unserem Team für eine personalisierte Demonstration.",
+    "startFree": "Kostenlos starten",
+    "talkToTeam": "Mit dem Team sprechen"
   }
 }

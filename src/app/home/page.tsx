@@ -59,7 +59,7 @@ export default function HomePage() {
       <Box component="footer" sx={{ bgcolor: 'background.paper', py: 4 }}>
         <Container maxWidth="lg" sx={{ textAlign: 'center' }}>
           <Typography variant="body2" color="text.secondary">
-            &copy; {new Date().getFullYear()} SaaS Platform. All rights reserved.
+            &copy; {new Date().getFullYear()} QualiSight. All rights reserved.
           </Typography>
         </Container>
       </Box>
