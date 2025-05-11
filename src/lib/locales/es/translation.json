@@ -308,5 +308,28 @@
       "required": "Campo requerido",
       "saving": "Guardando..."
     }
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "inspections": {
+      "title": "Inspecciones",
+      "all": "Todas las Inspecciones",
+      "create": "Crear Inspección"
+    },
+    "checklists": {
+      "title": "Checklists",
+      "all": "Todos los Checklists",
+      "create": "Crear Checklist"
+    },
+    "environments": "Ambientes",
+    "departments": "Departamentos",
+    "settings": "Configuración",
+    "administrative": {
+      "title": "Administrativo",
+      "users": "Usuarios",
+      "profiles": "Perfiles",
+      "plans": "Planes",
+      "history": "Historial"
+    }
   }
 }

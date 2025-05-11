@@ -308,5 +308,28 @@
       "required": "必填字段",
       "saving": "保存中..."
     }
+  },
+  "menu": {
+    "dashboard": "仪表板",
+    "inspections": {
+      "title": "检查",
+      "all": "所有检查",
+      "create": "创建检查"
+    },
+    "checklists": {
+      "title": "检查清单",
+      "all": "所有清单",
+      "create": "创建清单"
+    },
+    "environments": "环境",
+    "departments": "部门",
+    "settings": "设置",
+    "administrative": {
+      "title": "管理",
+      "users": "用户",
+      "profiles": "配置文件",
+      "plans": "计划",
+      "history": "历史"
+    }
   }
 }

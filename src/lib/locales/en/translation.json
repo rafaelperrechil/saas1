@@ -307,5 +307,28 @@
       "required": "Required field",
       "saving": "Saving..."
     }
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "inspections": {
+      "title": "Inspections",
+      "all": "All Inspections",
+      "create": "Create Inspection"
+    },
+    "checklists": {
+      "title": "Checklists",
+      "all": "All Checklists",
+      "create": "Create Checklist"
+    },
+    "environments": "Environments",
+    "departments": "Departments",
+    "settings": "Settings",
+    "administrative": {
+      "title": "Administrative",
+      "users": "Users",
+      "profiles": "Profiles",
+      "plans": "Plans",
+      "history": "History"
+    }
   }
 }

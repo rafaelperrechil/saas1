@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Drawer,
@@ -20,8 +21,12 @@ import { useTheme } from '@mui/material/styles';
 import {
   Menu as MenuIcon,
   Dashboard as DashboardIcon,
-  People as PeopleIcon,
+  AssignmentTurnedIn as AssignmentTurnedInIcon,
+  ListAlt as ListAltIcon,
+  Apartment as ApartmentIcon,
+  Group as GroupIcon,
   Settings as SettingsIcon,
+  People as PeopleIcon,
   History as HistoryIcon,
   ExpandLess,
   ExpandMore,
@@ -34,8 +39,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const router = useRouter();
   const { status } = useSession();
   const [open, setOpen] = useState(false);
+  const [openInspections, setOpenInspections] = useState(false);
+  const [openChecklists, setOpenChecklists] = useState(false);
   const [openAdmin, setOpenAdmin] = useState(false);
   const theme = useTheme();
+  const { t } = useTranslation();
 
   const handleDrawerToggle = () => {
     setOpen(!open);
@@ -79,37 +87,120 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         >
           <Toolbar sx={{ justifyContent: open ? 'flex-end' : 'center', px: [1] }}>
             <IconButton onClick={handleDrawerToggle} size="small">
-              <MenuIcon />
+              <MenuIcon sx={{ color: 'primary.main' }} />
             </IconButton>
           </Toolbar>
           <Box>
             <List>
-              {[
-                { text: 'Dashboard', icon: <DashboardIcon />, path: '/panel/dashboard' },
-                { text: 'Configurações gerais', icon: <SettingsIcon />, path: '/panel/settings' },
-              ].map(({ text, icon, path }) => (
-                <ListItem
-                  key={text}
-                  disablePadding
-                  sx={{ justifyContent: open ? 'initial' : 'center' }}
-                >
-                  <ListItemButton onClick={() => router.push(path)} sx={{ px: 2.5 }}>
-                    <ListItemIcon
-                      sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center' }}
-                    >
-                      {icon}
-                    </ListItemIcon>
-                    <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => router.push('/panel/dashboard')}>
+                  <ListItemIcon>
+                    <DashboardIcon sx={{ color: 'primary.main' }} />
+                  </ListItemIcon>
+                  <ListItemText primary={t('menu.dashboard')} />
+                </ListItemButton>
+              </ListItem>
+
+              {/* Menu Inspeções */}
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => setOpenInspections(!openInspections)}>
+                  <ListItemIcon>
+                    <AssignmentTurnedInIcon sx={{ color: 'primary.main' }} />
+                  </ListItemIcon>
+                  <ListItemText primary={t('menu.inspections.title')} />
+                  {openInspections ? (
+                    <ExpandLess sx={{ color: 'primary.main' }} />
+                  ) : (
+                    <ExpandMore sx={{ color: 'primary.main' }} />
+                  )}
+                </ListItemButton>
+              </ListItem>
+              <Collapse in={openInspections} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItemButton sx={{ pl: 4 }} onClick={() => router.push('/panel/inspections')}>
+                    <ListItemText primary={t('menu.inspections.all')} />
                   </ListItemButton>
-                </ListItem>
-              ))}
+                  <ListItemButton
+                    sx={{ pl: 4 }}
+                    onClick={() => router.push('/panel/inspections/new')}
+                  >
+                    <ListItemText primary={t('menu.inspections.create')} />
+                  </ListItemButton>
+                </List>
+              </Collapse>
+
+              {/* Menu Checklists */}
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => setOpenChecklists(!openChecklists)}>
+                  <ListItemIcon>
+                    <ListAltIcon sx={{ color: 'primary.main' }} />
+                  </ListItemIcon>
+                  <ListItemText primary={t('menu.checklists.title')} />
+                  {openChecklists ? (
+                    <ExpandLess sx={{ color: 'primary.main' }} />
+                  ) : (
+                    <ExpandMore sx={{ color: 'primary.main' }} />
+                  )}
+                </ListItemButton>
+              </ListItem>
+              <Collapse in={openChecklists} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItemButton sx={{ pl: 4 }} onClick={() => router.push('/panel/checklists')}>
+                    <ListItemText primary={t('menu.checklists.all')} />
+                  </ListItemButton>
+                  <ListItemButton
+                    sx={{ pl: 4 }}
+                    onClick={() => router.push('/panel/checklists/new')}
+                  >
+                    <ListItemText primary={t('menu.checklists.create')} />
+                  </ListItemButton>
+                </List>
+              </Collapse>
+
+              {/* Ambientes */}
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => router.push('/panel/environments')}>
+                  <ListItemIcon>
+                    <ApartmentIcon sx={{ color: 'primary.main' }} />
+                  </ListItemIcon>
+                  <ListItemText primary={t('menu.environments')} />
+                </ListItemButton>
+              </ListItem>
+
+              {/* Departamentos */}
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => router.push('/panel/departments')}>
+                  <ListItemIcon>
+                    <GroupIcon sx={{ color: 'primary.main' }} />
+                  </ListItemIcon>
+                  <ListItemText primary={t('menu.departments')} />
+                </ListItemButton>
+              </ListItem>
+
+              {/* Configurações */}
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => router.push('/panel/settings')}>
+                  <ListItemIcon>
+                    <SettingsIcon sx={{ color: 'primary.main' }} />
+                  </ListItemIcon>
+                  <ListItemText primary={t('menu.settings')} />
+                </ListItemButton>
+              </ListItem>
+
+              <Divider sx={{ my: 1 }} />
+
+              {/* Menu Administrativo */}
               <ListItem disablePadding>
                 <ListItemButton onClick={() => setOpenAdmin(!openAdmin)}>
                   <ListItemIcon>
-                    <SettingsIcon />
+                    <SettingsIcon sx={{ color: 'primary.main' }} />
                   </ListItemIcon>
-                  <ListItemText primary="Administrativo" />
-                  {openAdmin ? <ExpandLess /> : <ExpandMore />}
+                  <ListItemText primary={t('menu.administrative.title')} />
+                  {openAdmin ? (
+                    <ExpandLess sx={{ color: 'primary.main' }} />
+                  ) : (
+                    <ExpandMore sx={{ color: 'primary.main' }} />
+                  )}
                 </ListItemButton>
               </ListItem>
               <Collapse in={openAdmin} timeout="auto" unmountOnExit>
@@ -117,33 +208,33 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <ListItem disablePadding>
                     <ListItemButton sx={{ pl: 4 }} onClick={() => router.push('/panel/users')}>
                       <ListItemIcon>
-                        <PeopleIcon />
+                        <PeopleIcon sx={{ color: 'primary.main' }} />
                       </ListItemIcon>
-                      <ListItemText primary="Usuários" />
+                      <ListItemText primary={t('menu.administrative.users')} />
                     </ListItemButton>
                   </ListItem>
                   <ListItem disablePadding>
                     <ListItemButton sx={{ pl: 4 }} onClick={() => router.push('/panel/profiles')}>
                       <ListItemIcon>
-                        <SettingsIcon />
+                        <SettingsIcon sx={{ color: 'primary.main' }} />
                       </ListItemIcon>
-                      <ListItemText primary="Perfis" />
+                      <ListItemText primary={t('menu.administrative.profiles')} />
                     </ListItemButton>
                   </ListItem>
                   <ListItem disablePadding>
                     <ListItemButton sx={{ pl: 4 }} onClick={() => router.push('/panel/plans')}>
                       <ListItemIcon>
-                        <SettingsIcon />
+                        <SettingsIcon sx={{ color: 'primary.main' }} />
                       </ListItemIcon>
-                      <ListItemText primary="Planos" />
+                      <ListItemText primary={t('menu.administrative.plans')} />
                     </ListItemButton>
                   </ListItem>
                   <ListItem disablePadding>
                     <ListItemButton sx={{ pl: 4 }} onClick={() => router.push('/panel/history')}>
                       <ListItemIcon>
-                        <HistoryIcon />
+                        <HistoryIcon sx={{ color: 'primary.main' }} />
                       </ListItemIcon>
-                      <ListItemText primary="Histórico" />
+                      <ListItemText primary={t('menu.administrative.history')} />
                     </ListItemButton>
                   </ListItem>
                 </List>

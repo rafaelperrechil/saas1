@@ -308,5 +308,28 @@
       "required": "Champ obligatoire",
       "saving": "Enregistrement..."
     }
+  },
+  "menu": {
+    "dashboard": "Tableau de bord",
+    "inspections": {
+      "title": "Inspections",
+      "all": "Toutes les Inspections",
+      "create": "Créer une Inspection"
+    },
+    "checklists": {
+      "title": "Checklists",
+      "all": "Toutes les Checklists",
+      "create": "Créer une Checklist"
+    },
+    "environments": "Environnements",
+    "departments": "Départements",
+    "settings": "Paramètres",
+    "administrative": {
+      "title": "Administratif",
+      "users": "Utilisateurs",
+      "profiles": "Profils",
+      "plans": "Plans",
+      "history": "Historique"
+    }
   }
 }

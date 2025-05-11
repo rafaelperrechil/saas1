@@ -80,7 +80,7 @@ export default function Header() {
           {status === 'authenticated' && session?.user ? (
             <>
               <IconButton onClick={handleMenuOpen} size="small" sx={{ ml: 2 }}>
-                <Avatar sx={{ bgcolor: 'secondary.main' }}>{session.user.name?.[0] ?? '?'}</Avatar>
+                <Avatar sx={{ bgcolor: 'primary.main' }}>{session.user.name?.[0] ?? '?'}</Avatar>
               </IconButton>
               <Menu
                 anchorEl={anchorEl}

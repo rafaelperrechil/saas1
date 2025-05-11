@@ -308,5 +308,28 @@
       "required": "Pflichtfeld",
       "saving": "Speichern..."
     }
+  },
+  "menu": {
+    "dashboard": "Dashboard",
+    "inspections": {
+      "title": "Inspektionen",
+      "all": "Alle Inspektionen",
+      "create": "Inspektion erstellen"
+    },
+    "checklists": {
+      "title": "Checklisten",
+      "all": "Alle Checklisten",
+      "create": "Checkliste erstellen"
+    },
+    "environments": "Umgebungen",
+    "departments": "Abteilungen",
+    "settings": "Einstellungen",
+    "administrative": {
+      "title": "Verwaltung",
+      "users": "Benutzer",
+      "profiles": "Profile",
+      "plans": "Pläne",
+      "history": "Verlauf"
+    }
   }
 }
