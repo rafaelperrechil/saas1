@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useSession } from 'next-auth/react';
-import { Box, Alert, CircularProgress } from '@mui/material';
+import { Box, Alert, CircularProgress, Typography } from '@mui/material';
 import CurrentPlanCard from '@/components/account/CurrentPlanCard';
 import StatsCard from '@/components/account/StatsCard';
 import BillingHistoryCard from '@/components/account/BillingHistoryCard';
@@ -20,7 +20,7 @@ export default function BillingPage() {
   useEffect(() => {
     // Verificar se o usuário está autenticado
     if (status === 'unauthenticated') {
-      router.push('/login?callbackUrl=/account/billing');
+      router.push('/login?callbackUrl=/panel/billing');
       return;
     }
 
@@ -65,6 +65,10 @@ export default function BillingPage() {
 
   return (
     <Box>
+      <Typography variant="h4" component="h1" gutterBottom>
+        {t('account.billing.title')}
+      </Typography>
+
       <Box sx={{ mb: 4 }}>
         <Alert severity="info" sx={{ mb: 2 }}>
           {t('account.billing.subtitle')}

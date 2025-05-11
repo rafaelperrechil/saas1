@@ -48,7 +48,7 @@ export default function ProfilePage() {
   useEffect(() => {
     // Verificar se o usuário está autenticado
     if (status === 'unauthenticated') {
-      router.push('/login?callbackUrl=/account/profile');
+      router.push('/login?callbackUrl=/panel/profile');
       return;
     }
 
@@ -198,114 +198,97 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="300px">
+      <Box
+        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px' }}
+      >
         <CircularProgress />
       </Box>
     );
   }
 
+  if (!userProfile) {
+    return (
+      <Alert severity="error" sx={{ mt: 2 }}>
+        {error || t('account.profile.errorMessage')}
+      </Alert>
+    );
+  }
+
   return (
-    <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-        <PersonIcon sx={{ fontSize: 28, color: 'primary.main', mr: 1 }} />
-        <Typography variant="h5">{t('account.profile.personalInfo')}</Typography>
-      </Box>
+    <Box>
+      <Typography variant="h4" component="h1" gutterBottom>
+        {t('account.profile.title')}
+      </Typography>
 
-      <Box sx={{ mb: 4 }}>
-        <Alert severity="info">{t('account.profile.subtitle')}</Alert>
-      </Box>
-
-      {error && (
-        <Alert severity="error" sx={{ mb: 3 }}>
-          {error}
-        </Alert>
-      )}
-
-      <Box component="form" onSubmit={handleSubmit} noValidate>
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              required
-              fullWidth
-              label={t('account.profile.firstName')}
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              variant="outlined"
-              margin="normal"
-              disabled={saving}
-              InputLabelProps={{ shrink: true }}
-            />
+      <Paper sx={{ p: 3, mt: 3 }}>
+        <form onSubmit={handleSubmit}>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label={t('account.profile.email')}
+                value={userProfile.email}
+                disabled
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label={t('account.profile.name')}
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label={t('account.profile.company')}
+                name="company"
+                value={formData.company}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                fullWidth
+                label={t('account.profile.phone')}
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+              />
+            </Grid>
+            {error && (
+              <Grid item xs={12}>
+                <Alert severity="error">{error}</Alert>
+              </Grid>
+            )}
+            <Grid item xs={12}>
+              <Button
+                type="submit"
+                variant="contained"
+                startIcon={<SaveIcon />}
+                disabled={saving}
+                sx={{ mt: 2 }}
+              >
+                {saving ? t('common.saving') : t('common.save')}
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label={t('account.profile.email')}
-              value={userProfile?.email}
-              variant="outlined"
-              margin="normal"
-              disabled
-              helperText={t('account.profile.emailHelp')}
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label={t('account.profile.company')}
-              name="company"
-              value={formData.company}
-              onChange={handleChange}
-              variant="outlined"
-              margin="normal"
-              disabled={saving}
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label={t('account.profile.phone')}
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              variant="outlined"
-              margin="normal"
-              disabled={saving}
-              InputLabelProps={{ shrink: true }}
-            />
-          </Grid>
-        </Grid>
-
-        <Box display="flex" justifyContent="flex-end" mt={4}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            startIcon={saving ? null : <SaveIcon />}
-            disabled={saving}
-            sx={{ minWidth: 150 }}
-          >
-            {saving ? <CircularProgress size={24} /> : t('account.profile.saveChanges')}
-          </Button>
-        </Box>
-      </Box>
+        </form>
+      </Paper>
 
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
         onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
       >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbar.severity}
-          variant="filled"
-          sx={{ width: '100%' }}
-        >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
           {snackbar.message}
         </Alert>
       </Snackbar>
-    </Paper>
+    </Box>
   );
-}
+} 

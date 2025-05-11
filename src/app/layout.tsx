@@ -10,10 +10,14 @@ import '../lib/i18n';
 import Header from '@/components/Header';
 import Footer from '@/components/lp/weddings/Footer';
 import { Inter } from 'next/font/google';
+import { usePathname } from 'next/navigation';
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isPanelRoute = pathname?.startsWith('/panel');
+
   return (
     <html lang="pt-BR">
       <head>
@@ -24,14 +28,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
       </head>
-      <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning>
         <SessionProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <Toaster position="top-right" />
-            <Header />
+            {!isPanelRoute && <Header />}
             {children}
-            <Footer />
+            {!isPanelRoute && <Footer />}
           </ThemeProvider>
         </SessionProvider>
       </body>

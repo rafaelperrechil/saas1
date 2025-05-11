@@ -16,6 +16,7 @@ import {
   ListItemText,
   Collapse,
   CircularProgress,
+  Tooltip,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import {
@@ -31,6 +32,7 @@ import {
   ExpandLess,
   ExpandMore,
 } from '@mui/icons-material';
+import PanelHeader from '@/components/panel/Header';
 
 const drawerWidth = 240;
 const collapsedWidth = 60;
@@ -46,7 +48,39 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const { t } = useTranslation();
 
   const handleDrawerToggle = () => {
+    if (open) {
+      setOpenInspections(false);
+      setOpenChecklists(false);
+      setOpenAdmin(false);
+    }
     setOpen(!open);
+  };
+
+  const handleItemClick = (route: string) => {
+    if (!open) {
+      setOpen(true);
+    } else {
+      router.push(route);
+    }
+  };
+
+  const handleSubmenuClick = (setSubmenuOpen: (value: boolean) => void, isSubmenuOpen: boolean) => {
+    if (!open) {
+      setOpen(true);
+    } else {
+      setSubmenuOpen(!isSubmenuOpen);
+    }
+  };
+
+  const tooltipStyles = {
+    tooltip: {
+      sx: {
+        bgcolor: theme.palette.primary.main,
+        color: '#FFFFFF',
+        fontSize: '0.875rem',
+        padding: '8px 12px',
+      },
+    },
   };
 
   if (status === 'loading' || status === 'unauthenticated') {
@@ -66,193 +100,322 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <Box component="nav" sx={{ flexShrink: 0 }}>
-        <Drawer
-          variant="permanent"
-          open={open}
-          sx={{
+      <PanelHeader />
+      <Drawer
+        variant="permanent"
+        open={open}
+        sx={{
+          position: 'absolute',
+          '& .MuiDrawer-paper': {
+            position: 'fixed',
             width: open ? drawerWidth : collapsedWidth,
-            flexShrink: 0,
-            whiteSpace: 'nowrap',
-            boxSizing: 'border-box',
-            '& .MuiDrawer-paper': {
-              width: open ? drawerWidth : collapsedWidth,
-              transition: theme.transitions.create('width', {
-                easing: theme.transitions.easing.sharp,
-                duration: theme.transitions.duration.enteringScreen,
-              }),
-              overflowX: 'hidden',
-            },
-          }}
-        >
-          <Toolbar sx={{ justifyContent: open ? 'flex-end' : 'center', px: [1] }}>
-            <IconButton onClick={handleDrawerToggle} size="small">
-              <MenuIcon sx={{ color: 'primary.main' }} />
-            </IconButton>
-          </Toolbar>
-          <Box>
-            <List>
-              <ListItem disablePadding>
-                <ListItemButton onClick={() => router.push('/panel/dashboard')}>
+            backgroundColor: theme.palette.primary.main,
+            height: '100vh',
+            transition: theme.transitions.create('width', {
+              easing: theme.transitions.easing.sharp,
+              duration: 200,
+            }),
+            overflowX: 'hidden',
+            zIndex: 1300,
+          },
+        }}
+      >
+        <Toolbar sx={{ justifyContent: open ? 'flex-end' : 'center', px: [1] }}>
+          <IconButton onClick={handleDrawerToggle} size="small">
+            <MenuIcon sx={{ color: '#FFFFFF' }} />
+          </IconButton>
+        </Toolbar>
+        <Box>
+          <List>
+            <ListItem disablePadding>
+              <Tooltip
+                title={!open ? t('menu.dashboard') : ''}
+                placement="right"
+                componentsProps={tooltipStyles}
+              >
+                <ListItemButton onClick={() => handleItemClick('/panel/dashboard')}>
                   <ListItemIcon>
-                    <DashboardIcon sx={{ color: 'primary.main' }} />
+                    <DashboardIcon sx={{ color: '#FFFFFF' }} />
                   </ListItemIcon>
-                  <ListItemText primary={t('menu.dashboard')} />
+                  <ListItemText
+                    primary={t('menu.dashboard')}
+                    sx={{
+                      color: '#FFFFFF',
+                      opacity: open ? 1 : 0,
+                      transition: 'opacity 200ms',
+                    }}
+                  />
                 </ListItemButton>
-              </ListItem>
+              </Tooltip>
+            </ListItem>
 
-              {/* Menu Inspeções */}
-              <ListItem disablePadding>
-                <ListItemButton onClick={() => setOpenInspections(!openInspections)}>
+            {/* Menu Inspeções */}
+            <ListItem disablePadding>
+              <Tooltip
+                title={!open ? t('menu.inspections.title') : ''}
+                placement="right"
+                componentsProps={tooltipStyles}
+              >
+                <ListItemButton
+                  onClick={() => {
+                    if (!open) {
+                      setOpen(true);
+                    } else {
+                      setOpenInspections(!openInspections);
+                    }
+                  }}
+                >
                   <ListItemIcon>
-                    <AssignmentTurnedInIcon sx={{ color: 'primary.main' }} />
+                    <AssignmentTurnedInIcon sx={{ color: '#FFFFFF' }} />
                   </ListItemIcon>
-                  <ListItemText primary={t('menu.inspections.title')} />
-                  {openInspections ? (
-                    <ExpandLess sx={{ color: 'primary.main' }} />
-                  ) : (
-                    <ExpandMore sx={{ color: 'primary.main' }} />
-                  )}
+                  <ListItemText
+                    primary={t('menu.inspections.title')}
+                    sx={{
+                      color: '#FFFFFF',
+                      opacity: open ? 1 : 0,
+                      transition: 'opacity 200ms',
+                    }}
+                  />
+                  {open &&
+                    (openInspections ? (
+                      <ExpandLess sx={{ color: '#FFFFFF' }} />
+                    ) : (
+                      <ExpandMore sx={{ color: '#FFFFFF' }} />
+                    ))}
                 </ListItemButton>
-              </ListItem>
-              <Collapse in={openInspections} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  <ListItemButton sx={{ pl: 4 }} onClick={() => router.push('/panel/inspections')}>
-                    <ListItemText primary={t('menu.inspections.all')} />
-                  </ListItemButton>
-                  <ListItemButton
-                    sx={{ pl: 4 }}
-                    onClick={() => router.push('/panel/inspections/new')}
-                  >
-                    <ListItemText primary={t('menu.inspections.create')} />
-                  </ListItemButton>
-                </List>
-              </Collapse>
+              </Tooltip>
+            </ListItem>
+            <Collapse in={openInspections} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItemButton
+                  sx={{ pl: 4 }}
+                  onClick={() => handleItemClick('/panel/inspections')}
+                >
+                  <ListItemText primary={t('menu.inspections.all')} sx={{ color: '#FFFFFF' }} />
+                </ListItemButton>
+                <ListItemButton
+                  sx={{ pl: 4 }}
+                  onClick={() => handleItemClick('/panel/inspections/new')}
+                >
+                  <ListItemText primary={t('menu.inspections.create')} sx={{ color: '#FFFFFF' }} />
+                </ListItemButton>
+              </List>
+            </Collapse>
 
-              {/* Menu Checklists */}
-              <ListItem disablePadding>
-                <ListItemButton onClick={() => setOpenChecklists(!openChecklists)}>
+            {/* Menu Checklists */}
+            <ListItem disablePadding>
+              <Tooltip
+                title={!open ? t('menu.checklists.title') : ''}
+                placement="right"
+                componentsProps={tooltipStyles}
+              >
+                <ListItemButton
+                  onClick={() => {
+                    if (!open) {
+                      setOpen(true);
+                    } else {
+                      setOpenChecklists(!openChecklists);
+                    }
+                  }}
+                >
                   <ListItemIcon>
-                    <ListAltIcon sx={{ color: 'primary.main' }} />
+                    <ListAltIcon sx={{ color: '#FFFFFF' }} />
                   </ListItemIcon>
-                  <ListItemText primary={t('menu.checklists.title')} />
+                  <ListItemText primary={t('menu.checklists.title')} sx={{ color: '#FFFFFF' }} />
                   {openChecklists ? (
-                    <ExpandLess sx={{ color: 'primary.main' }} />
+                    <ExpandLess sx={{ color: '#FFFFFF' }} />
                   ) : (
-                    <ExpandMore sx={{ color: 'primary.main' }} />
+                    <ExpandMore sx={{ color: '#FFFFFF' }} />
                   )}
                 </ListItemButton>
-              </ListItem>
-              <Collapse in={openChecklists} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  <ListItemButton sx={{ pl: 4 }} onClick={() => router.push('/panel/checklists')}>
-                    <ListItemText primary={t('menu.checklists.all')} />
-                  </ListItemButton>
-                  <ListItemButton
-                    sx={{ pl: 4 }}
-                    onClick={() => router.push('/panel/checklists/new')}
-                  >
-                    <ListItemText primary={t('menu.checklists.create')} />
-                  </ListItemButton>
-                </List>
-              </Collapse>
-
-              {/* Ambientes */}
-              <ListItem disablePadding>
-                <ListItemButton onClick={() => router.push('/panel/environments')}>
-                  <ListItemIcon>
-                    <ApartmentIcon sx={{ color: 'primary.main' }} />
-                  </ListItemIcon>
-                  <ListItemText primary={t('menu.environments')} />
+              </Tooltip>
+            </ListItem>
+            <Collapse in={openChecklists} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItemButton sx={{ pl: 4 }} onClick={() => handleItemClick('/panel/checklists')}>
+                  <ListItemText primary={t('menu.checklists.all')} sx={{ color: '#FFFFFF' }} />
                 </ListItemButton>
-              </ListItem>
-
-              {/* Departamentos */}
-              <ListItem disablePadding>
-                <ListItemButton onClick={() => router.push('/panel/departments')}>
-                  <ListItemIcon>
-                    <GroupIcon sx={{ color: 'primary.main' }} />
-                  </ListItemIcon>
-                  <ListItemText primary={t('menu.departments')} />
+                <ListItemButton
+                  sx={{ pl: 4 }}
+                  onClick={() => handleItemClick('/panel/checklists/new')}
+                >
+                  <ListItemText primary={t('menu.checklists.create')} sx={{ color: '#FFFFFF' }} />
                 </ListItemButton>
-              </ListItem>
+              </List>
+            </Collapse>
 
-              {/* Configurações */}
-              <ListItem disablePadding>
-                <ListItemButton onClick={() => router.push('/panel/settings')}>
+            {/* Ambientes */}
+            <ListItem disablePadding>
+              <Tooltip
+                title={!open ? t('menu.environments') : ''}
+                placement="right"
+                componentsProps={tooltipStyles}
+              >
+                <ListItemButton onClick={() => handleItemClick('/panel/environments')}>
                   <ListItemIcon>
-                    <SettingsIcon sx={{ color: 'primary.main' }} />
+                    <ApartmentIcon sx={{ color: '#FFFFFF' }} />
                   </ListItemIcon>
-                  <ListItemText primary={t('menu.settings')} />
+                  <ListItemText
+                    primary={t('menu.environments')}
+                    sx={{
+                      color: '#FFFFFF',
+                      opacity: open ? 1 : 0,
+                      transition: 'opacity 200ms',
+                    }}
+                  />
                 </ListItemButton>
-              </ListItem>
+              </Tooltip>
+            </ListItem>
 
-              <Divider sx={{ my: 1 }} />
-
-              {/* Menu Administrativo */}
-              <ListItem disablePadding>
-                <ListItemButton onClick={() => setOpenAdmin(!openAdmin)}>
+            {/* Departamentos */}
+            <ListItem disablePadding>
+              <Tooltip
+                title={!open ? t('menu.departments') : ''}
+                placement="right"
+                componentsProps={tooltipStyles}
+              >
+                <ListItemButton onClick={() => handleItemClick('/panel/departments')}>
                   <ListItemIcon>
-                    <SettingsIcon sx={{ color: 'primary.main' }} />
+                    <GroupIcon sx={{ color: '#FFFFFF' }} />
                   </ListItemIcon>
-                  <ListItemText primary={t('menu.administrative.title')} />
+                  <ListItemText primary={t('menu.departments')} sx={{ color: '#FFFFFF' }} />
+                </ListItemButton>
+              </Tooltip>
+            </ListItem>
+
+            {/* Configurações */}
+            <ListItem disablePadding>
+              <Tooltip
+                title={!open ? t('menu.settings') : ''}
+                placement="right"
+                componentsProps={tooltipStyles}
+              >
+                <ListItemButton onClick={() => handleItemClick('/panel/settings')}>
+                  <ListItemIcon>
+                    <SettingsIcon sx={{ color: '#FFFFFF' }} />
+                  </ListItemIcon>
+                  <ListItemText primary={t('menu.settings')} sx={{ color: '#FFFFFF' }} />
+                </ListItemButton>
+              </Tooltip>
+            </ListItem>
+
+            <Divider sx={{ my: 1 }} />
+
+            {/* Menu Administrativo */}
+            <ListItem disablePadding>
+              <Tooltip
+                title={!open ? t('menu.administrative.title') : ''}
+                placement="right"
+                componentsProps={tooltipStyles}
+              >
+                <ListItemButton
+                  onClick={() => {
+                    if (!open) {
+                      setOpen(true);
+                    } else {
+                      setOpenAdmin(!openAdmin);
+                    }
+                  }}
+                >
+                  <ListItemIcon>
+                    <SettingsIcon sx={{ color: '#FFFFFF' }} />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={t('menu.administrative.title')}
+                    sx={{ color: '#FFFFFF' }}
+                  />
                   {openAdmin ? (
-                    <ExpandLess sx={{ color: 'primary.main' }} />
+                    <ExpandLess sx={{ color: '#FFFFFF' }} />
                   ) : (
-                    <ExpandMore sx={{ color: 'primary.main' }} />
+                    <ExpandMore sx={{ color: '#FFFFFF' }} />
                   )}
                 </ListItemButton>
-              </ListItem>
-              <Collapse in={openAdmin} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  <ListItem disablePadding>
-                    <ListItemButton sx={{ pl: 4 }} onClick={() => router.push('/panel/users')}>
-                      <ListItemIcon>
-                        <PeopleIcon sx={{ color: 'primary.main' }} />
-                      </ListItemIcon>
-                      <ListItemText primary={t('menu.administrative.users')} />
+              </Tooltip>
+            </ListItem>
+            <Collapse in={openAdmin} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                <ListItem disablePadding>
+                  <Tooltip
+                    title={!open ? t('menu.administrative.users') : ''}
+                    placement="right"
+                    componentsProps={tooltipStyles}
+                  >
+                    <ListItemButton sx={{ pl: 4 }} onClick={() => handleItemClick('/panel/users')}>
+                      <ListItemText
+                        primary={t('menu.administrative.users')}
+                        sx={{ color: '#FFFFFF' }}
+                      />
                     </ListItemButton>
-                  </ListItem>
-                  <ListItem disablePadding>
-                    <ListItemButton sx={{ pl: 4 }} onClick={() => router.push('/panel/profiles')}>
-                      <ListItemIcon>
-                        <SettingsIcon sx={{ color: 'primary.main' }} />
-                      </ListItemIcon>
-                      <ListItemText primary={t('menu.administrative.profiles')} />
+                  </Tooltip>
+                </ListItem>
+                <ListItem disablePadding>
+                  <Tooltip
+                    title={!open ? t('menu.administrative.profiles') : ''}
+                    placement="right"
+                    componentsProps={tooltipStyles}
+                  >
+                    <ListItemButton
+                      sx={{ pl: 4 }}
+                      onClick={() => handleItemClick('/panel/profiles')}
+                    >
+                      <ListItemText
+                        primary={t('menu.administrative.profiles')}
+                        sx={{ color: '#FFFFFF' }}
+                      />
                     </ListItemButton>
-                  </ListItem>
-                  <ListItem disablePadding>
-                    <ListItemButton sx={{ pl: 4 }} onClick={() => router.push('/panel/plans')}>
-                      <ListItemIcon>
-                        <SettingsIcon sx={{ color: 'primary.main' }} />
-                      </ListItemIcon>
-                      <ListItemText primary={t('menu.administrative.plans')} />
+                  </Tooltip>
+                </ListItem>
+                <ListItem disablePadding>
+                  <Tooltip
+                    title={!open ? t('menu.administrative.plans') : ''}
+                    placement="right"
+                    componentsProps={tooltipStyles}
+                  >
+                    <ListItemButton sx={{ pl: 4 }} onClick={() => handleItemClick('/panel/plans')}>
+                      <ListItemText
+                        primary={t('menu.administrative.plans')}
+                        sx={{ color: '#FFFFFF' }}
+                      />
                     </ListItemButton>
-                  </ListItem>
-                  <ListItem disablePadding>
-                    <ListItemButton sx={{ pl: 4 }} onClick={() => router.push('/panel/history')}>
-                      <ListItemIcon>
-                        <HistoryIcon sx={{ color: 'primary.main' }} />
-                      </ListItemIcon>
-                      <ListItemText primary={t('menu.administrative.history')} />
+                  </Tooltip>
+                </ListItem>
+                <ListItem disablePadding>
+                  <Tooltip
+                    title={!open ? t('menu.administrative.history') : ''}
+                    placement="right"
+                    componentsProps={tooltipStyles}
+                  >
+                    <ListItemButton
+                      sx={{ pl: 4 }}
+                      onClick={() => handleItemClick('/panel/history')}
+                    >
+                      <ListItemText
+                        primary={t('menu.administrative.history')}
+                        sx={{ color: '#FFFFFF' }}
+                      />
                     </ListItemButton>
-                  </ListItem>
-                </List>
-              </Collapse>
-            </List>
-            <Divider />
-          </Box>
-        </Drawer>
-      </Box>
+                  </Tooltip>
+                </ListItem>
+              </List>
+            </Collapse>
+          </List>
+          <Divider />
+        </Box>
+      </Drawer>
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           p: 3,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          width: '100%',
+          mt: '64px', // Altura do AppBar
+          pl: open ? `calc(${drawerWidth}px + 24px)` : `calc(${collapsedWidth}px + 24px)`,
+          transition: theme.transitions.create('padding', {
+            easing: theme.transitions.easing.sharp,
+            duration: 200,
+          }),
         }}
       >
-        <Toolbar />
         {children}
       </Box>
     </Box>
