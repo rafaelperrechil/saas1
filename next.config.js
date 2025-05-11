@@ -13,8 +13,9 @@ const nextConfig = {
   },
   // Cache melhorado para desenvolvimento
   experimental: {
+    // Habilitar server actions
     serverActions: {
-      bodySizeLimit: '2mb',
+      enabled: true,
     },
   },
   async rewrites() {

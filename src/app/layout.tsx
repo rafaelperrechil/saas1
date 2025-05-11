@@ -5,27 +5,26 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { SessionProvider } from 'next-auth/react';
 import theme from './theme';
 import { Toaster } from 'sonner';
-import type { Metadata } from 'next';
 import './globals.css';
 import '../lib/i18n';
 import Header from '@/components/Header';
 import Footer from '@/components/lp/weddings/Footer';
+import { Inter } from 'next/font/google';
 
-export const metadata: Metadata = {
-  title: 'QualiSight',
-  description: 'QualiSight',
-};
+const inter = Inter({ subsets: ['latin'] });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <head>
+        <title>QualiSight</title>
+        <meta name="description" content="QualiSight" />
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body>
+      <body className={inter.className}>
         <SessionProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />

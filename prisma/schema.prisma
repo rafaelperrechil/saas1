@@ -18,24 +18,34 @@ model Profile {
 }
 
 model User {
-  id              String   @id @default(cuid())
-  email           String   @unique
-  name            String?
-  emailVerified   DateTime?
-  image           String?
-  company         String?
-  phone           String?
-  password        String
-  profileId       String
-  profile         Profile  @relation(fields: [profileId], references: [id])
-  resetToken      String?
+  id               String       @id @default(cuid())
+  email            String       @unique
+  name             String?
+  emailVerified    DateTime?
+  image            String?
+  company          String?
+  phone            String?
+  password         String
+  profileId        String
+  profile          Profile      @relation(fields: [profileId], references: [id])
+  resetToken       String?
   resetTokenExpiry DateTime?
-  loginLogs       LoginLog[]
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  subscriptions  Subscription[]
-  stripeCustomerId String?   @map("stripe_customer_id")
-  payments           Payment[]     
+  loginLogs        LoginLog[]
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  wizardCompleted  Boolean      @default(false) @map("wizard_completed")
+
+  organization     Organization? @relation("OrgUsers", fields: [organizationId], references: [id])
+  organizationId   String?      @map("organization_id")
+
+  subscriptions    Subscription[]
+  payments         Payment[]
+  stripeCustomerId String?      @map("stripe_customer_id")
+  status           String       @default("ACTIVE")
+
+  departmentLinks  DepartmentResponsible[]
+
   @@map("users")
 }
 
@@ -50,22 +60,99 @@ model LoginLog {
   @@map("login_logs")
 }
 
+model Organization {
+  id             String    @id @default(cuid())
+  name           String
+  employeesCount Int       @map("employees_count")
+  country        String
+  city           String
+  nicheId        String    @map("niche_id")
+  niche          Niche     @relation(fields: [nicheId], references: [id])
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt      @map("updated_at")
+
+  users          User[]    @relation("OrgUsers")
+  branches       Branch[]
+
+  @@map("organizations")
+}
+
+model Niche {
+  id             String         @id @default(cuid())
+  name           String         @unique
+
+  organizations  Organization[]
+
+  @@map("niches")
+}
+
+model Branch {
+  id             String       @id @default(cuid())
+  name           String
+  organizationId String       @map("organization_id")
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt      @map("updated_at")
+
+  departments    Department[]
+  environments   Environment[]
+
+  @@map("branches")
+}
+
+model Department {
+  id        String                  @id @default(cuid())
+  name      String
+  branchId  String                  @map("branch_id")
+  branch    Branch                  @relation(fields: [branchId], references: [id])
+  createdAt DateTime                @default(now()) @map("created_at")
+  updatedAt DateTime                @updatedAt      @map("updated_at")
+
+  responsibles DepartmentResponsible[]
+
+  @@map("departments")
+}
+
+model DepartmentResponsible {
+  departmentId String     @map("department_id")
+  department   Department @relation(fields: [departmentId], references: [id])
+  userId       String     @map("user_id")
+  user         User       @relation(fields: [userId], references: [id])
+  assignedAt   DateTime   @default(now()) @map("assigned_at")
+
+  @@id([departmentId, userId])
+  @@map("department_responsibles")
+}
+
+model Environment {
+  id        String   @id @default(cuid())
+  name      String
+  branchId  String   @map("branch_id")
+  branch    Branch   @relation(fields: [branchId], references: [id])
+  position  Int?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt      @map("updated_at")
+
+  @@map("environments")
+}
+
 model Plan {
-  id                String   @id @default(cuid())
-  name              String   @unique
-  price             Decimal
-  includedUnits     Int      @map("included_units")
-  maxUsers          Int      @map("max_users")
-  extraUserPrice    Decimal? @map("extra_user_price")
-  maxChecklists     Int?     @map("max_checklists")
-  extraUnitPrice    Decimal? @map("extra_unit_price")
-  isCustom          Boolean  @default(false) @map("is_custom")
-  createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @updatedAt @map("updated_at")
-  subscriptions  Subscription[]
+  id               String         @id @default(cuid())
+  name             String         @unique
+  price            Decimal
+  includedUnits    Int            @map("included_units")
+  maxUsers         Int            @map("max_users")
+  extraUserPrice   Decimal?       @map("extra_user_price")
+  maxChecklists    Int?           @map("max_checklists")
+  extraUnitPrice   Decimal?       @map("extra_unit_price")
+  isCustom         Boolean        @default(false) @map("is_custom")
+  createdAt        DateTime       @default(now()) @map("created_at")
+  updatedAt        DateTime       @updatedAt      @map("updated_at")
+
+  subscriptions    Subscription[]
 
   @@map("plans")
-} 
+}
 
 enum SubscriptionStatus {
   ACTIVE
@@ -74,22 +161,22 @@ enum SubscriptionStatus {
 }
 
 model Subscription {
-  id           String         @id @default(cuid())
-  user         User           @relation(fields: [userId], references: [id])
-  userId       String         @map("user_id")
-  plan         Plan           @relation(fields: [planId], references: [id])
-  planId       String         @map("plan_id")
-  startDate    DateTime       @default(now()) @map("start_date")
-  endDate      DateTime?      @map("end_date")
-  status       SubscriptionStatus @default(ACTIVE)
-  invoices     Invoice[]
-  payments     Payment[]      // relação inversa
-  createdAt    DateTime       @default(now()) @map("created_at")
-  updatedAt    DateTime       @updatedAt      @map("updated_at")
+  id            String             @id @default(cuid())
+  userId        String             @map("user_id")
+  user          User               @relation(fields: [userId], references: [id])
+  planId        String             @map("plan_id")
+  plan          Plan               @relation(fields: [planId], references: [id])
+  startDate     DateTime           @default(now()) @map("start_date")
+  endDate       DateTime?          @map("end_date")
+  status        SubscriptionStatus @default(ACTIVE)
+  createdAt     DateTime           @default(now()) @map("created_at")
+  updatedAt     DateTime           @updatedAt      @map("updated_at")
+
+  invoices      Invoice[]
+  payments      Payment[]
 
   @@map("subscriptions")
 }
-
 
 enum InvoiceStatus {
   PENDING
@@ -98,19 +185,19 @@ enum InvoiceStatus {
 }
 
 model Invoice {
-  id              String       @id @default(cuid())
-  subscription    Subscription @relation(fields: [subscriptionId], references: [id])
-  subscriptionId  String       @map("subscription_id")
-  period          String       @map("period")
-  amount          Decimal      @map("amount")
-  issuedAt        DateTime     @default(now()) @map("issued_at")
-  dueDate         DateTime     @map("due_date")
-  paidAt          DateTime?    @map("paid_at")
-  status          InvoiceStatus       @default(PENDING)
-  payment         Payment?     @relation("InvoicePayment", fields: [paymentId], references: [id])
-  paymentId       String?      @map("payment_id") @unique
-  createdAt       DateTime     @default(now())      @map("created_at")
-  updatedAt       DateTime     @updatedAt           @map("updated_at")
+  id              String        @id @default(cuid())
+  subscriptionId  String        @map("subscription_id")
+  subscription    Subscription  @relation(fields: [subscriptionId], references: [id])
+  period          String        @map("period")
+  amount          Decimal       @map("amount")
+  issuedAt        DateTime      @default(now()) @map("issued_at")
+  dueDate         DateTime      @map("due_date")
+  paidAt          DateTime?     @map("paid_at")
+  status          InvoiceStatus @default(PENDING)
+  paymentId       String?       @map("payment_id") @unique
+  payment         Payment?      @relation("InvoicePayment", fields: [paymentId], references: [id])
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt      @map("updated_at")
 
   @@unique([subscriptionId, period])
   @@map("invoices")
@@ -123,19 +210,19 @@ enum PaymentStatus {
 }
 
 model Payment {
-  id                     String         @id @default(cuid())
-  user                   User           @relation(fields: [userId], references: [id])
-  userId                 String         @map("user_id")
-  subscription           Subscription?  @relation(fields: [subscriptionId], references: [id])
-  subscriptionId         String?        @map("subscription_id")
-  stripePaymentIntentId  String         @map("stripe_payment_intent_id")
-  amount                 Decimal        @map("amount")
-  currency               String         @default("BRL")
-  status                 PaymentStatus  @default(REQUIRES_PAYMENT_METHOD)
-  paidAt                 DateTime?      @map("paid_at")
-  createdAt              DateTime       @default(now()) @map("created_at")
-  updatedAt              DateTime       @updatedAt       @map("updated_at")
-  invoice                Invoice?       @relation("InvoicePayment")
+  id                    String         @id @default(cuid())
+  userId                String         @map("user_id")
+  user                  User           @relation(fields: [userId], references: [id])
+  subscriptionId        String?        @map("subscription_id")
+  subscription          Subscription?  @relation(fields: [subscriptionId], references: [id])
+  stripePaymentIntentId String         @map("stripe_payment_intent_id")
+  amount                Decimal        @map("amount")
+  currency              String         @default("BRL")
+  status                PaymentStatus  @default(REQUIRES_PAYMENT_METHOD)
+  paidAt                DateTime?      @map("paid_at")
+  createdAt             DateTime       @default(now()) @map("created_at")
+  updatedAt             DateTime       @updatedAt      @map("updated_at")
+  invoice               Invoice?       @relation("InvoicePayment")
 
   @@map("payments")
 }

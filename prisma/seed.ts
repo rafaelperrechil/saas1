@@ -4,9 +4,18 @@ const bcrypt = require('bcryptjs');
 const prisma = new PrismaClient();
 
 async function main() {
-  // Limpar dados existentes
+  // Limpar dados existentes na ordem correta
+  await prisma.invoice.deleteMany();
+  await prisma.payment.deleteMany();
+  await prisma.subscription.deleteMany();
+  await prisma.departmentResponsible.deleteMany();
+  await prisma.department.deleteMany();
+  await prisma.environment.deleteMany();
+  await prisma.loginLog.deleteMany();
   await prisma.user.deleteMany();
   await prisma.profile.deleteMany();
+  await prisma.organization.deleteMany();
+  await prisma.niche.deleteMany();
   await prisma.plan.deleteMany();
 
   // Criar perfis
@@ -98,6 +107,35 @@ async function main() {
   }
 
   console.log('Planos criados com sucesso!');
+
+  const niches = [
+    { name: 'Indústria Alimentícia' },
+    { name: 'Indústria Farmacêutica' },
+    { name: 'Indústria Automotiva' },
+    { name: 'Construção Civil' },
+    { name: 'Saúde' },
+    { name: 'Educação' },
+    { name: 'Varejo' },
+    { name: 'Logística' },
+    { name: 'Tecnologia' },
+    { name: 'Serviços Financeiros' },
+    { name: 'Agronegócio' },
+    { name: 'Hotelaria e Turismo' },
+    { name: 'Energia' },
+    { name: 'Telecomunicações' },
+    { name: 'Mineração' },
+  ];
+
+  for (const niche of niches) {
+    await prisma.niche.upsert({
+      where: { name: niche.name },
+      update: {},
+      create: niche,
+    });
+  }
+
+  console.log('Nichos de mercado inseridos com sucesso!');
+
   console.log('Seed concluído com sucesso!');
 }
 

@@ -253,5 +253,60 @@
     "cookies": "Cookie",
     "compliance": "合规",
     "copyright": "QualiSight. 版权所有。"
+  },
+  "wizard": {
+    "welcome": {
+      "title": "欢迎使用 QualiSight",
+      "subtitle": "让我们用几个步骤设置您的账户",
+      "description": "设置您的组织并在几分钟内开始使用 QualiSight"
+    },
+    "organization": {
+      "title": "组织详情",
+      "subtitle": "告诉我们关于您的公司",
+      "name": "组织名称",
+      "employeesCount": "员工数量",
+      "country": "国家",
+      "city": "城市",
+      "niche": "市场细分"
+    },
+    "branch": {
+      "title": "主要分支",
+      "subtitle": "设置您的第一个分支",
+      "name": "分支名称",
+      "description": "这将是您的主要分支"
+    },
+    "departments": {
+      "title": "部门",
+      "subtitle": "添加您的分支部门",
+      "name": "部门名称",
+      "addDepartment": "添加部门",
+      "responsibles": "负责人",
+      "addResponsible": "添加负责人",
+      "email": "负责人邮箱"
+    },
+    "environments": {
+      "title": "环境",
+      "subtitle": "设置您的分支环境",
+      "name": "环境名称",
+      "addEnvironment": "添加环境",
+      "dragToReorder": "拖动重新排序"
+    },
+    "completion": {
+      "title": "设置完成！",
+      "message": "恭喜！您的组织、部门和环境已成功配置。",
+      "redirect": "您将很快被重定向到创建您的第一个检查清单..."
+    },
+    "errors": {
+      "emptyNames": "所有环境必须有名称",
+      "duplicateNames": "不能有重复的环境名称",
+      "noEnvironments": "至少添加一个环境"
+    },
+    "common": {
+      "next": "下一步",
+      "back": "返回",
+      "finish": "完成",
+      "required": "必填字段",
+      "saving": "保存中..."
+    }
   }
 }

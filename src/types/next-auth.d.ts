@@ -1,5 +1,6 @@
 import 'next-auth';
 import { Profile } from '@prisma/client';
+import { DefaultSession } from 'next-auth';
 
 declare module 'next-auth' {
   interface Session {
@@ -7,8 +8,14 @@ declare module 'next-auth' {
       id: string;
       email: string;
       name: string;
-      profile: Profile;
-    };
+      wizardCompleted: boolean;
+      profile: {
+        name: string;
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+      };
+    } & DefaultSession['user'];
   }
 
   interface User {

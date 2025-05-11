@@ -68,7 +68,7 @@ export default function RegisterPage() {
         redirect: false,
       });
       if (loginResult?.ok) {
-        router.replace('/dashboard');
+        router.replace('/panel/dashboard');
       } else {
         setError(t('auth.register.error.loginAfterRegister'));
       }

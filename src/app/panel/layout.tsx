@@ -57,7 +57,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+    <Box sx={{ display: 'flex' }}>
       <Box component="nav" sx={{ flexShrink: 0 }}>
         <Drawer
           variant="permanent"

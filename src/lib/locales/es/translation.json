@@ -253,5 +253,60 @@
     "cookies": "Cookies",
     "compliance": "Cumplimiento",
     "copyright": "QualiSight. Todos los derechos reservados."
+  },
+  "wizard": {
+    "welcome": {
+      "title": "Bienvenido a QualiSight",
+      "subtitle": "Configuremos tu cuenta en pocos pasos",
+      "description": "Configura tu organización y comienza a usar QualiSight en minutos"
+    },
+    "organization": {
+      "title": "Datos de la Organización",
+      "subtitle": "Cuéntanos sobre tu empresa",
+      "name": "Nombre de la Organización",
+      "employeesCount": "Número de Empleados",
+      "country": "País",
+      "city": "Ciudad",
+      "niche": "Segmento de Mercado"
+    },
+    "branch": {
+      "title": "Unidad Principal",
+      "subtitle": "Configura tu primera unidad",
+      "name": "Nombre de la Unidad",
+      "description": "Esta será tu unidad principal"
+    },
+    "departments": {
+      "title": "Departamentos",
+      "subtitle": "Agrega los departamentos de tu unidad",
+      "name": "Nombre del Departamento",
+      "addDepartment": "Agregar Departamento",
+      "responsibles": "Responsables",
+      "addResponsible": "Agregar Responsable",
+      "email": "Correo del Responsable"
+    },
+    "environments": {
+      "title": "Ambientes",
+      "subtitle": "Configura los ambientes de tu unidad",
+      "name": "Nombre del Ambiente",
+      "addEnvironment": "Agregar Ambiente",
+      "dragToReorder": "Arrastra para reordenar"
+    },
+    "completion": {
+      "title": "¡Configuración Completada!",
+      "message": "¡Felicitaciones! Su organización, departamentos y ambientes han sido configurados exitosamente.",
+      "redirect": "Será redirigido para crear su primera lista de verificación en un momento..."
+    },
+    "errors": {
+      "emptyNames": "Todos los ambientes deben tener un nombre",
+      "duplicateNames": "No puede haber ambientes con nombres duplicados",
+      "noEnvironments": "Agregue al menos un ambiente"
+    },
+    "common": {
+      "next": "Siguiente",
+      "back": "Atrás",
+      "finish": "Finalizar",
+      "required": "Campo requerido",
+      "saving": "Guardando..."
+    }
   }
 }

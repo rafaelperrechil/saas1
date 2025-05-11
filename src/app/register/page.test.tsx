@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import RegisterPage from './page';
 import '@testing-library/jest-dom';
 
@@ -468,7 +468,9 @@ describe('RegisterPage', () => {
     });
 
     // Verifica se o usuário foi redirecionado
-    expect(mockRouter.replace).toHaveBeenCalledWith('/dashboard');
+    await waitFor(() => {
+      expect(mockRouter.replace).toHaveBeenCalledWith('/panel/dashboard');
+    });
   });
 
   describe('Acessibilidade', () => {

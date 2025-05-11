@@ -253,5 +253,60 @@
     "cookies": "Cookies",
     "compliance": "Compliance",
     "copyright": "QualiSight. Alle Rechte vorbehalten."
+  },
+  "wizard": {
+    "welcome": {
+      "title": "Willkommen bei QualiSight",
+      "subtitle": "Lassen Sie uns Ihr Konto in wenigen Schritten einrichten",
+      "description": "Richten Sie Ihre Organisation ein und beginnen Sie in wenigen Minuten mit QualiSight"
+    },
+    "organization": {
+      "title": "Organisationsdetails",
+      "subtitle": "Erzählen Sie uns von Ihrem Unternehmen",
+      "name": "Name der Organisation",
+      "employeesCount": "Anzahl der Mitarbeiter",
+      "country": "Land",
+      "city": "Stadt",
+      "niche": "Marktsegment"
+    },
+    "branch": {
+      "title": "Hauptniederlassung",
+      "subtitle": "Richten Sie Ihre erste Niederlassung ein",
+      "name": "Name der Niederlassung",
+      "description": "Dies wird Ihre Hauptniederlassung sein"
+    },
+    "departments": {
+      "title": "Abteilungen",
+      "subtitle": "Fügen Sie die Abteilungen Ihrer Niederlassung hinzu",
+      "name": "Name der Abteilung",
+      "addDepartment": "Abteilung hinzufügen",
+      "responsibles": "Verantwortliche",
+      "addResponsible": "Verantwortlichen hinzufügen",
+      "email": "E-Mail des Verantwortlichen"
+    },
+    "environments": {
+      "title": "Umgebungen",
+      "subtitle": "Richten Sie die Umgebungen Ihrer Niederlassung ein",
+      "name": "Name der Umgebung",
+      "addEnvironment": "Umgebung hinzufügen",
+      "dragToReorder": "Zum Neuordnen ziehen"
+    },
+    "completion": {
+      "title": "Einrichtung abgeschlossen!",
+      "message": "Herzlichen Glückwunsch! Ihre Organisation, Abteilungen und Umgebungen wurden erfolgreich konfiguriert.",
+      "redirect": "Sie werden in Kürze zur Erstellung Ihrer ersten Checkliste weitergeleitet..."
+    },
+    "errors": {
+      "emptyNames": "Alle Umgebungen müssen einen Namen haben",
+      "duplicateNames": "Es darf keine Umgebungen mit doppelten Namen geben",
+      "noEnvironments": "Fügen Sie mindestens eine Umgebung hinzu"
+    },
+    "common": {
+      "next": "Weiter",
+      "back": "Zurück",
+      "finish": "Abschließen",
+      "required": "Pflichtfeld",
+      "saving": "Speichern..."
+    }
   }
 }

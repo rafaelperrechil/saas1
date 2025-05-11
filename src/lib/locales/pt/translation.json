@@ -253,5 +253,68 @@
     "cookies": "Cookies",
     "compliance": "Compliance",
     "copyright": "QualiSight. Todos os direitos reservados."
+  },
+  "wizard": {
+    "welcome": {
+      "title": "Bem-vindo ao QualiSight",
+      "subtitle": "Vamos configurar sua conta em poucos passos",
+      "description": "Configure sua organização e comece a usar o QualiSight em minutos"
+    },
+    "organization": {
+      "title": "Dados da Organização",
+      "subtitle": "Conte-nos sobre sua empresa",
+      "name": "Nome da Organização",
+      "employeesCount": "Número de Funcionários",
+      "country": "País",
+      "city": "Cidade",
+      "niche": "Segmento de Mercado",
+      "errors": {
+        "nameRequired": "O nome da organização é obrigatório",
+        "employeesRequired": "O número de funcionários é obrigatório",
+        "countryRequired": "O país é obrigatório",
+        "cityRequired": "A cidade é obrigatória",
+        "nicheRequired": "O segmento de mercado é obrigatório",
+        "loadingNiches": "Erro ao carregar os segmentos de mercado"
+      }
+    },
+    "branch": {
+      "title": "Unidade Principal",
+      "subtitle": "Configure sua primeira unidade",
+      "name": "Nome da Unidade",
+      "description": "Esta será sua unidade principal"
+    },
+    "departments": {
+      "title": "Departamentos",
+      "subtitle": "Adicione os departamentos da sua unidade",
+      "name": "Nome do Departamento",
+      "addDepartment": "Adicionar Departamento",
+      "responsibles": "Responsáveis",
+      "addResponsible": "Adicionar Responsável",
+      "email": "E-mail do Responsável"
+    },
+    "environments": {
+      "title": "Ambientes",
+      "subtitle": "Configure os ambientes da sua unidade",
+      "name": "Nome do Ambiente",
+      "addEnvironment": "Adicionar Ambiente",
+      "dragToReorder": "Arraste para reordenar"
+    },
+    "completion": {
+      "title": "Configuração Concluída!",
+      "message": "Parabéns! Sua organização, departamentos e ambientes foram configurados com sucesso.",
+      "redirect": "Você será redirecionado para criar seu primeiro checklist em instantes..."
+    },
+    "errors": {
+      "emptyNames": "Todos os ambientes devem ter um nome",
+      "duplicateNames": "Não pode haver ambientes com nomes duplicados",
+      "noEnvironments": "Adicione pelo menos um ambiente"
+    },
+    "common": {
+      "next": "Próximo",
+      "back": "Voltar",
+      "finish": "Concluir",
+      "required": "Campo obrigatório",
+      "saving": "Salvando..."
+    }
   }
 }

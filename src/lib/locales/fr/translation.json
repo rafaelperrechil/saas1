@@ -253,5 +253,60 @@
     "cookies": "Cookies",
     "compliance": "Conformité",
     "copyright": "QualiSight. Tous droits réservés."
+  },
+  "wizard": {
+    "welcome": {
+      "title": "Bienvenue sur QualiSight",
+      "subtitle": "Configurons votre compte en quelques étapes",
+      "description": "Configurez votre organisation et commencez à utiliser QualiSight en quelques minutes"
+    },
+    "organization": {
+      "title": "Détails de l'Organisation",
+      "subtitle": "Parlez-nous de votre entreprise",
+      "name": "Nom de l'Organisation",
+      "employeesCount": "Nombre d'Employés",
+      "country": "Pays",
+      "city": "Ville",
+      "niche": "Segment de Marché"
+    },
+    "branch": {
+      "title": "Unité Principale",
+      "subtitle": "Configurez votre première unité",
+      "name": "Nom de l'Unité",
+      "description": "Ce sera votre unité principale"
+    },
+    "departments": {
+      "title": "Départements",
+      "subtitle": "Ajoutez les départements de votre unité",
+      "name": "Nom du Département",
+      "addDepartment": "Ajouter un Département",
+      "responsibles": "Responsables",
+      "addResponsible": "Ajouter un Responsable",
+      "email": "Email du Responsable"
+    },
+    "environments": {
+      "title": "Environnements",
+      "subtitle": "Configurez les environnements de votre unité",
+      "name": "Nom de l'Environnement",
+      "addEnvironment": "Ajouter un Environnement",
+      "dragToReorder": "Glissez pour réorganiser"
+    },
+    "completion": {
+      "title": "Configuration Terminée !",
+      "message": "Félicitations ! Votre organisation, vos départements et vos environnements ont été configurés avec succès.",
+      "redirect": "Vous serez redirigé pour créer votre première liste de contrôle dans un instant..."
+    },
+    "errors": {
+      "emptyNames": "Tous les environnements doivent avoir un nom",
+      "duplicateNames": "Il ne peut pas y avoir d'environnements avec des noms en double",
+      "noEnvironments": "Ajoutez au moins un environnement"
+    },
+    "common": {
+      "next": "Suivant",
+      "back": "Retour",
+      "finish": "Terminer",
+      "required": "Champ obligatoire",
+      "saving": "Enregistrement..."
+    }
   }
 }

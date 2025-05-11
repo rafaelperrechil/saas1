@@ -252,5 +252,60 @@
     "cookies": "Cookies",
     "compliance": "Compliance",
     "copyright": "QualiSight. All rights reserved."
+  },
+  "wizard": {
+    "welcome": {
+      "title": "Welcome to QualiSight",
+      "subtitle": "Let's set up your account in a few steps",
+      "description": "Set up your organization and start using QualiSight in minutes"
+    },
+    "organization": {
+      "title": "Organization Details",
+      "subtitle": "Tell us about your company",
+      "name": "Organization Name",
+      "employeesCount": "Number of Employees",
+      "country": "Country",
+      "city": "City",
+      "niche": "Market Segment"
+    },
+    "branch": {
+      "title": "Main Branch",
+      "subtitle": "Set up your first branch",
+      "name": "Branch Name",
+      "description": "This will be your main branch"
+    },
+    "departments": {
+      "title": "Departments",
+      "subtitle": "Add your branch departments",
+      "name": "Department Name",
+      "addDepartment": "Add Department",
+      "responsibles": "Responsibles",
+      "addResponsible": "Add Responsible",
+      "email": "Responsible's Email"
+    },
+    "environments": {
+      "title": "Environments",
+      "subtitle": "Set up your branch environments",
+      "name": "Environment Name",
+      "addEnvironment": "Add Environment",
+      "dragToReorder": "Drag to reorder"
+    },
+    "completion": {
+      "title": "Setup Complete!",
+      "message": "Congratulations! Your organization, departments and environments have been successfully configured.",
+      "redirect": "You will be redirected to create your first checklist in a moment..."
+    },
+    "errors": {
+      "emptyNames": "All environments must have a name",
+      "duplicateNames": "There cannot be environments with duplicate names",
+      "noEnvironments": "Add at least one environment"
+    },
+    "common": {
+      "next": "Next",
+      "back": "Back",
+      "finish": "Finish",
+      "required": "Required field",
+      "saving": "Saving..."
+    }
   }
 }
