@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { useState } from 'react';
-import useSWR from 'swr';
+import useSWR, { mutate as mutateGlobal } from 'swr';
 import {
   Box,
   Container,
@@ -59,25 +59,25 @@ interface UserFormData {
 
 export default function UsersPage() {
   const {
-    data: users,
+    data: users = [],
     error: usersError,
     mutate: mutateUsers,
   } = useSWR<User[]>('/api/users', fetcher);
-  const { data: profiles, error: profilesError } = useSWR<Profile[]>('/api/profiles', fetcher);
+  const { data: profiles = [], error: profilesError } = useSWR<Profile[]>('/api/profiles', fetcher);
 
   const [openDialog, setOpenDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const [formData, setFormData] = useState<UserFormData>({
     name: '',
     email: '',
     password: '',
     profileId: '',
   });
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [error, setError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const handleOpenDialog = (user?: User) => {
     if (user) {
@@ -117,10 +117,10 @@ export default function UsersPage() {
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
+      setError('');
+
       const url = selectedUser ? `/api/users/${selectedUser.id}` : '/api/users';
       const method = selectedUser ? 'PUT' : 'POST';
-
-      console.log('Enviando dados:', formData);
 
       const response = await fetch(url, {
         method,
@@ -189,6 +189,14 @@ export default function UsersPage() {
     }
   };
 
+  if (usersError || profilesError) {
+    return (
+      <Alert severity="error" sx={{ m: 2 }}>
+        Erro ao carregar dados
+      </Alert>
+    );
+  }
+
   if (!users || !profiles) {
     return (
       <Box
@@ -196,14 +204,6 @@ export default function UsersPage() {
       >
         <CircularProgress />
       </Box>
-    );
-  }
-
-  if (usersError || profilesError) {
-    return (
-      <Alert severity="error" sx={{ m: 2 }}>
-        Erro ao carregar dados
-      </Alert>
     );
   }
 
@@ -240,37 +240,54 @@ export default function UsersPage() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.profile.name}</TableCell>
-                <TableCell>
-                  {format(new Date(user.createdAt), "dd 'de' MMMM 'de' yyyy", {
-                    locale: ptBR,
-                  })}
-                </TableCell>
-                <TableCell align="right">
-                  <Tooltip title="Editar">
-                    <IconButton onClick={() => handleOpenDialog(user)} color="primary">
-                      <EditIcon />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Excluir">
-                    <IconButton onClick={() => handleOpenDeleteDialog(user)} color="error">
-                      <DeleteIcon />
-                    </IconButton>
-                  </Tooltip>
-                </TableCell>
-              </TableRow>
-            ))}
+            {Array.isArray(users) &&
+              users.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell>{user.name}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>{user.profile.name}</TableCell>
+                  <TableCell>
+                    {format(new Date(user.createdAt), "dd 'de' MMMM 'de' yyyy", {
+                      locale: ptBR,
+                    })}
+                  </TableCell>
+                  <TableCell align="right">
+                    <Tooltip title="Editar">
+                      <IconButton
+                        onClick={() => handleOpenDialog(user)}
+                        color="primary"
+                        aria-label="Editar"
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Excluir">
+                      <IconButton
+                        onClick={() => handleOpenDeleteDialog(user)}
+                        color="error"
+                        aria-label="Excluir"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
 
       {/* Dialog de Criação/Edição */}
-      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
-        <DialogTitle>{selectedUser ? 'Editar Usuário' : 'Novo Usuário'}</DialogTitle>
+      <Dialog
+        open={openDialog}
+        onClose={handleCloseDialog}
+        maxWidth="sm"
+        fullWidth
+        aria-labelledby="user-dialog-title"
+      >
+        <DialogTitle id="user-dialog-title">
+          {selectedUser ? 'Editar Usuário' : 'Novo Usuário'}
+        </DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
             <TextField
@@ -279,6 +296,7 @@ export default function UsersPage() {
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               fullWidth
               required
+              inputProps={{ 'aria-label': 'Nome' }}
             />
             <TextField
               label="Email"
@@ -287,6 +305,7 @@ export default function UsersPage() {
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               fullWidth
               required
+              inputProps={{ 'aria-label': 'Email' }}
             />
             <TextField
               label="Senha"
@@ -296,13 +315,16 @@ export default function UsersPage() {
               fullWidth
               required={!selectedUser}
               helperText={selectedUser ? 'Deixe em branco para manter a senha atual' : ''}
+              inputProps={{ 'aria-label': 'Senha' }}
             />
             <FormControl fullWidth required>
-              <InputLabel>Perfil</InputLabel>
+              <InputLabel id="profile-label">Perfil</InputLabel>
               <Select
+                labelId="profile-label"
                 value={formData.profileId}
                 onChange={(e) => setFormData({ ...formData, profileId: e.target.value })}
                 label="Perfil"
+                inputProps={{ 'aria-label': 'Perfil' }}
               >
                 {profiles.map((profile) => (
                   <MenuItem key={profile.id} value={profile.id}>
@@ -335,8 +357,12 @@ export default function UsersPage() {
       </Dialog>
 
       {/* Dialog de Confirmação de Exclusão */}
-      <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
-        <DialogTitle>Confirmar Exclusão</DialogTitle>
+      <Dialog
+        open={openDeleteDialog}
+        onClose={handleCloseDeleteDialog}
+        aria-labelledby="delete-dialog-title"
+      >
+        <DialogTitle id="delete-dialog-title">Confirmar Exclusão</DialogTitle>
         <DialogContent>
           <Typography>Tem certeza que deseja excluir o usuário {selectedUser?.name}?</Typography>
         </DialogContent>

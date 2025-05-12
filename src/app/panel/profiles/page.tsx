@@ -228,10 +228,18 @@ export default function ProfilesPage() {
               <TableRow key={profile.id}>
                 <TableCell>{profile.name}</TableCell>
                 <TableCell align="right">
-                  <IconButton color="primary" onClick={() => handleOpenDialog(profile)}>
+                  <IconButton
+                    color="primary"
+                    onClick={() => handleOpenDialog(profile)}
+                    data-testid="edit-button"
+                  >
                     <EditIcon />
                   </IconButton>
-                  <IconButton color="error" onClick={() => handleOpenDeleteDialog(profile)}>
+                  <IconButton
+                    color="error"
+                    onClick={() => handleOpenDeleteDialog(profile)}
+                    data-testid="delete-button"
+                  >
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>
