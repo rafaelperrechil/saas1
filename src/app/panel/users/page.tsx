@@ -75,6 +75,9 @@ export default function UsersPage() {
   });
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const handleOpenDialog = (user?: User) => {
     if (user) {
@@ -113,6 +116,7 @@ export default function UsersPage() {
 
   const handleSubmit = async () => {
     try {
+      setIsLoading(true);
       const url = selectedUser ? `/api/users/${selectedUser.id}` : '/api/users';
       const method = selectedUser ? 'PUT' : 'POST';
 
@@ -133,9 +137,17 @@ export default function UsersPage() {
 
       await mutateUsers();
       handleCloseDialog();
+      setSuccessMessage(
+        selectedUser ? 'Usuário editado com sucesso!' : 'Usuário criado com sucesso!'
+      );
+
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 5000);
     } catch (error: any) {
-      console.error('Erro ao salvar usuário:', error.message);
       setError(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -153,6 +165,7 @@ export default function UsersPage() {
     if (!selectedUser) return;
 
     try {
+      setIsDeleteLoading(true);
       const response = await fetch(`/api/users/${selectedUser.id}`, {
         method: 'DELETE',
       });
@@ -164,8 +177,15 @@ export default function UsersPage() {
 
       await mutateUsers();
       handleCloseDeleteDialog();
+      setSuccessMessage('Usuário excluído com sucesso!');
+
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 5000);
     } catch (error: any) {
-      console.error('Erro ao excluir usuário:', error);
+      setError(error.message);
+    } finally {
+      setIsDeleteLoading(false);
     }
   };
 
@@ -189,6 +209,11 @@ export default function UsersPage() {
 
   return (
     <Box>
+      {successMessage && (
+        <Alert severity="success" sx={{ mb: 2 }}>
+          {successMessage}
+        </Alert>
+      )}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" component="h1">
           Usuários
@@ -294,9 +319,17 @@ export default function UsersPage() {
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancelar</Button>
-          <Button onClick={handleSubmit} variant="contained" color="primary">
-            Salvar
+          <Button onClick={handleCloseDialog} disabled={isLoading}>
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            variant="contained"
+            color="primary"
+            disabled={isLoading}
+            startIcon={isLoading ? <CircularProgress size={20} color="inherit" /> : undefined}
+          >
+            {isLoading ? 'Salvando...' : 'Salvar'}
           </Button>
         </DialogActions>
       </Dialog>
@@ -308,9 +341,19 @@ export default function UsersPage() {
           <Typography>Tem certeza que deseja excluir o usuário {selectedUser?.name}?</Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDeleteDialog}>Cancelar</Button>
-          <Button onClick={handleDelete} color="error" variant="contained">
-            Excluir
+          <Button onClick={handleCloseDeleteDialog} disabled={isDeleteLoading}>
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleDelete}
+            color="error"
+            variant="contained"
+            disabled={isDeleteLoading}
+            startIcon={
+              isDeleteLoading ? <CircularProgress size={20} color="inherit" /> : <DeleteIcon />
+            }
+          >
+            {isDeleteLoading ? 'Excluindo...' : 'Excluir'}
           </Button>
         </DialogActions>
       </Dialog>

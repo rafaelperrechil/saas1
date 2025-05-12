@@ -14,16 +14,20 @@ import {
   Snackbar,
   CircularProgress,
   Typography,
+  Autocomplete,
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import PersonIcon from '@mui/icons-material/Person';
+import { countries } from '@/utils/countries';
+import { timezones } from '@/utils/timezones';
 
 interface UserProfile {
   id: string;
   name: string;
   email: string;
-  company?: string;
   phone?: string;
+  country?: string;
+  timezone?: string;
 }
 
 export default function ProfilePage() {
@@ -35,8 +39,9 @@ export default function ProfilePage() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [formData, setFormData] = useState({
     name: '',
-    company: '',
     phone: '',
+    country: '',
+    timezone: '',
   });
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -46,14 +51,12 @@ export default function ProfilePage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // Verificar se o usuário está autenticado
     if (status === 'unauthenticated') {
       router.push('/login?callbackUrl=/panel/profile');
       return;
     }
 
     if (status === 'authenticated' && session?.user) {
-      // Carregar dados do usuário
       const fetchUserData = async () => {
         setLoading(true);
         setError('');
@@ -68,51 +71,55 @@ export default function ProfilePage() {
               id: userData.id || (session.user.id as string),
               name: userData.name || session.user.name || '',
               email: userData.email || session.user.email || '',
-              company: userData.company || '',
               phone: userData.phone || '',
+              country: userData.country || '',
+              timezone: userData.timezone || '',
             });
 
             setFormData({
               name: userData.name || session.user.name || '',
-              company: userData.company || '',
               phone: userData.phone || '',
+              country: userData.country || '',
+              timezone: userData.timezone || '',
             });
           } else {
             const errorData = await response.json();
             setError(errorData.error || t('account.profile.errorMessage'));
 
-            // Usar dados da sessão como fallback
             setUserProfile({
               id: session.user.id as string,
               name: session.user.name || '',
               email: session.user.email || '',
-              company: '',
               phone: '',
+              country: '',
+              timezone: '',
             });
 
             setFormData({
               name: session.user.name || '',
-              company: '',
               phone: '',
+              country: '',
+              timezone: '',
             });
           }
         } catch (error) {
           console.error('Erro ao carregar dados do usuário:', error);
           setError(t('account.profile.errorMessage'));
 
-          // Usar dados da sessão como fallback
           setUserProfile({
             id: session.user.id as string,
             name: session.user.name || '',
             email: session.user.email || '',
-            company: '',
             phone: '',
+            country: '',
+            timezone: '',
           });
 
           setFormData({
             name: session.user.name || '',
-            company: '',
             phone: '',
+            country: '',
+            timezone: '',
           });
         } finally {
           setLoading(false);
@@ -123,11 +130,10 @@ export default function ProfilePage() {
     }
   }, [session, status, router, t]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [field]: value,
     }));
   };
 
@@ -137,7 +143,6 @@ export default function ProfilePage() {
     setError('');
 
     try {
-      // Enviar dados atualizados para o servidor
       const response = await fetch('/api/user/profile', {
         method: 'PUT',
         headers: {
@@ -149,16 +154,14 @@ export default function ProfilePage() {
       const data = await response.json();
 
       if (response.ok) {
-        // Atualizar o perfil local
         setUserProfile((prev) => ({
           ...prev!,
           name: formData.name,
-          // company e phone serão simulados na interface, mas podem não ser salvos no DB
-          company: formData.company,
           phone: formData.phone,
+          country: formData.country,
+          timezone: formData.timezone,
         }));
 
-        // Atualizar a sessão para refletir o novo nome
         await update({
           ...session,
           user: {
@@ -167,7 +170,6 @@ export default function ProfilePage() {
           },
         });
 
-        // Mostrar mensagem do servidor se existir
         setSnackbar({
           open: true,
           message: data.message || t('account.profile.successMessage'),
@@ -226,37 +228,49 @@ export default function ProfilePage() {
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label={t('account.profile.email')}
-                value={userProfile.email}
-                disabled
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
                 label={t('account.profile.name')}
                 name="name"
                 value={formData.name}
-                onChange={handleChange}
+                onChange={(e) => handleChange('name', e.target.value)}
                 required
               />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label={t('account.profile.company')}
-                name="company"
-                value={formData.company}
-                onChange={handleChange}
+                label={t('account.profile.email')}
+                value={userProfile.email}
+                disabled
               />
             </Grid>
+
             <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 label={t('account.profile.phone')}
                 name="phone"
                 value={formData.phone}
-                onChange={handleChange}
+                onChange={(e) => handleChange('phone', e.target.value)}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Autocomplete
+                options={countries}
+                value={formData.country}
+                onChange={(_, newValue) => handleChange('country', newValue || '')}
+                renderInput={(params) => (
+                  <TextField {...params} label={t('account.profile.country')} />
+                )}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Autocomplete
+                options={timezones}
+                value={formData.timezone}
+                onChange={(_, newValue) => handleChange('timezone', newValue || '')}
+                renderInput={(params) => (
+                  <TextField {...params} label={t('account.profile.timezone')} />
+                )}
               />
             </Grid>
             {error && (
@@ -291,4 +305,4 @@ export default function ProfilePage() {
       </Snackbar>
     </Box>
   );
-} 
+}

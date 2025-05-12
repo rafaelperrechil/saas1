@@ -17,6 +17,7 @@ import {
   Collapse,
   CircularProgress,
   Tooltip,
+  Typography,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import {
@@ -31,6 +32,8 @@ import {
   History as HistoryIcon,
   ExpandLess,
   ExpandMore,
+  BugReport as BugReportIcon,
+  Assessment as AssessmentIcon,
 } from '@mui/icons-material';
 import PanelHeader from '@/components/panel/Header';
 
@@ -120,13 +123,27 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           },
         }}
       >
-        <Toolbar sx={{ justifyContent: open ? 'flex-end' : 'center', px: [1] }}>
-          <IconButton onClick={handleDrawerToggle} size="small">
-            <MenuIcon sx={{ color: '#FFFFFF' }} />
-          </IconButton>
-        </Toolbar>
         <Box>
-          <List>
+          <List sx={{ mt: 0, pt: 0 }}>
+            <ListItem disablePadding>
+              <ListItemButton onClick={handleDrawerToggle} sx={{ bgcolor: 'primary.dark' }}>
+                <ListItemIcon>
+                  <MenuIcon sx={{ color: '#FFFFFF' }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary={'QualiSight'}
+                  sx={{
+                    color: '#FFFFFF',
+                    opacity: open ? 1 : 0,
+                    transition: 'opacity 200ms',
+                    '& .MuiListItemText-primary': {
+                      fontWeight: 700,
+                      fontSize: '1.3rem',
+                    },
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
             <ListItem disablePadding>
               <Tooltip
                 title={!open ? t('menu.dashboard') : ''}
@@ -283,6 +300,38 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </Tooltip>
             </ListItem>
 
+            {/* Departamentos */}
+            <ListItem disablePadding>
+              <Tooltip
+                title={!open ? 'Tickets & Chamados' : ''}
+                placement="right"
+                componentsProps={tooltipStyles}
+              >
+                <ListItemButton onClick={() => handleItemClick('/panel/departments')}>
+                  <ListItemIcon>
+                    <BugReportIcon sx={{ color: '#FFFFFF' }} />
+                  </ListItemIcon>
+                  <ListItemText primary={'Tickets & Chamados'} sx={{ color: '#FFFFFF' }} />
+                </ListItemButton>
+              </Tooltip>
+            </ListItem>
+
+            {/* Relatórios */}
+            <ListItem disablePadding>
+              <Tooltip
+                title={!open ? t('menu.reports') : ''}
+                placement="right"
+                componentsProps={tooltipStyles}
+              >
+                <ListItemButton onClick={() => handleItemClick('/panel/reports')}>
+                  <ListItemIcon>
+                    <AssessmentIcon sx={{ color: '#FFFFFF' }} />
+                  </ListItemIcon>
+                  <ListItemText primary={t('menu.reports')} sx={{ color: '#FFFFFF' }} />
+                </ListItemButton>
+              </Tooltip>
+            </ListItem>
+
             {/* Configurações */}
             <ListItem disablePadding>
               <Tooltip
@@ -298,7 +347,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </ListItemButton>
               </Tooltip>
             </ListItem>
-
             <Divider sx={{ my: 1 }} />
 
             {/* Menu Administrativo */}

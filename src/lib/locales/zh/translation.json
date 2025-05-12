@@ -8,6 +8,10 @@
     "login": "登录",
     "getStarted": "开始使用"
   },
+  "common": {
+    "saving": "保存中...",
+    "save": "保存"
+  },
   "account": {
     "myAccount": "我的账户",
     "myPlan": "我的计划",
@@ -26,12 +30,15 @@
       "title": "我的账户",
       "subtitle": "管理您的个人信息",
       "personalInfo": "个人信息",
+      "name": "姓名",
       "firstName": "名字",
       "lastName": "姓氏",
       "company": "公司",
       "phone": "电话",
       "email": "电子邮件",
       "emailHelp": "电子邮件不能更改",
+      "country": "国家",
+      "timezone": "时区",
       "changePassword": "更改密码",
       "currentPassword": "当前密码",
       "newPassword": "新密码",
@@ -324,6 +331,7 @@
     "environments": "环境",
     "departments": "部门",
     "settings": "设置",
+    "reports": "报告",
     "administrative": {
       "title": "管理",
       "users": "用户",

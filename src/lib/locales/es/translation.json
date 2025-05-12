@@ -8,6 +8,10 @@
     "login": "Iniciar sesión",
     "getStarted": "Comenzar"
   },
+  "common": {
+    "saving": "Guardando...",
+    "save": "Guardar"
+  },
   "account": {
     "myAccount": "Mi cuenta",
     "myPlan": "Mi plan",
@@ -32,6 +36,8 @@
       "phone": "Teléfono",
       "email": "Correo electrónico",
       "emailHelp": "El correo electrónico no puede ser cambiado",
+      "country": "País",
+      "timezone": "Zona Horaria",
       "changePassword": "Cambiar Contraseña",
       "currentPassword": "Contraseña Actual",
       "newPassword": "Nueva Contraseña",
@@ -324,6 +330,7 @@
     "environments": "Ambientes",
     "departments": "Departamentos",
     "settings": "Configuración",
+    "reports": "Informes",
     "administrative": {
       "title": "Administrativo",
       "users": "Usuarios",

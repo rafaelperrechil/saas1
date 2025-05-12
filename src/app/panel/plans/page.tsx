@@ -75,6 +75,9 @@ export default function PlansPage() {
   });
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleOpenDialog = (plan?: Plan) => {
     if (plan) {
@@ -125,6 +128,7 @@ export default function PlansPage() {
 
   const handleSubmit = async () => {
     try {
+      setIsSaving(true);
       const url = selectedPlan ? `/api/plans/${selectedPlan.id}` : '/api/plans';
       const method = selectedPlan ? 'PUT' : 'POST';
       const response = await fetch(url, {
@@ -140,8 +144,18 @@ export default function PlansPage() {
       }
       await mutatePlans();
       handleCloseDialog();
+      setSuccessMessage(
+        selectedPlan ? 'Plano atualizado com sucesso!' : 'Plano criado com sucesso!'
+      );
+
+      // Limpar mensagem de sucesso após 5 segundos
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 5000);
     } catch (error: any) {
       setError(error.message);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -158,6 +172,7 @@ export default function PlansPage() {
   const handleDelete = async () => {
     if (!selectedPlan) return;
     try {
+      setIsDeleting(true);
       const response = await fetch(`/api/plans/${selectedPlan.id}`, {
         method: 'DELETE',
       });
@@ -167,8 +182,16 @@ export default function PlansPage() {
       }
       await mutatePlans();
       handleCloseDeleteDialog();
+      setSuccessMessage('Plano excluído com sucesso!');
+
+      // Limpar mensagem de sucesso após 5 segundos
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 5000);
     } catch (error: any) {
       setError(error.message);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -205,6 +228,19 @@ export default function PlansPage() {
           Novo Plano
         </Button>
       </Box>
+
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>
+          {error}
+        </Alert>
+      )}
+
+      {successMessage && (
+        <Alert severity="success" sx={{ mb: 2 }} onClose={() => setSuccessMessage('')}>
+          {successMessage}
+        </Alert>
+      )}
+
       <Paper>
         <TableContainer>
           <Table>
@@ -260,6 +296,7 @@ export default function PlansPage() {
             fullWidth
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            disabled={isSaving}
           />
           <TextField
             margin="normal"
@@ -268,6 +305,7 @@ export default function PlansPage() {
             fullWidth
             value={formData.price}
             onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
+            disabled={isSaving}
           />
           <TextField
             margin="normal"
@@ -276,6 +314,7 @@ export default function PlansPage() {
             fullWidth
             value={formData.includedUnits}
             onChange={(e) => setFormData({ ...formData, includedUnits: Number(e.target.value) })}
+            disabled={isSaving}
           />
           <TextField
             margin="normal"
@@ -284,6 +323,7 @@ export default function PlansPage() {
             fullWidth
             value={formData.maxUsers}
             onChange={(e) => setFormData({ ...formData, maxUsers: Number(e.target.value) })}
+            disabled={isSaving}
           />
           <TextField
             margin="normal"
@@ -297,6 +337,7 @@ export default function PlansPage() {
                 extraUserPrice: e.target.value === '' ? null : Number(e.target.value),
               })
             }
+            disabled={isSaving}
           />
           <TextField
             margin="normal"
@@ -310,6 +351,7 @@ export default function PlansPage() {
                 maxChecklists: e.target.value === '' ? null : Number(e.target.value),
               })
             }
+            disabled={isSaving}
           />
           <TextField
             margin="normal"
@@ -323,6 +365,7 @@ export default function PlansPage() {
                 extraUnitPrice: e.target.value === '' ? null : Number(e.target.value),
               })
             }
+            disabled={isSaving}
           />
           <Box sx={{ mt: 2 }}>
             <label>
@@ -330,6 +373,7 @@ export default function PlansPage() {
                 type="checkbox"
                 checked={formData.isCustom}
                 onChange={(e) => setFormData({ ...formData, isCustom: e.target.checked })}
+                disabled={isSaving}
               />{' '}
               Personalizado
             </label>
@@ -341,20 +385,38 @@ export default function PlansPage() {
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancelar</Button>
-          <Button onClick={handleSubmit} variant="contained" color="primary">
-            Salvar
+          <Button onClick={handleCloseDialog} disabled={isSaving}>
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            variant="contained"
+            color="primary"
+            disabled={isSaving}
+            startIcon={isSaving ? <CircularProgress size={20} color="inherit" /> : undefined}
+          >
+            {isSaving ? 'Salvando...' : 'Salvar'}
           </Button>
         </DialogActions>
       </Dialog>
       {/* Dialog de confirmação de exclusão */}
       <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
         <DialogTitle>Excluir Plano</DialogTitle>
-        <DialogContent>Tem certeza que deseja excluir este plano?</DialogContent>
+        <DialogContent>
+          <Typography>Tem certeza que deseja excluir o plano "{selectedPlan?.name}"?</Typography>
+        </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDeleteDialog}>Cancelar</Button>
-          <Button onClick={handleDelete} color="error" variant="contained">
-            Excluir
+          <Button onClick={handleCloseDeleteDialog} disabled={isDeleting}>
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleDelete}
+            color="error"
+            variant="contained"
+            disabled={isDeleting}
+            startIcon={isDeleting ? <CircularProgress size={20} color="inherit" /> : <DeleteIcon />}
+          >
+            {isDeleting ? 'Excluindo...' : 'Excluir'}
           </Button>
         </DialogActions>
       </Dialog>

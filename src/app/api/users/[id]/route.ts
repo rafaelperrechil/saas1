@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
@@ -7,15 +7,18 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 // GET - Buscar usuário específico
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
+    const params = await context.params;
+    const { id } = params;
+
     const user = await prisma.user.findUnique({
-      where: { id: params.id },
+      where: { id },
       select: {
         id: true,
         name: true,
@@ -39,7 +42,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 }
 
 // PUT - Atualizar usuário
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -47,7 +50,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     }
 
     const data = await request.json();
-    const userId = params.id;
+    const params = await context.params;
+    const { id } = params;
 
     // Validação dos campos obrigatórios
     if (!data.name || !data.email || !data.profileId) {
@@ -58,7 +62,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
     const existingUser = await prisma.user.findFirst({
       where: {
         email: data.email,
-        NOT: { id: userId },
+        NOT: { id },
       },
     });
 
@@ -80,7 +84,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
     // Atualizar usuário
     const user = await prisma.user.update({
-      where: { id: userId },
+      where: { id },
       data: updateData,
       select: {
         id: true,
@@ -101,18 +105,19 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 }
 
 // DELETE - Remover usuário
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
-    const userId = params.id;
+    const params = await context.params;
+    const { id } = params;
 
     // Verificar se é o último administrador
     const user = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { id },
       include: { profile: true },
     });
 
@@ -136,7 +141,7 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
     }
 
     await prisma.user.delete({
-      where: { id: userId },
+      where: { id },
     });
 
     return NextResponse.json({ message: 'Usuário removido com sucesso' });

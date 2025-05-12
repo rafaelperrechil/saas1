@@ -8,6 +8,10 @@
     "login": "Log In",
     "getStarted": "Get Started"
   },
+  "common": {
+    "saving": "Saving...",
+    "save": "Save"
+  },
   "account": {
     "myAccount": "My Account",
     "myPlan": "My Plan",
@@ -31,6 +35,8 @@
       "company": "Company",
       "email": "Email",
       "emailHelp": "Email cannot be changed",
+      "country": "Country",
+      "timezone": "Time Zone",
       "changePassword": "Change Password",
       "currentPassword": "Current Password",
       "newPassword": "New Password",
@@ -323,6 +329,7 @@
     "environments": "Environments",
     "departments": "Departments",
     "settings": "Settings",
+    "reports": "Reports",
     "administrative": {
       "title": "Administrative",
       "users": "Users",

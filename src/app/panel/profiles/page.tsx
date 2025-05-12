@@ -41,8 +41,12 @@ export default function ProfilesPage() {
   const [editingProfile, setEditingProfile] = useState<Profile | null>(null);
   const [profileName, setProfileName] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [profileToDelete, setProfileToDelete] = useState<Profile | null>(null);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -100,6 +104,7 @@ export default function ProfilesPage() {
         return;
       }
 
+      setIsSaving(true);
       const url = editingProfile ? `/api/profiles/${editingProfile.id}` : '/api/profiles';
 
       const response = await fetch(url, {
@@ -115,21 +120,41 @@ export default function ProfilesPage() {
         throw new Error(data.error || 'Erro ao salvar perfil');
       }
 
-      setSuccess(editingProfile ? 'Perfil atualizado com sucesso!' : 'Perfil criado com sucesso!');
+      setSuccessMessage(
+        editingProfile ? 'Perfil atualizado com sucesso!' : 'Perfil criado com sucesso!'
+      );
       handleCloseDialog();
       await loadProfiles();
+
+      // Limpar mensagem de sucesso após 5 segundos
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 5000);
     } catch (error: any) {
       setError(error.message);
+    } finally {
+      setIsSaving(false);
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!window.confirm('Tem certeza que deseja excluir este perfil?')) {
-      return;
-    }
+  const handleOpenDeleteDialog = (profile: Profile) => {
+    setProfileToDelete(profile);
+    setOpenDeleteDialog(true);
+    setError('');
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+    setProfileToDelete(null);
+    setError('');
+  };
+
+  const handleDelete = async () => {
+    if (!profileToDelete) return;
 
     try {
-      const response = await fetch(`/api/profiles/${id}`, {
+      setIsDeleting(profileToDelete.id);
+      const response = await fetch(`/api/profiles/${profileToDelete.id}`, {
         method: 'DELETE',
       });
 
@@ -138,10 +163,18 @@ export default function ProfilesPage() {
         throw new Error(data.error || 'Erro ao excluir perfil');
       }
 
-      setSuccess('Perfil excluído com sucesso!');
+      setSuccessMessage('Perfil excluído com sucesso!');
+      handleCloseDeleteDialog();
       await loadProfiles();
+
+      // Limpar mensagem de sucesso após 5 segundos
+      setTimeout(() => {
+        setSuccessMessage('');
+      }, 5000);
     } catch (error: any) {
       setError(error.message);
+    } finally {
+      setIsDeleting(null);
     }
   };
 
@@ -176,9 +209,9 @@ export default function ProfilesPage() {
         </Alert>
       )}
 
-      {success && (
-        <Alert severity="success" sx={{ mb: 2 }} onClose={() => setSuccess('')}>
-          {success}
+      {successMessage && (
+        <Alert severity="success" sx={{ mb: 2 }} onClose={() => setSuccessMessage('')}>
+          {successMessage}
         </Alert>
       )}
 
@@ -198,7 +231,7 @@ export default function ProfilesPage() {
                   <IconButton color="primary" onClick={() => handleOpenDialog(profile)}>
                     <EditIcon />
                   </IconButton>
-                  <IconButton color="error" onClick={() => handleDelete(profile.id)}>
+                  <IconButton color="error" onClick={() => handleOpenDeleteDialog(profile)}>
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>
@@ -221,12 +254,44 @@ export default function ProfilesPage() {
             onChange={(e) => setProfileName(e.target.value)}
             error={!!error}
             helperText={error}
+            disabled={isSaving}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancelar</Button>
-          <Button onClick={handleSubmit} variant="contained">
-            Salvar
+          <Button onClick={handleCloseDialog} disabled={isSaving}>
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            variant="contained"
+            color="primary"
+            disabled={isSaving}
+            startIcon={isSaving ? <CircularProgress size={20} color="inherit" /> : undefined}
+          >
+            {isSaving ? 'Salvando...' : 'Salvar'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
+        <DialogTitle>Excluir Perfil</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Tem certeza que deseja excluir o perfil "{profileToDelete?.name}"?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteDialog} disabled={isDeleting !== null}>
+            Cancelar
+          </Button>
+          <Button
+            onClick={handleDelete}
+            variant="contained"
+            color="error"
+            disabled={isDeleting !== null}
+            startIcon={isDeleting ? <CircularProgress size={20} color="inherit" /> : <DeleteIcon />}
+          >
+            {isDeleting ? 'Excluindo...' : 'Excluir'}
           </Button>
         </DialogActions>
       </Dialog>

@@ -32,6 +32,8 @@
       "phone": "Telefone",
       "email": "Email",
       "emailHelp": "O email não pode ser alterado",
+      "country": "País",
+      "timezone": "Fuso Horário",
       "changePassword": "Alterar Senha",
       "currentPassword": "Senha Atual",
       "newPassword": "Nova Senha",
@@ -332,6 +334,7 @@
     "environments": "Ambientes",
     "departments": "Departamentos",
     "settings": "Configurações",
+    "reports": "Relatórios",
     "administrative": {
       "title": "Administrativo",
       "users": "Usuários",
@@ -339,5 +342,9 @@
       "plans": "Planos",
       "history": "Histórico"
     }
+  },
+  "common": {
+    "saving": "Salvando...",
+    "save": "Salvar"
   }
 }
