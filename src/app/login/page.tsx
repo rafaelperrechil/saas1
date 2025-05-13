@@ -54,7 +54,7 @@ export default function LoginPage() {
     }
   };
 
-  if (status === 'loading' || status === 'authenticated') {
+  if (status === 'loading') {
     return (
       <Box
         sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
@@ -108,7 +108,7 @@ export default function LoginPage() {
             </Alert>
           )}
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} role="form">
             <TextField
               margin="normal"
               required
@@ -120,6 +120,7 @@ export default function LoginPage() {
               autoFocus
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              inputProps={{ 'data-testid': 'email', tabIndex: 1 }}
             />
             <TextField
               margin="normal"
@@ -132,6 +133,7 @@ export default function LoginPage() {
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              inputProps={{ 'data-testid': 'password', tabIndex: 2 }}
             />
             <Button
               type="submit"
@@ -139,13 +141,14 @@ export default function LoginPage() {
               variant="contained"
               sx={{ mt: 3, mb: 2, p: 2 }}
               disabled={isLoading}
+              tabIndex={3}
             >
               {isLoading ? <CircularProgress size={24} /> : t('auth.login.submit')}
             </Button>
           </form>
 
           <Box sx={{ textAlign: 'center', mt: 2 }}>
-            <Link href="/forgot-password">
+            <Link href="/forgot-password" tabIndex={4}>
               <Typography variant="body2" color="primary" sx={{ cursor: 'pointer' }}>
                 {t('auth.login.forgotPassword')}
               </Typography>
@@ -155,7 +158,7 @@ export default function LoginPage() {
           <Box sx={{ textAlign: 'center', mt: 4 }}>
             <Typography variant="body2" color="text.secondary">
               {t('auth.login.noAccount')}{' '}
-              <Link href="/register">
+              <Link href="/register" tabIndex={5}>
                 <Typography
                   component="span"
                   variant="body2"

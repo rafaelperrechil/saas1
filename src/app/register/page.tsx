@@ -145,7 +145,7 @@ export default function RegisterPage() {
             </Alert>
           )}
 
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} role="form">
             <TextField
               margin="normal"
               required
