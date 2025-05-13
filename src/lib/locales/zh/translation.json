@@ -274,13 +274,23 @@
       "employeesCount": "员工数量",
       "country": "国家",
       "city": "城市",
-      "niche": "市场细分"
+      "niche": "市场细分",
+      "errors": {
+        "nameRequired": "组织名称为必填项",
+        "employeesRequired": "员工数量为必填项",
+        "countryRequired": "国家为必填项",
+        "cityRequired": "城市为必填项",
+        "nicheRequired": "市场细分为必填项",
+        "loadingNiches": "加载市场细分时出错"
+      },
+      "readOnlyMessage": "由于已存在已完成向导的分支，组织数据无法更改"
     },
     "branch": {
       "title": "主要分支",
       "subtitle": "设置您的第一个分支",
       "name": "分支名称",
-      "description": "这将是您的主要分支"
+      "description": "这将是您的主要分支",
+      "select": "选择分支"
     },
     "departments": {
       "title": "部门",

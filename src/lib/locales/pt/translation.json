@@ -263,7 +263,7 @@
       "description": "Configure sua organização e comece a usar o QualiSight em minutos"
     },
     "organization": {
-      "title": "Dados da Organização",
+      "title": "Organização",
       "subtitle": "Conte-nos sobre sua empresa",
       "name": "Nome da Organização",
       "employeesCount": "Número de Funcionários",
@@ -277,13 +277,15 @@
         "cityRequired": "A cidade é obrigatória",
         "nicheRequired": "O segmento de mercado é obrigatório",
         "loadingNiches": "Erro ao carregar os segmentos de mercado"
-      }
+      },
+      "readOnlyMessage": "Os dados da organização não podem ser alterados pois já existe uma filial com wizard completo"
     },
     "branch": {
-      "title": "Unidade Principal",
-      "subtitle": "Configure sua primeira unidade",
+      "title": "Unidade",
+      "subtitle": "Configure sua unidade",
       "name": "Nome da Unidade",
-      "description": "Esta será sua unidade principal"
+      "description": "Esta será sua unidade principal",
+      "select": "Selecionar filial"
     },
     "departments": {
       "title": "Departamentos",

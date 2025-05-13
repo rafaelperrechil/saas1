@@ -1,26 +1,32 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Container, Box, Typography } from '@mui/material';
+import { Container, Box } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import OnboardingWizard from '@/components/wizard/OnboardingWizard';
 import { useSession } from 'next-auth/react';
+import LoadingScreen from '@/components/common/LoadingScreen';
 
 export default function WizardPage() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
-    // Se o usuário já completou o wizard, redireciona para o dashboard
-    if (session?.user?.wizardCompleted) {
+    // Se o usuário tem uma branch e ela já completou o wizard, redireciona para o dashboard
+    if (session?.user?.branch?.wizardCompleted) {
       router.push('/panel/dashboard');
     }
   }, [session, router]);
 
+  // Mostra loading enquanto verifica a sessão
+  if (status === 'loading' || session?.user?.branch?.wizardCompleted) {
+    return <LoadingScreen />;
+  }
+
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        // minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
         bgcolor: '#f8f9fa',

@@ -2,8 +2,12 @@
 import { AppBar, Box, Toolbar } from '@mui/material';
 import LanguageSelector from '@/components/LanguageSelector';
 import UserMenu from '@/components/UserMenu';
+import BranchSelector from '@/components/BranchSelector';
+interface PanelHeaderProps {
+  open?: boolean;
+}
 
-export default function PanelHeader() {
+export default function PanelHeader({ open }: PanelHeaderProps) {
   return (
     <AppBar
       position="fixed"
@@ -17,7 +21,8 @@ export default function PanelHeader() {
     >
       <Toolbar sx={{ justifyContent: 'flex-end', gap: 2, minHeight: '64px' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <UserMenu /> 
+          <BranchSelector />
+          <UserMenu />
           <LanguageSelector />
         </Box>
       </Toolbar>

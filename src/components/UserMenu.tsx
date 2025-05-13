@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { IconButton, Menu, MenuItem, Avatar } from '@mui/material';
 
 export default function UserMenu() {
@@ -44,12 +45,7 @@ export default function UserMenu() {
         <MenuItem component={Link} href="/panel/dashboard" onClick={handleMenuClose}>
           {t('account.goToPanel')}
         </MenuItem>
-        <MenuItem
-          onClick={() => {
-            handleMenuClose();
-            signOut();
-          }}
-        >
+        <MenuItem component={Link} href="/logout" onClick={handleMenuClose}>
           {t('account.logout')}
         </MenuItem>
       </Menu>

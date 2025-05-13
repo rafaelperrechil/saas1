@@ -14,7 +14,7 @@ export default function NotFound() {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          router.push('/');
+          router.push('/home');
           return 0;
         }
         return prev - 1;
@@ -28,34 +28,26 @@ export default function NotFound() {
     <Container maxWidth="sm">
       <Box
         sx={{
-          minHeight: '100vh',
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
+          margin: '200px 0',
         }}
       >
-        <Paper
-          elevation={3}
-          sx={{
-            p: 4,
-            textAlign: 'center',
-            width: '100%',
-          }}
-        >
-          <ErrorOutlineIcon sx={{ fontSize: 64, color: 'error.main', mb: 2 }} />
-          <Typography variant="h4" gutterBottom>
-            Página não encontrada
-          </Typography>
-          <Typography variant="body1" color="text.secondary" paragraph>
-            A página que você está procurando não existe ou foi movida.
-          </Typography>
-          <Typography variant="body2" color="primary" sx={{ mb: 3 }}>
-            Você será redirecionado em {countdown} segundos...
-          </Typography>
-          <Box sx={{ mb: 3 }}>
-            <CircularProgress variant="determinate" value={(countdown / 5) * 100} size={40} />
-          </Box>
-        </Paper>
+        {/* <ErrorOutlineIcon sx={{ fontSize: 64, color: 'error.main', mb: 2 }} /> */}
+        <Typography variant="h4" gutterBottom>
+          Página não encontrada :(
+        </Typography>
+        <Typography variant="body1" color="text.secondary" paragraph>
+          A página que você está procurando não existe ou foi movida.
+        </Typography>
+        <Typography variant="body2" color="primary" sx={{ mb: 3 }}>
+          Você será redirecionado em {countdown} segundos...
+        </Typography>
+        <Box sx={{ mb: 3 }}>
+          <CircularProgress variant="determinate" value={(countdown / 5) * 100} size={40} />
+        </Box>
       </Box>
     </Container>
   );

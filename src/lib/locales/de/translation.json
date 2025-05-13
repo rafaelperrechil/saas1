@@ -273,13 +273,23 @@
       "employeesCount": "Anzahl der Mitarbeiter",
       "country": "Land",
       "city": "Stadt",
-      "niche": "Marktsegment"
+      "niche": "Marktsegment",
+      "errors": {
+        "nameRequired": "Der Name der Organisation ist erforderlich",
+        "employeesRequired": "Die Anzahl der Mitarbeiter ist erforderlich",
+        "countryRequired": "Das Land ist erforderlich",
+        "cityRequired": "Die Stadt ist erforderlich",
+        "nicheRequired": "Das Marktsegment ist erforderlich",
+        "loadingNiches": "Fehler beim Laden der Marktsegmente"
+      },
+      "readOnlyMessage": "Die Organisationsdaten können nicht geändert werden, da bereits eine Filiale mit abgeschlossenem Assistenten existiert"
     },
     "branch": {
       "title": "Hauptniederlassung",
       "subtitle": "Richten Sie Ihre erste Niederlassung ein",
       "name": "Name der Niederlassung",
-      "description": "Dies wird Ihre Hauptniederlassung sein"
+      "description": "Dies wird Ihre Hauptniederlassung sein",
+      "select": "Filiale auswählen"
     },
     "departments": {
       "title": "Abteilungen",

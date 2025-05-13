@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Box, Stepper, Step, StepLabel } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Box, Stepper, Step, StepLabel, useMediaQuery, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import WelcomeStep from './steps/WelcomeStep';
 import OrganizationStep from './steps/OrganizationStep';
@@ -16,6 +16,8 @@ interface OnboardingWizardProps {
 
 export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const steps = [
     t('wizard.welcome.title'),
     t('wizard.organization.title'),
@@ -27,6 +29,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
   const [activeStep, setActiveStep] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [hasCompletedWizard, setHasCompletedWizard] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -49,6 +52,33 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
     }>,
     environments: [] as Array<{ name: string; position: number }>,
   });
+
+  useEffect(() => {
+    const fetchOrganizationData = async () => {
+      try {
+        const response = await fetch('/api/organization/completed-wizard');
+        const data = await response.json();
+
+        if (data.hasCompletedWizard) {
+          setHasCompletedWizard(true);
+          setFormData((prev) => ({
+            ...prev,
+            organization: {
+              name: data.organizationData.name,
+              employeesCount: data.organizationData.employeesCount || '',
+              country: data.organizationData.country || '',
+              city: data.organizationData.city || '',
+              nicheId: data.organizationData.nicheId || '',
+            },
+          }));
+        }
+      } catch (error) {
+        console.error('Erro ao buscar dados da organização:', error);
+      }
+    };
+
+    fetchOrganizationData();
+  }, []);
 
   const handleNext = async () => {
     if (activeStep === steps.length - 1) {
@@ -87,6 +117,11 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
   };
 
   const updateFormData = (section: string, data: any) => {
+    // Se for a seção da organização e já existe wizard completo, não permite atualização
+    if (section === 'organization' && hasCompletedWizard) {
+      return;
+    }
+
     setFormData((prev) => ({
       ...prev,
       [section]: data,
@@ -96,7 +131,25 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
   return (
     <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ p: 3, borderBottom: '1px solid #eee' }}>
-        <Stepper activeStep={activeStep} alternativeLabel>
+        <Stepper
+          activeStep={activeStep}
+          orientation={isMobile ? 'vertical' : 'horizontal'}
+          alternativeLabel={!isMobile}
+          sx={{
+            '& .MuiStepLabel-root': isMobile
+              ? {
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  gap: 1,
+                }
+              : {},
+            '& .MuiStepLabel-labelContainer': isMobile
+              ? {
+                  m: 0,
+                }
+              : {},
+          }}
+        >
           {steps.map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
@@ -117,6 +170,7 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
                 onChange={(data) => updateFormData('organization', data)}
                 onBack={handleBack}
                 onNext={handleNext}
+                readOnly={hasCompletedWizard}
               />
             )}
             {activeStep === 2 && (

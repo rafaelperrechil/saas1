@@ -273,13 +273,23 @@
       "employeesCount": "Nombre d'Employés",
       "country": "Pays",
       "city": "Ville",
-      "niche": "Segment de Marché"
+      "niche": "Segment de Marché",
+      "errors": {
+        "nameRequired": "Le nom de l'organisation est obligatoire",
+        "employeesRequired": "Le nombre d'employés est obligatoire",
+        "countryRequired": "Le pays est obligatoire",
+        "cityRequired": "La ville est obligatoire",
+        "nicheRequired": "Le segment de marché est obligatoire",
+        "loadingNiches": "Erreur lors du chargement des segments de marché"
+      },
+      "readOnlyMessage": "Les données de l'organisation ne peuvent pas être modifiées car il existe déjà une filiale avec l'assistant complété"
     },
     "branch": {
       "title": "Unité Principale",
       "subtitle": "Configurez votre première unité",
       "name": "Nom de l'Unité",
-      "description": "Ce sera votre unité principale"
+      "description": "Ce sera votre unité principale",
+      "select": "Sélectionner une filiale"
     },
     "departments": {
       "title": "Départements",

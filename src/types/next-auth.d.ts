@@ -1,21 +1,29 @@
 import 'next-auth';
-import { Profile } from '@prisma/client';
+import { Profile, Branch } from '@prisma/client';
 import { DefaultSession } from 'next-auth';
+
+interface Branch {
+  id: string;
+  name: string;
+  wizardCompleted: boolean;
+}
 
 declare module 'next-auth' {
   interface Session {
     user: {
       id: string;
-      email: string;
       name: string;
-      wizardCompleted: boolean;
+      email: string;
       profile: {
         name: string;
         id: string;
-        createdAt: Date;
-        updatedAt: Date;
       };
-    } & DefaultSession['user'];
+      branch?: {
+        id: string;
+        name: string;
+        wizardCompleted: boolean;
+      };
+    };
   }
 
   interface User {
@@ -23,11 +31,13 @@ declare module 'next-auth' {
     email: string;
     name: string;
     profile: Profile;
+    branch?: Branch | null;
   }
 }
 
 declare module 'next-auth/jwt' {
   interface JWT {
     profile: Profile;
+    branch?: Branch;
   }
 }

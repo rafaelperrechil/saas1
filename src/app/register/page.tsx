@@ -1,22 +1,40 @@
 'use client';
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Box, TextField, Button, Typography, Paper, CircularProgress, Alert } from '@mui/material';
 import Link from 'next/link';
 import Image from 'next/image';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { useTranslation } from 'react-i18next';
 
 export default function RegisterPage() {
   const router = useRouter();
   const { t } = useTranslation();
+  const { data: session, status } = useSession();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      router.replace('/panel/dashboard');
+    }
+  }, [status, router]);
+
+  // Se estiver carregando a sessão ou já estiver autenticado, não mostra o formulário
+  if (status === 'loading' || status === 'authenticated') {
+    return (
+      <Box
+        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

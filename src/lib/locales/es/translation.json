@@ -273,13 +273,23 @@
       "employeesCount": "Número de Empleados",
       "country": "País",
       "city": "Ciudad",
-      "niche": "Segmento de Mercado"
+      "niche": "Segmento de Mercado",
+      "errors": {
+        "nameRequired": "El nombre de la organización es obligatorio",
+        "employeesRequired": "El número de empleados es obligatorio",
+        "countryRequired": "El país es obligatorio",
+        "cityRequired": "La ciudad es obligatoria",
+        "nicheRequired": "El segmento de mercado es obligatorio",
+        "loadingNiches": "Error al cargar los segmentos de mercado"
+      },
+      "readOnlyMessage": "Los datos de la organización no pueden ser modificados porque ya existe una sucursal con el asistente completado"
     },
     "branch": {
       "title": "Unidad Principal",
       "subtitle": "Configura tu primera unidad",
       "name": "Nombre de la Unidad",
-      "description": "Esta será tu unidad principal"
+      "description": "Esta será tu unidad principal",
+      "select": "Seleccionar sucursal"
     },
     "departments": {
       "title": "Departamentos",

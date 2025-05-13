@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -36,12 +36,14 @@ import {
   Assessment as AssessmentIcon,
 } from '@mui/icons-material';
 import PanelHeader from '@/components/panel/Header';
+import LoadingScreen from '@/components/common/LoadingScreen';
 
 const drawerWidth = 240;
 const collapsedWidth = 60;
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
   const { status } = useSession();
   const [open, setOpen] = useState(false);
   const [openInspections, setOpenInspections] = useState(false);
@@ -49,6 +51,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const [openAdmin, setOpenAdmin] = useState(false);
   const theme = useTheme();
   const { t } = useTranslation();
+
+  const isWizardPage = pathname === '/panel/wizard';
 
   const handleDrawerToggle = () => {
     if (open) {
@@ -87,18 +91,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   };
 
   if (status === 'loading' || status === 'unauthenticated') {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
+    return <LoadingScreen />;
+  }
+
+  if (isWizardPage) {
+    return children;
   }
 
   return (

@@ -35,6 +35,7 @@ export async function POST(req: Request) {
         data: {
           name: data.branch.name,
           organizationId: organization.id,
+          wizardCompleted: true,
         },
       });
 
@@ -79,12 +80,6 @@ export async function POST(req: Request) {
           });
         })
       );
-
-      // 5. Atualizar o status do wizard do usuário
-      await tx.user.update({
-        where: { id: session.user.id },
-        data: { wizardCompleted: true },
-      });
 
       return {
         organization,

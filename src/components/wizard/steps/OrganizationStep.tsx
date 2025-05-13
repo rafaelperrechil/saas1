@@ -23,6 +23,7 @@ interface OrganizationStepProps {
   onChange: (data: OrganizationStepProps['data']) => void;
   onBack: () => void;
   onNext: () => void;
+  readOnly?: boolean;
 }
 
 export default function OrganizationStep({
@@ -30,6 +31,7 @@ export default function OrganizationStep({
   onChange,
   onBack,
   onNext,
+  readOnly = false,
 }: OrganizationStepProps) {
   const { t } = useTranslation();
   const [niches, setNiches] = useState<Niche[]>([]);
@@ -129,6 +131,7 @@ export default function OrganizationStep({
             value={data.name}
             onChange={(e) => handleChange('name', e.target.value)}
             required
+            disabled={readOnly}
           />
         </Grid>
 
@@ -140,6 +143,7 @@ export default function OrganizationStep({
             value={data.employeesCount}
             onChange={(e) => handleChange('employeesCount', e.target.value)}
             required
+            disabled={readOnly}
           />
         </Grid>
 
@@ -151,6 +155,7 @@ export default function OrganizationStep({
             renderInput={(params) => (
               <TextField {...params} label={t('wizard.organization.country')} required />
             )}
+            disabled={readOnly}
           />
         </Grid>
 
@@ -162,6 +167,7 @@ export default function OrganizationStep({
             renderInput={(params) => (
               <TextField {...params} label={t('wizard.organization.city')} required />
             )}
+            disabled={readOnly}
           />
         </Grid>
 
@@ -175,9 +181,16 @@ export default function OrganizationStep({
             renderInput={(params) => (
               <TextField {...params} label={t('wizard.organization.niche')} required />
             )}
+            disabled={readOnly}
           />
         </Grid>
       </Grid>
+
+      {/* {readOnly && (
+        <Typography variant="body2" color="info" sx={{ mt: 2 }}>
+          {t('wizard.organization.readOnlyMessage')}
+        </Typography>
+      )} */}
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
         <Button variant="outlined" onClick={onBack} startIcon={<ArrowBack />}>

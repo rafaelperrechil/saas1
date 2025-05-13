@@ -1,11 +1,14 @@
 {
+  "branch": {
+    "select": "Select branch"
+  },
   "nav": {
     "home": "Home",
     "products": "Products",
     "solutions": "Solutions",
     "help": "Help Center",
     "pricing": "Pricing",
-    "login": "Log In",
+    "login": "Login",
     "getStarted": "Get Started"
   },
   "common": {
@@ -272,13 +275,23 @@
       "employeesCount": "Number of Employees",
       "country": "Country",
       "city": "City",
-      "niche": "Market Segment"
+      "niche": "Market Segment",
+      "errors": {
+        "nameRequired": "Organization name is required",
+        "employeesRequired": "Number of employees is required",
+        "countryRequired": "Country is required",
+        "cityRequired": "City is required",
+        "nicheRequired": "Market segment is required",
+        "loadingNiches": "Error loading market segments"
+      },
+      "readOnlyMessage": "Organization data cannot be changed because there is already a branch with completed wizard"
     },
     "branch": {
       "title": "Main Branch",
       "subtitle": "Set up your first branch",
       "name": "Branch Name",
-      "description": "This will be your main branch"
+      "description": "This will be your main branch",
+      "select": "Select branch"
     },
     "departments": {
       "title": "Departments",
