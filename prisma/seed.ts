@@ -12,9 +12,10 @@ async function main() {
   await prisma.department.deleteMany();
   await prisma.environment.deleteMany();
   await prisma.loginLog.deleteMany();
+  await prisma.branch.deleteMany();
+  await prisma.organization.deleteMany();
   await prisma.user.deleteMany();
   await prisma.profile.deleteMany();
-  await prisma.organization.deleteMany();
   await prisma.niche.deleteMany();
   await prisma.plan.deleteMany();
 
@@ -39,7 +40,7 @@ async function main() {
   console.log('Criando usuário...');
   const hashedPassword = await bcrypt.hash('123123', 10);
 
-  await prisma.user.create({
+  const user = await prisma.user.create({
     data: {
       email: 'rafaelperrechil@hotmail.com',
       name: 'Rafael Perrechil',
@@ -48,7 +49,152 @@ async function main() {
     },
   });
 
-  console.log('Usuário criado com sucesso!');
+  
+  // Criar usuário Bruno
+  console.log('Criando usuário Bruno...');
+  const hashedPasswordBruno = await bcrypt.hash('123123', 10);
+  const brunoUser = await prisma.user.create({
+    data: {
+      email: 'bruno@bol.com',
+      name: 'Bruno',
+      password: hashedPasswordBruno,
+      profileId: userProfile.id,
+    },
+  });
+
+  console.log('Usuáriso criados com sucesso!');
+
+
+  // Criar nichos
+  console.log('Criando nichos...');
+  const niches = [
+    { name: 'Indústria Alimentícia', description: 'Empresas do setor alimentício' },
+    { name: 'Indústria Farmacêutica', description: 'Empresas do setor farmacêutico' },
+    { name: 'Indústria Automotiva', description: 'Empresas do setor automotivo' },
+    { name: 'Construção Civil', description: 'Empresas do setor de construção' },
+    { name: 'Saúde', description: 'Empresas do setor de saúde' },
+    { name: 'Educação', description: 'Empresas do setor educacional' },
+    { name: 'Varejo', description: 'Empresas do setor varejista' },
+    { name: 'Logística', description: 'Empresas do setor logístico' },
+    { name: 'Tecnologia', description: 'Empresas do setor de tecnologia' },
+    { name: 'Serviços Financeiros', description: 'Empresas do setor financeiro' },
+    { name: 'Agronegócio', description: 'Empresas do setor agrícola' },
+    { name: 'Hotelaria e Turismo', description: 'Empresas do setor hoteleiro e turístico' },
+    { name: 'Energia', description: 'Empresas do setor energético' },
+    { name: 'Telecomunicações', description: 'Empresas do setor de telecomunicações' },
+    { name: 'Mineração', description: 'Empresas do setor de mineração' },
+  ];
+
+  for (const niche of niches) {
+    await prisma.niche.upsert({
+      where: { name: niche.name },
+      update: { description: niche.description },
+      create: niche,
+    });
+  }
+  console.log('Nichos criados com sucesso!');
+
+  // Criar organização
+  console.log('Criando organização...');
+  const technologyNiche = await prisma.niche.findFirst({
+    where: {
+      name: 'Tecnologia'
+    }
+  });
+
+  const organization = await prisma.organization.create({
+    data: {
+      name: 'DEV House',
+      employeesCount: 1,
+      country: 'Brasil',
+      city: 'São Paulo',
+      niche: {
+        connect: {
+          id: technologyNiche.id
+        }
+      },
+      users: {
+        connect: {
+          id: user.id
+        }
+      }
+    }
+  });
+  console.log('Organização criada com sucesso!');
+
+  // Atualizar usuários com a organização
+  console.log('Atualizando usuários com a organização...');
+  await prisma.user.update({
+    where: { email: 'rafaelperrechil@hotmail.com' },
+    data: {
+      organizationId: organization.id
+    }
+  });
+
+  await prisma.user.update({
+    where: { email: 'bruno@bol.com' },
+    data: {
+      organizationId: organization.id
+    }
+  });
+  console.log('Usuários atualizados com sucesso!');
+
+  // Criar filial
+  console.log('Criando filial...');
+  const branch = await prisma.branch.create({
+    data: {
+      name: 'Ilhabela',
+      organization: {
+        connect: {
+          id: organization.id
+        }
+      }
+    }
+  });
+  console.log('Filial criada com sucesso!');
+
+
+
+    
+  // Criar departamento
+  console.log('Criando departamento...');
+  const department = await prisma.department.create({
+    data: {
+      name: 'TI',
+      branch: {
+        connect: {
+          id: branch.id
+        }
+      },
+      responsibles: {
+        create: {
+          user: {
+            connect: {
+              id: brunoUser.id
+            }
+          }
+        }
+      }
+    }
+  });
+  console.log('Departamento criado com sucesso!');
+
+  // Criar ambientes
+  console.log('Criando ambientes...');
+  const environments = ['Sala', 'Quintal'];
+  for (const envName of environments) {
+    await prisma.environment.create({
+      data: {
+        name: envName,
+        branch: {
+          connect: {
+            id: branch.id
+          }
+        }
+      }
+    });
+  }
+  console.log('Ambientes criados com sucesso!');
 
   // Criar planos
   console.log('Criando planos...');
@@ -102,34 +248,6 @@ async function main() {
   }
 
   console.log('Planos criados com sucesso!');
-
-  const niches = [
-    { name: 'Indústria Alimentícia', description: 'Empresas do setor alimentício' },
-    { name: 'Indústria Farmacêutica', description: 'Empresas do setor farmacêutico' },
-    { name: 'Indústria Automotiva', description: 'Empresas do setor automotivo' },
-    { name: 'Construção Civil', description: 'Empresas do setor de construção' },
-    { name: 'Saúde', description: 'Empresas do setor de saúde' },
-    { name: 'Educação', description: 'Empresas do setor educacional' },
-    { name: 'Varejo', description: 'Empresas do setor varejista' },
-    { name: 'Logística', description: 'Empresas do setor logístico' },
-    { name: 'Tecnologia', description: 'Empresas do setor de tecnologia' },
-    { name: 'Serviços Financeiros', description: 'Empresas do setor financeiro' },
-    { name: 'Agronegócio', description: 'Empresas do setor agrícola' },
-    { name: 'Hotelaria e Turismo', description: 'Empresas do setor hoteleiro e turístico' },
-    { name: 'Energia', description: 'Empresas do setor energético' },
-    { name: 'Telecomunicações', description: 'Empresas do setor de telecomunicações' },
-    { name: 'Mineração', description: 'Empresas do setor de mineração' },
-  ];
-
-  console.log('Criando nichos...');
-  for (const niche of niches) {
-    await prisma.niche.upsert({
-      where: { name: niche.name },
-      update: { description: niche.description },
-      create: niche,
-    });
-  }
-  console.log('Nichos criados com sucesso!');
 
   console.log('Seed concluído com sucesso!');
 }

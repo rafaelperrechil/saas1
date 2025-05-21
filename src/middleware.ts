@@ -27,7 +27,7 @@ export async function middleware(request: NextRequest) {
 
   // Se não estiver autenticado, redireciona para o login
   if (!token) {
-    return NextResponse.redirect(new URL('/auth/login', request.url));
+    return NextResponse.redirect(new URL('/login', request.url));
   }
 
   // Se estiver na página do wizard, verifica se já completou
@@ -129,8 +129,5 @@ export const config = {
 
     // APIs protegidas (excluindo auth, verificação de email e plans)
     '/api/((?!auth|check-email|plans).*)',
-
-    // Outras rotas protegidas específicas
-    '/pricing',
   ],
 };
