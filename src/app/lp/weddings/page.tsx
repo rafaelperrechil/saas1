@@ -1,3 +1,5 @@
+'use client';
+
 import { Box } from '@mui/material';
 import HeroSection from '@/components/lp/weddings/HeroSection';
 import WhyUseSection from '@/components/lp/weddings/WhyUseSection';
@@ -7,64 +9,74 @@ import TestimonialSection from '@/components/lp/weddings/TestimonialSection';
 import PricingPlans from '@/components/PricingPlans';
 import FinalCTASection from '@/components/lp/weddings/FinalCTASection';
 import Footer from '@/components/lp/weddings/Footer';
-import prisma from '@/lib/prisma';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { useSession } from 'next-auth/react';
+import { planService } from '@/services';
+import { Plan } from '@/services/api.types';
+import { useEffect, useState } from 'react';
+import { CircularProgress, Typography } from '@mui/material';
 
-export default async function WeddingsLandingPage() {
-  // Buscar a sessão do usuário
-  const session = await getServerSession(authOptions);
-  const userId = session?.user?.id;
+type PlanWithAction = Plan & { action: 'current' | 'upgrade' };
 
-  // Buscar todos os planos
-  const plansRaw = await prisma.plan.findMany({
-    select: {
-      id: true,
-      name: true,
-      price: true,
-      includedUnits: true,
-      maxUsers: true,
-      maxChecklists: true,
-      extraUserPrice: true,
-      extraUnitPrice: true,
-      isCustom: true,
-    },
-    orderBy: { price: 'asc' },
-  });
+export default function WeddingsLandingPage() {
+  const { data: session } = useSession();
+  const [plans, setPlans] = useState<PlanWithAction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Converter os valores Decimal para number
-  let plans = plansRaw.map((plan) => ({
-    ...plan,
-    price: plan.price.toNumber(),
-    extraUserPrice: plan.extraUserPrice?.toNumber() ?? null,
-    extraUnitPrice: plan.extraUnitPrice?.toNumber() ?? null,
-  }));
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        const response = await planService.getPlans();
+        if (response.error) {
+          throw new Error(response.error);
+        }
 
-  // Se o usuário estiver logado, verificar se tem uma subscription ativa
-  if (userId) {
-    const activeSubscription = await prisma.subscription.findFirst({
-      where: {
-        userId: userId,
-        status: 'ACTIVE',
-      },
-      select: {
-        planId: true,
-      },
-    });
+        let plansData: PlanWithAction[] = (response.data || []).map((plan) => ({
+          ...plan,
+          action: 'upgrade' as const,
+        }));
 
-    // Se o usuário tiver uma subscription ativa, marcar os planos adequadamente
-    if (activeSubscription) {
-      plans = plans.map((plan) => ({
-        ...plan,
-        action: plan.id === activeSubscription.planId ? 'current' : 'upgrade',
-      }));
-    } else {
-      // Se não tiver subscription ativa, todos os planos são para upgrade
-      plans = plans.map((plan) => ({
-        ...plan,
-        action: 'upgrade',
-      }));
-    }
+        // Se o usuário estiver logado, verificar se tem uma subscription ativa
+        if (session?.user?.id) {
+          const currentPlanResponse = await planService.getCurrentPlan();
+          const currentPlanId = currentPlanResponse.data?.id;
+
+          // Se o usuário tiver uma subscription ativa, marcar os planos adequadamente
+          if (currentPlanId) {
+            plansData = plansData.map((plan) => ({
+              ...plan,
+              action: plan.id === currentPlanId ? 'current' : 'upgrade',
+            }));
+          }
+        }
+
+        setPlans(plansData);
+      } catch (error: any) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPlans();
+  }, [session]);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '300px' }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ p: 3 }}>
+        <Typography color="error">Erro ao carregar planos: {error}</Typography>
+      </Box>
+    );
   }
 
   return (
@@ -74,7 +86,7 @@ export default async function WeddingsLandingPage() {
       <FeaturesSection />
       <HowItWorksSection />
       <TestimonialSection />
-      <PricingPlans plans={plans} userIsLoggedIn={!!userId} />
+      <PricingPlans plans={plans} userIsLoggedIn={!!session?.user} />
       <FinalCTASection />
       <Footer />
     </Box>

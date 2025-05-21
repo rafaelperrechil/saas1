@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { useState } from 'react';
-import useSWR, { mutate as mutateGlobal } from 'swr';
+import useSWR from 'swr';
 import {
   Box,
   Container,
@@ -33,21 +33,8 @@ import { ptBR } from 'date-fns/locale';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
-interface Profile {
-  id: string;
-  name: string;
-}
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  profile: Profile;
-  createdAt: string;
-}
+import { userService } from '@/services';
+import { User, Profile } from '@/services/api.types';
 
 interface UserFormData {
   id?: string;
@@ -57,13 +44,32 @@ interface UserFormData {
   profileId: string;
 }
 
+const fetcher = async (): Promise<User[]> => {
+  const response = await userService.getUsers();
+  if (response.error) {
+    throw new Error(response.error);
+  }
+  return response.data || [];
+};
+
+const profileFetcher = async (): Promise<Profile[]> => {
+  const response = await userService.getProfiles();
+  if (response.error) {
+    throw new Error(response.error);
+  }
+  return response.data || [];
+};
+
 export default function UsersPage() {
   const {
     data: users = [],
     error: usersError,
     mutate: mutateUsers,
   } = useSWR<User[]>('/api/users', fetcher);
-  const { data: profiles = [], error: profilesError } = useSWR<Profile[]>('/api/profiles', fetcher);
+  const { data: profiles = [], error: profilesError } = useSWR<Profile[]>(
+    '/api/profiles',
+    profileFetcher
+  );
 
   const [openDialog, setOpenDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -119,20 +125,12 @@ export default function UsersPage() {
       setIsLoading(true);
       setError('');
 
-      const url = selectedUser ? `/api/users/${selectedUser.id}` : '/api/users';
-      const method = selectedUser ? 'PUT' : 'POST';
+      const response = selectedUser
+        ? await userService.updateUser(selectedUser.id, formData)
+        : await userService.createUser(formData);
 
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Erro ao salvar usuário');
+      if (response.error) {
+        throw new Error(response.error);
       }
 
       await mutateUsers();
@@ -166,13 +164,10 @@ export default function UsersPage() {
 
     try {
       setIsDeleteLoading(true);
-      const response = await fetch(`/api/users/${selectedUser.id}`, {
-        method: 'DELETE',
-      });
+      const response = await userService.deleteUser(selectedUser.id);
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Erro ao excluir usuário');
+      if (response.error) {
+        throw new Error(response.error);
       }
 
       await mutateUsers();
@@ -253,20 +248,12 @@ export default function UsersPage() {
                   </TableCell>
                   <TableCell align="right">
                     <Tooltip title="Editar">
-                      <IconButton
-                        onClick={() => handleOpenDialog(user)}
-                        color="primary"
-                        aria-label="Editar"
-                      >
+                      <IconButton onClick={() => handleOpenDialog(user)}>
                         <EditIcon />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Excluir">
-                      <IconButton
-                        onClick={() => handleOpenDeleteDialog(user)}
-                        color="error"
-                        aria-label="Excluir"
-                      >
+                      <IconButton onClick={() => handleOpenDeleteDialog(user)}>
                         <DeleteIcon />
                       </IconButton>
                     </Tooltip>
@@ -277,68 +264,55 @@ export default function UsersPage() {
         </Table>
       </TableContainer>
 
-      {/* Dialog de Criação/Edição */}
-      <Dialog
-        open={openDialog}
-        onClose={handleCloseDialog}
-        maxWidth="sm"
-        fullWidth
-        aria-labelledby="user-dialog-title"
-      >
-        <DialogTitle id="user-dialog-title">
-          {selectedUser ? 'Editar Usuário' : 'Novo Usuário'}
-        </DialogTitle>
+      {/* Dialog de criar/editar usuário */}
+      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+        <DialogTitle>{selectedUser ? 'Editar Usuário' : 'Novo Usuário'}</DialogTitle>
         <DialogContent>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 2 }}>
-            <TextField
-              label="Nome"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              fullWidth
-              required
-              inputProps={{ 'aria-label': 'Nome' }}
-            />
-            <TextField
-              label="Email"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              fullWidth
-              required
-              inputProps={{ 'aria-label': 'Email' }}
-            />
-            <TextField
-              label="Senha"
-              type="password"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              fullWidth
-              required={!selectedUser}
-              helperText={selectedUser ? 'Deixe em branco para manter a senha atual' : ''}
-              inputProps={{ 'aria-label': 'Senha' }}
-            />
-            <FormControl fullWidth required>
-              <InputLabel id="profile-label">Perfil</InputLabel>
-              <Select
-                labelId="profile-label"
-                value={formData.profileId}
-                onChange={(e) => setFormData({ ...formData, profileId: e.target.value })}
-                label="Perfil"
-                inputProps={{ 'aria-label': 'Perfil' }}
-              >
-                {profiles.map((profile) => (
-                  <MenuItem key={profile.id} value={profile.id}>
-                    {profile.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            {error && (
-              <Alert severity="error" sx={{ mt: 1 }}>
-                {error}
-              </Alert>
-            )}
-          </Box>
+          <TextField
+            margin="normal"
+            label="Nome"
+            fullWidth
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            disabled={isLoading}
+          />
+          <TextField
+            margin="normal"
+            label="Email"
+            type="email"
+            fullWidth
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            disabled={isLoading}
+          />
+          <TextField
+            margin="normal"
+            label="Senha"
+            type="password"
+            fullWidth
+            value={formData.password}
+            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            disabled={isLoading}
+          />
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Perfil</InputLabel>
+            <Select
+              value={formData.profileId}
+              onChange={(e) => setFormData({ ...formData, profileId: e.target.value })}
+              disabled={isLoading}
+            >
+              {profiles.map((profile) => (
+                <MenuItem key={profile.id} value={profile.id}>
+                  {profile.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          {error && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {error}
+            </Alert>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog} disabled={isLoading}>
@@ -356,15 +330,11 @@ export default function UsersPage() {
         </DialogActions>
       </Dialog>
 
-      {/* Dialog de Confirmação de Exclusão */}
-      <Dialog
-        open={openDeleteDialog}
-        onClose={handleCloseDeleteDialog}
-        aria-labelledby="delete-dialog-title"
-      >
-        <DialogTitle id="delete-dialog-title">Confirmar Exclusão</DialogTitle>
+      {/* Dialog de confirmação de exclusão */}
+      <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
+        <DialogTitle>Excluir Usuário</DialogTitle>
         <DialogContent>
-          <Typography>Tem certeza que deseja excluir o usuário {selectedUser?.name}?</Typography>
+          <Typography>Tem certeza que deseja excluir o usuário "{selectedUser?.name}"?</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDeleteDialog} disabled={isDeleteLoading}>

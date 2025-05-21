@@ -75,10 +75,13 @@ model Organization {
 }
 
 model Niche {
-  id             String         @id @default(cuid())
-  name           String         @unique
+  id            String         @id @default(cuid())
+  name          String         @unique
+  description   String?        @db.Text
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt      @map("updated_at")
 
-  organizations  Organization[]
+  organizations Organization[]
 
   @@map("niches")
 }

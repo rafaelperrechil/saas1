@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
@@ -14,26 +14,20 @@ export async function GET() {
     // Buscar o usuário com sua organização
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      include: { organization: true },
+      include: {
+        organization: {
+          include: {
+            branches: true,
+          },
+        },
+      },
     });
 
-    if (!user?.organizationId) {
+    if (!user?.organization) {
       return NextResponse.json({ error: 'Organização não encontrada' }, { status: 404 });
     }
 
-    // Buscar todas as filiais da organização
-    const branches = await prisma.branch.findMany({
-      where: {
-        organizationId: user.organizationId,
-      },
-      select: {
-        id: true,
-        name: true,
-        wizardCompleted: true,
-      },
-    });
-
-    return NextResponse.json(branches);
+    return NextResponse.json({ data: user.organization.branches });
   } catch (error) {
     console.error('Erro ao buscar filiais:', error);
     return NextResponse.json({ error: 'Erro ao buscar filiais' }, { status: 500 });

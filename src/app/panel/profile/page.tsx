@@ -20,6 +20,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import PersonIcon from '@mui/icons-material/Person';
 import { countries } from '@/utils/countries';
 import { timezones } from '@/utils/timezones';
+import { userService } from '@/services';
 
 interface UserProfile {
   id: string;
@@ -62,10 +63,10 @@ export default function ProfilePage() {
         setError('');
 
         try {
-          const response = await fetch('/api/user/profile');
+          const response = await userService.getProfile();
 
-          if (response.ok) {
-            const userData = await response.json();
+          if (response.data) {
+            const userData = response.data;
 
             setUserProfile({
               id: userData.id || (session.user.id as string),
@@ -83,8 +84,7 @@ export default function ProfilePage() {
               timezone: userData.timezone || '',
             });
           } else {
-            const errorData = await response.json();
-            setError(errorData.error || t('account.profile.errorMessage'));
+            setError(response.error || t('account.profile.errorMessage'));
 
             setUserProfile({
               id: session.user.id as string,
@@ -143,17 +143,9 @@ export default function ProfilePage() {
     setError('');
 
     try {
-      const response = await fetch('/api/user/profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await userService.updateProfile(formData);
 
-      const data = await response.json();
-
-      if (response.ok) {
+      if (response.data) {
         setUserProfile((prev) => ({
           ...prev!,
           name: formData.name,
@@ -172,11 +164,11 @@ export default function ProfilePage() {
 
         setSnackbar({
           open: true,
-          message: data.message || t('account.profile.successMessage'),
+          message: response.data.message || t('account.profile.successMessage'),
           severity: 'success',
         });
       } else {
-        throw new Error(data.error || t('account.profile.errorMessage'));
+        throw new Error(response.error || t('account.profile.errorMessage'));
       }
     } catch (error: any) {
       console.error('Erro ao salvar perfil:', error);

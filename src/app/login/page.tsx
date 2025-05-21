@@ -3,11 +3,12 @@ import React from 'react';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { signIn, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { Box, TextField, Button, Typography, Paper, CircularProgress, Alert } from '@mui/material';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
+import { authService } from '@/services';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -35,15 +36,14 @@ export default function LoginPage() {
     setError('');
 
     try {
-      const result = await signIn('credentials', {
+      const response = await authService.login({
         email,
         password,
-        redirect: false,
       });
 
-      if (result?.error) {
+      if (response.error) {
         setError(t('auth.login.error.invalid'));
-      } else if (result?.ok) {
+      } else if (response.data) {
         router.replace('/panel/dashboard');
       }
     } catch (err) {

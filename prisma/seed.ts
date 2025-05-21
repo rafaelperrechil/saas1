@@ -25,8 +25,13 @@ async function main() {
       name: 'Administrador',
     },
   });
+  const userProfile = await prisma.profile.create({
+    data: {
+      name: 'User',
+    },
+  });
 
-  const userProfile = await prisma.profile.findFirst({ where: { name: 'Usuário' } });
+  //const userProfile = await prisma.profile.findFirst({ where: { name: 'Usuário' } });
 
   console.log('Perfis criados com sucesso!');
 
@@ -39,7 +44,7 @@ async function main() {
       email: 'rafaelperrechil@hotmail.com',
       name: 'Rafael Perrechil',
       password: hashedPassword,
-      profileId: adminProfile.id,
+      profileId: userProfile.id,
     },
   });
 
@@ -79,7 +84,7 @@ async function main() {
       isCustom: false,
     },
     {
-      name: 'Enterprise',
+      name: 'Platinum',
       price: 249,
       includedUnits: 1,
       maxUsers: 50,
@@ -87,16 +92,6 @@ async function main() {
       maxChecklists: null, // Ilimitado
       extraUnitPrice: 49,
       isCustom: false,
-    },
-    {
-      name: 'Platinum',
-      price: 0, // Sob consulta
-      includedUnits: 999999, // Praticamente ilimitado
-      maxUsers: 999999, // Praticamente ilimitado
-      extraUserPrice: 0, // Incluído
-      maxChecklists: null, // Ilimitado
-      extraUnitPrice: 0, // Incluído
-      isCustom: true,
     },
   ];
 
@@ -109,32 +104,32 @@ async function main() {
   console.log('Planos criados com sucesso!');
 
   const niches = [
-    { name: 'Indústria Alimentícia' },
-    { name: 'Indústria Farmacêutica' },
-    { name: 'Indústria Automotiva' },
-    { name: 'Construção Civil' },
-    { name: 'Saúde' },
-    { name: 'Educação' },
-    { name: 'Varejo' },
-    { name: 'Logística' },
-    { name: 'Tecnologia' },
-    { name: 'Serviços Financeiros' },
-    { name: 'Agronegócio' },
-    { name: 'Hotelaria e Turismo' },
-    { name: 'Energia' },
-    { name: 'Telecomunicações' },
-    { name: 'Mineração' },
+    { name: 'Indústria Alimentícia', description: 'Empresas do setor alimentício' },
+    { name: 'Indústria Farmacêutica', description: 'Empresas do setor farmacêutico' },
+    { name: 'Indústria Automotiva', description: 'Empresas do setor automotivo' },
+    { name: 'Construção Civil', description: 'Empresas do setor de construção' },
+    { name: 'Saúde', description: 'Empresas do setor de saúde' },
+    { name: 'Educação', description: 'Empresas do setor educacional' },
+    { name: 'Varejo', description: 'Empresas do setor varejista' },
+    { name: 'Logística', description: 'Empresas do setor logístico' },
+    { name: 'Tecnologia', description: 'Empresas do setor de tecnologia' },
+    { name: 'Serviços Financeiros', description: 'Empresas do setor financeiro' },
+    { name: 'Agronegócio', description: 'Empresas do setor agrícola' },
+    { name: 'Hotelaria e Turismo', description: 'Empresas do setor hoteleiro e turístico' },
+    { name: 'Energia', description: 'Empresas do setor energético' },
+    { name: 'Telecomunicações', description: 'Empresas do setor de telecomunicações' },
+    { name: 'Mineração', description: 'Empresas do setor de mineração' },
   ];
 
+  console.log('Criando nichos...');
   for (const niche of niches) {
     await prisma.niche.upsert({
       where: { name: niche.name },
-      update: {},
+      update: { description: niche.description },
       create: niche,
     });
   }
-
-  console.log('Nichos de mercado inseridos com sucesso!');
+  console.log('Nichos criados com sucesso!');
 
   console.log('Seed concluído com sucesso!');
 }

@@ -1,7 +1,8 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import prisma from './prisma';
-import bcryptjs from 'bcryptjs';
+import type { AppProfile, AppBranch } from '@/types/next-auth';
+import { prisma } from '@/lib/prisma';
+import { compare } from 'bcryptjs';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -14,53 +15,87 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials, _req) {
         try {
           if (!credentials?.email || !credentials?.password) {
-            console.log('Credenciais faltando');
+            console.log('[Auth] Credenciais faltando:', {
+              email: !!credentials?.email,
+              password: !!credentials?.password,
+            });
             return null;
           }
 
-          console.log('Buscando usuário:', credentials.email);
+          console.log('[Auth] Iniciando autenticação para:', credentials.email);
+
+          // Buscar usuário no banco de dados
           const user = await prisma.user.findUnique({
-            where: {
-              email: credentials.email,
-            },
+            where: { email: credentials.email },
             include: {
               profile: true,
               organization: {
                 include: {
-                  branches: {
-                    take: 1,
-                  },
+                  branches: true,
                 },
               },
             },
           });
 
           if (!user) {
-            console.log('Usuário não encontrado');
+            console.log('[Auth] Usuário não encontrado');
             return null;
           }
 
-          console.log('Verificando senha');
-          const passwordMatch = await bcryptjs.compare(credentials.password, user.password);
+          console.log('[Auth] Usuário encontrado:', {
+            id: user.id,
+            hasProfile: !!user.profile,
+            hasOrganization: !!user.organization,
+            branchCount: user.organization?.branches.length || 0,
+          });
 
-          if (!passwordMatch) {
-            console.log('Senha incorreta');
+          // Verificar e corrigir data inválida
+          if (!user.updatedAt || user.updatedAt < new Date('2000-01-01')) {
+            console.log('[Auth] Corrigindo data inválida para o usuário:', user.id);
+            await prisma.user.update({
+              where: { id: user.id },
+              data: { updatedAt: new Date() },
+            });
+            user.updatedAt = new Date();
+          }
+
+          // Verificar senha
+          const isValid = await compare(credentials.password, user.password);
+
+          if (!isValid) {
+            console.log('[Auth] Senha inválida para:', credentials.email);
+            return null;
+          }
+
+          if (!user.profile) {
+            console.log('[Auth] Perfil não encontrado para:', credentials.email);
             return null;
           }
 
           // Pega a primeira branch da organização (se existir)
           const branch = user.organization?.branches[0];
 
-          console.log('Login bem sucedido');
+          console.log('[Auth] Login bem sucedido:', {
+            userId: user.id,
+            hasBranch: !!branch,
+            branchId: branch?.id,
+          });
+
           return {
             id: user.id,
             email: user.email,
             name: user.name || '',
-            profile: user.profile,
+            profile: user.profile as AppProfile,
             branch: branch || undefined,
           };
         } catch (error) {
-          console.error('Erro na autenticação:', error);
+          console.error('[Auth] Erro na autenticação:', error);
+          if (error instanceof Error) {
+            console.error('[Auth] Detalhes do erro:', {
+              message: error.message,
+              stack: error.stack,
+            });
+          }
           return null;
         }
       },
@@ -69,24 +104,35 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user, trigger, session }) {
       if (user) {
+        console.log('[Auth] Atualizando token com dados do usuário:', {
+          userId: user.id,
+          hasProfile: !!user.profile,
+          hasBranch: !!user.branch,
+        });
         token.id = user.id;
         token.profile = user.profile;
-        token.branch = user.branch;
+        token.branch = user.branch || undefined;
       }
 
-      // Se a sessão foi atualizada, atualiza o token também
       if (trigger === 'update' && session?.user?.branch) {
+        console.log('[Auth] Atualizando branch no token');
         token.branch = session.user.branch;
       }
 
       return token;
     },
     async session({ session, token }) {
+      console.log('[Auth] Atualizando sessão com dados do token:', {
+        userId: token.id,
+        hasProfile: !!token.profile,
+        hasBranch: !!token.branch,
+      });
+
       session.user = {
         ...session.user,
         id: token.id as string,
-        profile: token.profile as typeof token.profile,
-        branch: token.branch as typeof token.branch,
+        profile: token.profile as AppProfile,
+        branch: token.branch as AppBranch | undefined,
       };
       return session;
     },
@@ -98,5 +144,5 @@ export const authOptions: NextAuthOptions = {
     signIn: '/login',
   },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: false,
+  debug: true, // Ativando debug para mais informações
 };

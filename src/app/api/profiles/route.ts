@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 // GET - Listar todos os perfis
 export async function GET() {
@@ -11,12 +11,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
-    const profiles = await prisma.profile.findMany({
-      orderBy: {
-        name: 'asc',
-      },
-    });
-
+    const profiles = await prisma.profile.findMany();
     return NextResponse.json(profiles);
   } catch (error) {
     console.error('Erro ao buscar perfis:', error);

@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useTranslation } from 'react-i18next';
+import { authService } from '@/services';
 
 export default function ForgotPasswordPage() {
   const { t } = useTranslation();
@@ -28,20 +29,13 @@ export default function ForgotPasswordPage() {
 
   const onSubmit = async (data: ForgotPasswordFormData) => {
     try {
-      const response = await fetch('/api/auth/forgot-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
+      const response = await authService.forgotPassword(data.email);
 
-      if (response.ok) {
+      if (response.data) {
         setMessage(t('auth.forgotPassword.successMessage'));
         setError('');
       } else {
-        const errorData = await response.json();
-        setError(errorData.message || t('auth.forgotPassword.error.generic'));
+        setError(response.error || t('auth.forgotPassword.error.generic'));
         setMessage('');
       }
     } catch {

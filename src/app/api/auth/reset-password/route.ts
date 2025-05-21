@@ -1,8 +1,5 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
-
-const prisma = new PrismaClient();
+import { userService } from '@/services';
 
 export async function POST(request: Request) {
   try {
@@ -12,36 +9,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: 'Token e senha são obrigatórios' }, { status: 400 });
     }
 
-    // Encontrar usuário com o token válido
-    const user = await prisma.user.findFirst({
-      where: {
-        resetToken: token,
-        resetTokenExpiry: {
-          gt: new Date(), // Token ainda não expirou
-        },
-      },
-    });
-
-    if (!user) {
-      return NextResponse.json({ message: 'Token inválido ou expirado' }, { status: 400 });
+    const response = await userService.resetPassword(token, password);
+    if (response.error) {
+      throw new Error(response.error);
     }
-
-    // Hash da nova senha
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Atualizar senha e limpar token
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        password: hashedPassword,
-        resetToken: null,
-        resetTokenExpiry: null,
-      },
-    });
 
     return NextResponse.json({ message: 'Senha redefinida com sucesso' }, { status: 200 });
   } catch (error: any) {
-    console.error('Reset password error:', error);
-    return NextResponse.json({ message: 'Erro ao redefinir senha' }, { status: 500 });
+    console.error('Erro ao redefinir senha:', error);
+    return NextResponse.json({ message: error.message }, { status: 400 });
   }
 }

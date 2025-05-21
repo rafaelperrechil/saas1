@@ -1,32 +1,53 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Container, Box } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import OnboardingWizard from '@/components/wizard/OnboardingWizard';
 import { useSession } from 'next-auth/react';
 import LoadingScreen from '@/components/common/LoadingScreen';
+import { wizardService, organizationService } from '@/services';
+import { WizardStep } from '@/services/api.types';
 
 export default function WizardPage() {
   const router = useRouter();
   const { data: session, status } = useSession();
+  const [steps, setSteps] = useState<WizardStep[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Se o usuário tem uma branch e ela já completou o wizard, redireciona para o dashboard
-    if (session?.user?.branch?.wizardCompleted) {
-      router.push('/panel/dashboard');
-    }
+    const checkWizard = async () => {
+      if (!session?.user?.id) return;
+
+      try {
+        const response = await organizationService.getCompletedWizardData(session.user.id);
+        if (response.data?.hasCompletedWizard) {
+          router.replace('/panel/dashboard');
+          return;
+        }
+
+        // Se não completou, carrega os passos
+        const stepsResponse = await wizardService.getSteps();
+        if (stepsResponse.data) {
+          setSteps(stepsResponse.data);
+        }
+      } catch (error) {
+        console.error('Erro:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkWizard();
   }, [session, router]);
 
-  // Mostra loading enquanto verifica a sessão
-  if (status === 'loading' || session?.user?.branch?.wizardCompleted) {
+  if (status === 'loading' || loading) {
     return <LoadingScreen />;
   }
 
   return (
     <Box
       sx={{
-        // minHeight: '100vh',
         display: 'flex',
         flexDirection: 'column',
         bgcolor: '#f8f9fa',
@@ -52,7 +73,12 @@ export default function WizardPage() {
             flexDirection: 'column',
           }}
         >
-          <OnboardingWizard onComplete={() => router.push('/panel/templates/new')} />
+          <OnboardingWizard
+            steps={steps}
+            onComplete={() => {
+              router.replace('/panel/dashboard');
+            }}
+          />
         </Box>
       </Container>
     </Box>

@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 export async function POST(request: Request) {
   try {
@@ -17,37 +17,27 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'ID da filial não fornecido' }, { status: 400 });
     }
 
-    // Buscar o usuário com sua organização
+    // Busca a filial e verifica se pertence à organização do usuário
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
-      include: { organization: true },
+      include: { organization: { include: { branches: true } } },
     });
-
-    if (!user?.organizationId) {
-      return NextResponse.json({ error: 'Organização não encontrada' }, { status: 404 });
-    }
-
-    // Verificar se a filial existe e pertence à organização do usuário
-    const branch = await prisma.branch.findFirst({
-      where: {
-        id: branchId,
-        organizationId: user.organizationId,
-      },
-      select: {
-        id: true,
-        name: true,
-        wizardCompleted: true,
-      },
-    });
-
-    if (!branch) {
+    if (!user?.organization?.branches.some((b) => b.id === branchId)) {
       return NextResponse.json(
-        { error: 'Filial não encontrada ou acesso não autorizado' },
-        { status: 404 }
+        { error: 'Filial não encontrada ou não pertence à sua organização' },
+        { status: 403 }
       );
     }
 
-    return NextResponse.json(branch);
+    // Busca os dados da branch selecionada
+    const branch = user.organization.branches.find((b) => b.id === branchId);
+    if (!branch) {
+      return NextResponse.json({ error: 'Filial não encontrada' }, { status: 404 });
+    }
+
+    // Atualiza o JWT (token) do usuário na sessão (NextAuth usa JWT, então precisa trigger update no frontend)
+    // Aqui apenas retorna os dados da branch para o frontend atualizar a sessão
+    return NextResponse.json({ success: true, branch });
   } catch (error) {
     console.error('Erro ao selecionar filial:', error);
     return NextResponse.json({ error: 'Erro ao selecionar filial' }, { status: 500 });

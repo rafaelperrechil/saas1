@@ -4,18 +4,21 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useSession } from 'next-auth/react';
-import { Box, Alert, CircularProgress, Typography } from '@mui/material';
+import { Box, Alert, CircularProgress, Typography, Button } from '@mui/material';
 import CurrentPlanCard from '@/components/account/CurrentPlanCard';
 import StatsCard from '@/components/account/StatsCard';
 import BillingHistoryCard from '@/components/account/BillingHistoryCard';
+import { checkoutService, planService } from '@/services';
+import { CheckoutSession, Plan } from '@/services/api.types';
 
 export default function BillingPage() {
   const { t } = useTranslation();
   const router = useRouter();
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState(true);
-  const [userData, setUserData] = useState<any>(null);
-  const [payments, setPayments] = useState<any[]>([]);
+  const [currentPlan, setCurrentPlan] = useState<Plan | null>(null);
+  const [payments, setPayments] = useState<CheckoutSession[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // Verificar se o usuário está autenticado
@@ -28,18 +31,25 @@ export default function BillingPage() {
       // Carregar dados do usuário, assinatura e pagamentos
       const fetchData = async () => {
         try {
-          // Buscar dados do usuário
-          const userResponse = await fetch('/api/user/subscription');
-          const userData = await userResponse.json();
+          // Buscar plano atual
+          const planResponse = await planService.getCurrentPlan();
+          if (planResponse.data) {
+            setCurrentPlan(planResponse.data);
+          } else if (planResponse.error?.includes('404')) {
+            // Se não houver assinatura ativa, não é um erro
+            setCurrentPlan(null);
+          } else {
+            setError(planResponse.error || 'Erro ao carregar plano atual');
+          }
 
           // Buscar histórico de pagamentos
-          const paymentsResponse = await fetch('/api/user/payments');
-          const paymentsData = await paymentsResponse.json();
-
-          setUserData(userData);
-          setPayments(paymentsData.payments || []);
+          const paymentsResponse = await checkoutService.getCheckoutSessions();
+          if (paymentsResponse.data) {
+            setPayments(paymentsResponse.data);
+          }
         } catch (error) {
           console.error('Erro ao carregar dados:', error);
+          setError('Erro ao carregar dados. Por favor, tente novamente.');
         } finally {
           setLoading(false);
         }
@@ -59,9 +69,18 @@ export default function BillingPage() {
     );
   }
 
-  // Verificar se o usuário tem um plano ativo
-  const activeSubscription = userData?.subscriptions?.[0] || null;
-  const currentPlan = activeSubscription?.plan || null;
+  if (error) {
+    return (
+      <Box>
+        <Typography variant="h4" component="h1" gutterBottom>
+          {t('account.billing.title')}
+        </Typography>
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      </Box>
+    );
+  }
 
   return (
     <Box>
@@ -80,7 +99,6 @@ export default function BillingPage() {
         <Box sx={{ flex: 1 }}>
           <CurrentPlanCard
             currentPlan={currentPlan}
-            subscription={activeSubscription}
             translations={{
               currentPlan: t('account.billing.currentPlan'),
               active: t('account.billing.active'),

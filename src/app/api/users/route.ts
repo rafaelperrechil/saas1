@@ -1,10 +1,7 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import bcrypt from 'bcryptjs';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 // GET - Listar todos os usuários
 export async function GET() {
@@ -15,15 +12,8 @@ export async function GET() {
     }
 
     const users = await prisma.user.findMany({
-      select: {
-        id: true,
-        name: true,
-        email: true,
+      include: {
         profile: true,
-        createdAt: true,
-      },
-      orderBy: {
-        name: 'asc',
       },
     });
 
@@ -50,41 +40,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Todos os campos são obrigatórios' }, { status: 400 });
     }
 
-    // Verificar se o email já existe
-    const existingUser = await prisma.user.findUnique({
-      where: { email: data.email },
-    });
-
-    if (existingUser) {
-      return NextResponse.json({ error: 'Este email já está em uso' }, { status: 400 });
-    }
-
-    // Hash da senha
-    const hashedPassword = await bcrypt.hash(data.password, 10);
-
-    // Verificar se o perfil existe
-    const profile = await prisma.profile.findUnique({
-      where: { id: data.profileId },
-    });
-
-    if (!profile) {
-      return NextResponse.json({ error: 'Perfil não encontrado' }, { status: 400 });
-    }
-
-    // Criar usuário
     const user = await prisma.user.create({
       data: {
         name: data.name,
         email: data.email,
-        password: hashedPassword,
+        password: data.password,
         profileId: data.profileId,
       },
-      select: {
-        id: true,
-        name: true,
-        email: true,
+      include: {
         profile: true,
-        createdAt: true,
       },
     });
 

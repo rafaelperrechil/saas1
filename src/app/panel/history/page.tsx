@@ -17,33 +17,26 @@ import {
 } from '@mui/material';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-
-interface LoginLog {
-  id: number;
-  userId: number;
-  user: {
-    name: string;
-    email: string;
-  };
-  ip: string;
-  userAgent: string;
-  createdAt: string;
-}
+import { logService } from '@/services';
+import { Log } from '@/services/api.types';
 
 export default function HistoryPage() {
-  const [logs, setLogs] = useState<LoginLog[]>([]);
+  const [logs, setLogs] = useState<Log[]>([]);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchLogs = async () => {
       try {
-        const response = await fetch('/api/logs');
-        if (!response.ok) throw new Error('Erro ao carregar histórico');
-        const data = await response.json();
-        setLogs(data);
-      } catch (error) {
-        setError('Erro ao carregar histórico de logins');
+        const response = await logService.getLogs();
+        if (response.error) {
+          throw new Error(response.error);
+        }
+        if (response.data) {
+          setLogs(response.data);
+        }
+      } catch (error: any) {
+        setError(error.message || 'Erro ao carregar histórico de logins');
       } finally {
         setIsLoading(false);
       }
@@ -78,20 +71,20 @@ export default function HistoryPage() {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell>Ação</TableCell>
+              <TableCell>Descrição</TableCell>
               <TableCell>Usuário</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>IP</TableCell>
-              <TableCell>Navegador</TableCell>
+              <TableCell>Organização</TableCell>
               <TableCell>Data/Hora</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {logs.map((log) => (
               <TableRow key={log.id}>
-                <TableCell>{log.user.name}</TableCell>
-                <TableCell>{log.user.email}</TableCell>
-                <TableCell>{log.ip}</TableCell>
-                <TableCell>{log.userAgent}</TableCell>
+                <TableCell>{log.action}</TableCell>
+                <TableCell>{log.description}</TableCell>
+                <TableCell>{log.userId}</TableCell>
+                <TableCell>{log.organizationId}</TableCell>
                 <TableCell>
                   {format(new Date(log.createdAt), "dd 'de' MMMM 'de' yyyy 'às' HH:mm", {
                     locale: ptBR,

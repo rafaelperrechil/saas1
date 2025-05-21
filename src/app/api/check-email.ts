@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { userService } from '@/services';
 
 export async function POST(request: Request) {
   try {
@@ -9,8 +7,13 @@ export async function POST(request: Request) {
     if (!email) {
       return NextResponse.json({ exists: false });
     }
-    const user = await prisma.user.findUnique({ where: { email } });
-    return NextResponse.json({ exists: !!user });
+
+    const response = await userService.getUserByEmail(email);
+    if (response.error) {
+      throw new Error(response.error);
+    }
+
+    return NextResponse.json({ exists: !!response.data });
   } catch (err) {
     console.error('Erro ao verificar e-mail:', err);
     return NextResponse.json(

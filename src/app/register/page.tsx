@@ -5,8 +5,9 @@ import { useRouter } from 'next/navigation';
 import { Box, TextField, Button, Typography, Paper, CircularProgress, Alert } from '@mui/material';
 import Link from 'next/link';
 import Image from 'next/image';
-import { signIn, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { useTranslation } from 'react-i18next';
+import { authService } from '@/services';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -18,6 +19,8 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
+  const [emailExists, setEmailExists] = useState(false);
 
   useEffect(() => {
     if (status === 'authenticated') {
@@ -36,9 +39,41 @@ export default function RegisterPage() {
     );
   }
 
+  const handleEmailChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newEmail = e.target.value;
+    setEmail(newEmail);
+    setError('');
+    setEmailExists(false);
+
+    // Validação de formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmail)) {
+      return;
+    }
+
+    setIsCheckingEmail(true);
+    try {
+      const checkResponse = await authService.checkEmail(newEmail);
+      if (checkResponse.error) {
+        console.error('Erro ao verificar e-mail:', checkResponse.error);
+        return;
+      }
+      if (checkResponse.data?.exists) {
+        setEmailExists(true);
+        setError(t('auth.register.error.emailExists'));
+      }
+    } catch (err) {
+      console.error('Erro ao verificar e-mail:', err);
+    } finally {
+      setIsCheckingEmail(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    // Validações básicas
     if (!name || !email || !password || !confirmPassword) {
       setError(t('auth.register.error.required'));
       return;
@@ -53,48 +88,48 @@ export default function RegisterPage() {
       setError(t('auth.register.error.invalidEmail'));
       return;
     }
+
+    // Se o e-mail já existe, não permite o registro
+    if (emailExists) {
+      setError(t('auth.register.error.emailExists'));
+      return;
+    }
+
     setIsLoading(true);
     try {
-      // Verifica se já existe usuário
-      const checkRes = await fetch('/api/check-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      const checkData = await checkRes.json();
-      if (checkData.exists) {
-        setError(t('auth.register.error.emailExists'));
-        setIsLoading(false);
-        return;
-      }
       // Cria usuário
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
-      });
-      if (!res.ok) {
-        const data = await res.json();
-        setError(data.message || t('auth.register.error.generic'));
-        setIsLoading(false);
-        return;
-      }
-      // Login automático
-      const loginResult = await signIn('credentials', {
+      const registerResponse = await authService.register({
+        name,
         email,
         password,
-        redirect: false,
+        confirmPassword,
       });
-      if (loginResult?.ok) {
+
+      if (registerResponse.error) {
+        setError(registerResponse.error || t('auth.register.error.generic'));
+        setIsLoading(false);
+        return;
+      }
+
+      // Login automático
+      const loginResponse = await authService.login({
+        email,
+        password,
+      });
+
+      if (loginResponse.error) {
+        setError(loginResponse.error || t('auth.register.error.loginAfterRegister'));
+        setIsLoading(false);
+        return;
+      }
+
+      if (loginResponse.data) {
         router.replace('/panel/dashboard');
       } else {
         setError(t('auth.register.error.loginAfterRegister'));
       }
     } catch (err) {
-      // Exiba mensagens de erro no console apenas em ambiente de desenvolvimento e produção, não em testes
-      if (process.env.NODE_ENV !== 'test') {
-        console.error('Erro durante o processo de registro:', err);
-      }
+      console.error('Erro durante o processo de registro:', err);
       setError(t('auth.register.error.generic'));
     } finally {
       setIsLoading(false);
@@ -168,8 +203,16 @@ export default function RegisterPage() {
               name="email"
               autoComplete="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
               inputProps={{ 'data-testid': 'email' }}
+              error={emailExists}
+              helperText={
+                isCheckingEmail
+                  ? 'Verificando...'
+                  : emailExists
+                    ? t('auth.register.error.emailExists')
+                    : ''
+              }
             />
             <TextField
               margin="normal"
@@ -202,7 +245,7 @@ export default function RegisterPage() {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2, p: 2 }}
-              disabled={isLoading}
+              disabled={isLoading || isCheckingEmail || emailExists}
             >
               {isLoading ? <CircularProgress size={24} /> : t('auth.register.submit')}
             </Button>

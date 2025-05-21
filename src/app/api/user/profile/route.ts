@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 // GET - Buscar dados do perfil do usuário
 export async function GET() {
@@ -14,7 +14,6 @@ export async function GET() {
 
     const userId = session.user.id;
 
-    // @ts-ignore - Os campos existem no banco, mas o Prisma não está reconhecendo
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -62,7 +61,6 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'Nome é obrigatório' }, { status: 400 });
     }
 
-    // @ts-ignore - Os campos existem no banco, mas o Prisma não está reconhecendo
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {

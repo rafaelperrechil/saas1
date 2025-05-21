@@ -27,6 +27,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { useRouter } from 'next/navigation';
+import { profileService } from '@/services';
 
 interface Profile {
   id: string;
@@ -58,13 +59,13 @@ export default function ProfilesPage() {
     try {
       setIsLoading(true);
       setError('');
-      const response = await fetch('/api/profiles');
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Erro ao carregar perfis');
+      const response = await profileService.getProfiles();
+
+      if (response.data) {
+        setProfiles(response.data);
+      } else {
+        throw new Error(response.error || 'Erro ao carregar perfis');
       }
-      const data = await response.json();
-      setProfiles(data);
     } catch (error: any) {
       setError(error.message || 'Erro ao carregar perfis');
     } finally {
@@ -105,31 +106,24 @@ export default function ProfilesPage() {
       }
 
       setIsSaving(true);
-      const url = editingProfile ? `/api/profiles/${editingProfile.id}` : '/api/profiles';
+      const response = editingProfile
+        ? await profileService.updateProfile(editingProfile.id, { name: profileName.trim() })
+        : await profileService.createProfile({ name: profileName.trim() });
 
-      const response = await fetch(url, {
-        method: editingProfile ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ name: profileName.trim() }),
-      });
+      if (response.data) {
+        setSuccessMessage(
+          editingProfile ? 'Perfil atualizado com sucesso!' : 'Perfil criado com sucesso!'
+        );
+        handleCloseDialog();
+        await loadProfiles();
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Erro ao salvar perfil');
+        // Limpar mensagem de sucesso após 5 segundos
+        setTimeout(() => {
+          setSuccessMessage('');
+        }, 5000);
+      } else {
+        throw new Error(response.error || 'Erro ao salvar perfil');
       }
-
-      setSuccessMessage(
-        editingProfile ? 'Perfil atualizado com sucesso!' : 'Perfil criado com sucesso!'
-      );
-      handleCloseDialog();
-      await loadProfiles();
-
-      // Limpar mensagem de sucesso após 5 segundos
-      setTimeout(() => {
-        setSuccessMessage('');
-      }, 5000);
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -154,23 +148,20 @@ export default function ProfilesPage() {
 
     try {
       setIsDeleting(profileToDelete.id);
-      const response = await fetch(`/api/profiles/${profileToDelete.id}`, {
-        method: 'DELETE',
-      });
+      const response = await profileService.deleteProfile(profileToDelete.id);
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Erro ao excluir perfil');
+      if (response.data) {
+        setSuccessMessage('Perfil excluído com sucesso!');
+        handleCloseDeleteDialog();
+        await loadProfiles();
+
+        // Limpar mensagem de sucesso após 5 segundos
+        setTimeout(() => {
+          setSuccessMessage('');
+        }, 5000);
+      } else {
+        throw new Error(response.error || 'Erro ao excluir perfil');
       }
-
-      setSuccessMessage('Perfil excluído com sucesso!');
-      handleCloseDeleteDialog();
-      await loadProfiles();
-
-      // Limpar mensagem de sucesso após 5 segundos
-      setTimeout(() => {
-        setSuccessMessage('');
-      }, 5000);
     } catch (error: any) {
       setError(error.message);
     } finally {

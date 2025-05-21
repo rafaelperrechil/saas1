@@ -7,21 +7,28 @@ import {
   People as PeopleIcon,
   History as HistoryIcon,
   Settings as SettingsIcon,
+  Business as BusinessIcon,
+  Apartment as ApartmentIcon,
+  MeetingRoom as MeetingRoomIcon,
 } from '@mui/icons-material';
-
-const fetcher = async (url: string) => {
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error('Erro ao carregar dados');
-  }
-  return res.json();
-};
+import { dashboardService } from '@/services';
 
 interface DashboardStats {
   totalUsers: number;
   totalLogins: number;
   totalProfiles: number;
+  totalBranches: number;
+  totalDepartments: number;
+  totalEnvironments: number;
 }
+
+const fetcher = async (url: string): Promise<DashboardStats> => {
+  const response = await dashboardService.getStats();
+  if (response.error) {
+    throw new Error(response.error);
+  }
+  return response.data as DashboardStats;
+};
 
 export default function DashboardPage() {
   const { status } = useSession();
@@ -29,7 +36,10 @@ export default function DashboardPage() {
     data: stats,
     error,
     isLoading,
-  } = useSWR<DashboardStats>(status === 'authenticated' ? '/api/dashboard/stats' : null, fetcher);
+  } = useSWR<DashboardStats, Error>(
+    status === 'authenticated' ? '/api/dashboard/stats' : null,
+    fetcher
+  );
 
   const StatCard = ({
     title,
@@ -100,9 +110,23 @@ export default function DashboardPage() {
         </Grid>
         <Grid item xs={12} md={4}>
           <StatCard
-            title="Total de Logins"
-            value={stats.totalLogins}
-            icon={<HistoryIcon fontSize="large" color="primary" />}
+            title="Total de Filiais"
+            value={stats.totalBranches}
+            icon={<BusinessIcon fontSize="large" color="primary" />}
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <StatCard
+            title="Total de Departamentos"
+            value={stats.totalDepartments}
+            icon={<ApartmentIcon fontSize="large" color="primary" />}
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <StatCard
+            title="Total de Ambientes"
+            value={stats.totalEnvironments}
+            icon={<MeetingRoomIcon fontSize="large" color="primary" />}
           />
         </Grid>
         <Grid item xs={12} md={4}>
@@ -110,6 +134,13 @@ export default function DashboardPage() {
             title="Total de Perfis"
             value={stats.totalProfiles}
             icon={<SettingsIcon fontSize="large" color="primary" />}
+          />
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <StatCard
+            title="Total de Logins"
+            value={stats.totalLogins}
+            icon={<HistoryIcon fontSize="large" color="primary" />}
           />
         </Grid>
       </Grid>

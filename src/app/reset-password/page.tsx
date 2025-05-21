@@ -14,6 +14,7 @@ import {
   Alert,
 } from '@mui/material';
 import Link from 'next/link';
+import { authService } from '@/services';
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -42,21 +43,14 @@ export default function ResetPasswordPage() {
     }
 
     try {
-      const response = await fetch('/api/auth/reset-password', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          token,
-          password,
-        }),
+      const response = await authService.resetPassword({
+        token: token!,
+        password,
+        confirmPassword,
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Erro ao redefinir senha');
+      if (response.error) {
+        throw new Error(response.error);
       }
 
       router.push('/login');

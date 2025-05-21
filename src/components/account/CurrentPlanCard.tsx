@@ -2,23 +2,18 @@
 
 import React from 'react';
 import { Card, CardContent, Typography, Button, Box, Chip } from '@mui/material';
-import { Plan, Subscription } from '@prisma/client';
+import { Plan } from '@/services/api.types';
 import Link from 'next/link';
 
 interface CurrentPlanCardProps {
   currentPlan: Plan | null;
-  subscription: Subscription | null;
   translations?: {
     currentPlan?: string;
     active?: string;
   };
 }
 
-export default function CurrentPlanCard({
-  currentPlan,
-  subscription,
-  translations,
-}: CurrentPlanCardProps) {
+export default function CurrentPlanCard({ currentPlan, translations }: CurrentPlanCardProps) {
   const text = {
     currentPlan: translations?.currentPlan || 'Current Plan',
     active: translations?.active || 'ACTIVE',
@@ -29,7 +24,7 @@ export default function CurrentPlanCard({
     upgradePlan: 'Upgrade plan',
   };
 
-  if (!currentPlan || !subscription) {
+  if (!currentPlan) {
     return (
       <Card sx={{ height: '100%', minHeight: '200px' }}>
         <CardContent>

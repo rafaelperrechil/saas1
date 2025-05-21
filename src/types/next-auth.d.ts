@@ -1,11 +1,20 @@
 import 'next-auth';
-import { Profile, Branch } from '@prisma/client';
+// import { Profile, Branch } from '@prisma/client'; // Comentado ou removido se Profile do Prisma não for o desejado aqui
 import { DefaultSession } from 'next-auth';
 
-interface Branch {
+// Definindo os tipos que serão usados na sessão e JWT
+// Este Profile corresponde ao de api.types.ts ou ao que authService.login efetivamente retorna
+interface AppProfile {
   id: string;
   name: string;
-  wizardCompleted: boolean;
+}
+
+// Ajustando AppBranch para corresponder ao que authService.login retorna
+interface AppBranch {
+  id: string;
+  name: string;
+  // wizardCompleted é opcional já que não vem do authService.login
+  wizardCompleted?: boolean;
 }
 
 declare module 'next-auth' {
@@ -14,15 +23,8 @@ declare module 'next-auth' {
       id: string;
       name: string;
       email: string;
-      profile: {
-        name: string;
-        id: string;
-      };
-      branch?: {
-        id: string;
-        name: string;
-        wizardCompleted: boolean;
-      };
+      profile: AppProfile; // Usar o tipo AppProfile definido localmente
+      branch?: AppBranch;
     };
   }
 
@@ -30,14 +32,14 @@ declare module 'next-auth' {
     id: string;
     email: string;
     name: string;
-    profile: Profile;
-    branch?: Branch | null;
+    profile: AppProfile; // Usar o tipo AppProfile definido localmente
+    branch?: AppBranch | null;
   }
 }
 
 declare module 'next-auth/jwt' {
   interface JWT {
-    profile: Profile;
-    branch?: Branch;
+    profile: AppProfile; // Usar o tipo AppProfile definido localmente
+    branch?: AppBranch; // Presumindo que Branch aqui também é AppBranch
   }
 }

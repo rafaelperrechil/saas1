@@ -9,6 +9,7 @@ import UnitStep from './steps/UnitStep';
 import DepartmentsStep from './steps/DepartmentsStep';
 import EnvironmentsStep from './steps/EnvironmentsStep';
 import CompletionStep from './steps/CompletionStep';
+import api from '@/services/api';
 
 interface OnboardingWizardProps {
   onComplete: () => void;
@@ -56,19 +57,20 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
   useEffect(() => {
     const fetchOrganizationData = async () => {
       try {
-        const response = await fetch('/api/organization/completed-wizard');
-        const data = await response.json();
+        const response = await api.get('/api/organization/completed-wizard', {
+          requiresAuth: true,
+        });
 
-        if (data.hasCompletedWizard) {
+        if (response.data?.hasCompletedWizard) {
           setHasCompletedWizard(true);
           setFormData((prev) => ({
             ...prev,
             organization: {
-              name: data.organizationData.name,
-              employeesCount: data.organizationData.employeesCount || '',
-              country: data.organizationData.country || '',
-              city: data.organizationData.city || '',
-              nicheId: data.organizationData.nicheId || '',
+              name: response.data.organizationData.name,
+              employeesCount: response.data.organizationData.employeesCount || '',
+              country: response.data.organizationData.country || '',
+              city: response.data.organizationData.city || '',
+              nicheId: response.data.organizationData.nicheId || '',
             },
           }));
         }
@@ -83,17 +85,13 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
   const handleNext = async () => {
     if (activeStep === steps.length - 1) {
       try {
-        const response = await fetch('/api/wizard', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
+        const response = await api.post('/api/wizard', formData, {
+          requiresAuth: true,
+          requiresCSRF: true,
         });
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || 'Erro ao salvar dados');
+        if (response.error) {
+          throw new Error(response.error);
         }
 
         setCompleted(true);

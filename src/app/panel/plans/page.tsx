@@ -27,20 +27,8 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
-interface Plan {
-  id: string;
-  name: string;
-  price: number;
-  includedUnits: number;
-  maxUsers: number;
-  extraUserPrice: number | null;
-  maxChecklists: number | null;
-  extraUnitPrice: number | null;
-  isCustom: boolean;
-}
+import { planService } from '@/services';
+import { Plan } from '@/services/api.types';
 
 interface PlanFormData {
   id?: string;
@@ -52,14 +40,26 @@ interface PlanFormData {
   maxChecklists: number | null;
   extraUnitPrice: number | null;
   isCustom: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
+
+const fetcher = async (): Promise<Plan[]> => {
+  const response = await planService.getPlans();
+  if (response.error) {
+    throw new Error(response.error);
+  }
+  return response.data || [];
+};
 
 export default function PlansPage() {
   const {
     data: plans,
     error: plansError,
     mutate: mutatePlans,
-  } = useSWR<Plan[]>('/api/plans', fetcher);
+  } = useSWR<Plan[]>('/api/plans', fetcher, {
+    revalidateOnFocus: false,
+  });
 
   const [openDialog, setOpenDialog] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
@@ -92,6 +92,8 @@ export default function PlansPage() {
         maxChecklists: plan.maxChecklists,
         extraUnitPrice: plan.extraUnitPrice,
         isCustom: plan.isCustom,
+        createdAt: plan.createdAt,
+        updatedAt: plan.updatedAt,
       });
     } else {
       setSelectedPlan(null);
@@ -129,29 +131,29 @@ export default function PlansPage() {
   const handleSubmit = async () => {
     try {
       setIsSaving(true);
-      const url = selectedPlan ? `/api/plans/${selectedPlan.id}` : '/api/plans';
-      const method = selectedPlan ? 'PUT' : 'POST';
-      const response = await fetch(url, {
-        method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Erro ao salvar plano');
-      }
-      await mutatePlans();
-      handleCloseDialog();
-      setSuccessMessage(
-        selectedPlan ? 'Plano atualizado com sucesso!' : 'Plano criado com sucesso!'
-      );
+      const planData = {
+        ...formData,
+        createdAt: formData.createdAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      const response = selectedPlan
+        ? await planService.updatePlan(selectedPlan.id, planData)
+        : await planService.createPlan(planData);
 
-      // Limpar mensagem de sucesso após 5 segundos
-      setTimeout(() => {
-        setSuccessMessage('');
-      }, 5000);
+      if (response.data) {
+        await mutatePlans();
+        handleCloseDialog();
+        setSuccessMessage(
+          selectedPlan ? 'Plano atualizado com sucesso!' : 'Plano criado com sucesso!'
+        );
+
+        // Limpar mensagem de sucesso após 5 segundos
+        setTimeout(() => {
+          setSuccessMessage('');
+        }, 5000);
+      } else {
+        throw new Error(response.error || 'Erro ao salvar plano');
+      }
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -173,21 +175,20 @@ export default function PlansPage() {
     if (!selectedPlan) return;
     try {
       setIsDeleting(true);
-      const response = await fetch(`/api/plans/${selectedPlan.id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || 'Erro ao excluir plano');
-      }
-      await mutatePlans();
-      handleCloseDeleteDialog();
-      setSuccessMessage('Plano excluído com sucesso!');
+      const response = await planService.deletePlan(selectedPlan.id);
 
-      // Limpar mensagem de sucesso após 5 segundos
-      setTimeout(() => {
-        setSuccessMessage('');
-      }, 5000);
+      if (response.data) {
+        await mutatePlans();
+        handleCloseDeleteDialog();
+        setSuccessMessage('Plano excluído com sucesso!');
+
+        // Limpar mensagem de sucesso após 5 segundos
+        setTimeout(() => {
+          setSuccessMessage('');
+        }, 5000);
+      } else {
+        throw new Error(response.error || 'Erro ao excluir plano');
+      }
     } catch (error: any) {
       setError(error.message);
     } finally {

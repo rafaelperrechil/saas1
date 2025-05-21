@@ -1,11 +1,21 @@
 'use client';
 
-import { Box, TextField, Button, Grid, Autocomplete, Typography } from '@mui/material';
+import {
+  Box,
+  TextField,
+  Button,
+  Grid,
+  Autocomplete,
+  Typography,
+  Alert,
+  CircularProgress,
+} from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { countries } from '@/utils/countries';
 import { cities } from '@/utils/cities';
 import { ArrowBack } from '@mui/icons-material';
+import { nicheService } from '@/services';
 
 interface Niche {
   id: string;
@@ -41,12 +51,24 @@ export default function OrganizationStep({
   useEffect(() => {
     const fetchNiches = async () => {
       try {
-        const response = await fetch('/api/niches');
-        if (!response.ok) {
-          throw new Error('Erro ao carregar nichos');
+        setLoading(true);
+        setError(null);
+
+        const response = await nicheService.getNiches();
+
+        if (response.error) {
+          console.error('Erro ao carregar nichos:', response.error);
+          setError(t('wizard.organization.errors.loadingNiches'));
+          return;
         }
-        const data = await response.json();
-        setNiches(data);
+
+        if (!response.data) {
+          console.error('Resposta sem dados ao carregar nichos');
+          setError(t('wizard.organization.errors.loadingNiches'));
+          return;
+        }
+
+        setNiches(response.data);
       } catch (error) {
         console.error('Erro ao carregar nichos:', error);
         setError(t('wizard.organization.errors.loadingNiches'));
@@ -102,25 +124,18 @@ export default function OrganizationStep({
   };
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 3,
-      }}
-    >
+    <Box sx={{ p: 3 }}>
       <Typography variant="h5" gutterBottom>
         {t('wizard.organization.title')}
       </Typography>
-
-      <Typography variant="body1" color="textSecondary" gutterBottom>
+      <Typography variant="body1" color="text.secondary" paragraph>
         {t('wizard.organization.subtitle')}
       </Typography>
 
       {error && (
-        <Typography color="error" variant="body2">
+        <Alert severity="error" sx={{ mb: 2 }} role="alert">
           {error}
-        </Typography>
+        </Alert>
       )}
 
       <Grid container spacing={3}>
@@ -132,6 +147,7 @@ export default function OrganizationStep({
             onChange={(e) => handleChange('name', e.target.value)}
             required
             disabled={readOnly}
+            inputProps={{ 'data-testid': 'organization-name' }}
           />
         </Grid>
 
@@ -139,15 +155,16 @@ export default function OrganizationStep({
           <TextField
             fullWidth
             label={t('wizard.organization.employeesCount')}
-            type="number"
             value={data.employeesCount}
             onChange={(e) => handleChange('employeesCount', e.target.value)}
+            type="number"
             required
             disabled={readOnly}
+            inputProps={{ 'data-testid': 'employees-count' }}
           />
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} sm={6}>
           <Autocomplete
             options={countries}
             value={data.country}
@@ -159,15 +176,15 @@ export default function OrganizationStep({
           />
         </Grid>
 
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} sm={6}>
           <Autocomplete
-            options={cities}
+            options={cities[data.country] || []}
             value={data.city}
             onChange={(_, newValue) => handleChange('city', newValue || '')}
             renderInput={(params) => (
               <TextField {...params} label={t('wizard.organization.city')} required />
             )}
-            disabled={readOnly}
+            disabled={readOnly || !data.country}
           />
         </Grid>
 
@@ -179,18 +196,25 @@ export default function OrganizationStep({
             onChange={(_, newValue) => handleChange('nicheId', newValue?.id || '')}
             loading={loading}
             renderInput={(params) => (
-              <TextField {...params} label={t('wizard.organization.niche')} required />
+              <TextField
+                {...params}
+                label={t('wizard.organization.niche')}
+                required
+                InputProps={{
+                  ...params.InputProps,
+                  endAdornment: (
+                    <>
+                      {loading ? <CircularProgress color="inherit" size={20} /> : null}
+                      {params.InputProps.endAdornment}
+                    </>
+                  ),
+                }}
+              />
             )}
             disabled={readOnly}
           />
         </Grid>
       </Grid>
-
-      {/* {readOnly && (
-        <Typography variant="body2" color="info" sx={{ mt: 2 }}>
-          {t('wizard.organization.readOnlyMessage')}
-        </Typography>
-      )} */}
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
         <Button variant="outlined" onClick={onBack} startIcon={<ArrowBack />}>
@@ -199,6 +223,7 @@ export default function OrganizationStep({
         <Button
           variant="contained"
           onClick={handleNext}
+          disabled={loading}
           sx={{
             bgcolor: '#2AB7CA',
             '&:hover': {

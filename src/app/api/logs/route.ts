@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-
-const prisma = new PrismaClient();
+import { logService } from '@/services';
 
 export async function GET() {
   try {
@@ -12,25 +10,14 @@ export async function GET() {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
-    const logs = await prisma.loginLog.findMany({
-      include: {
-        user: {
-          select: {
-            name: true,
-            email: true,
-          },
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+    const response = await logService.getLoginLogs();
+    if (response.error) {
+      throw new Error(response.error);
+    }
 
-    return NextResponse.json(logs);
+    return NextResponse.json(response.data);
   } catch (error) {
     console.error('Erro ao buscar logs:', error);
     return NextResponse.json({ error: 'Erro ao buscar histórico de logins' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
   }
 }

@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-
-const prisma = new PrismaClient();
+import { prisma } from '@/lib/prisma';
 
 // GET - Buscar perfil específico
 export async function GET(request: Request, { params }: { params: { id: string } }) {
@@ -25,8 +23,6 @@ export async function GET(request: Request, { params }: { params: { id: string }
   } catch (error) {
     console.error('Erro ao buscar perfil:', error);
     return NextResponse.json({ error: 'Erro ao buscar perfil' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
@@ -53,8 +49,6 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   } catch (error) {
     console.error('Erro ao atualizar perfil:', error);
     return NextResponse.json({ error: 'Erro ao atualizar perfil' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
   }
 }
 
@@ -66,18 +60,6 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
-    // Verificar se existem usuários vinculados ao perfil
-    const usersWithProfile = await prisma.user.count({
-      where: { profileId: params.id },
-    });
-
-    if (usersWithProfile > 0) {
-      return NextResponse.json(
-        { error: 'Não é possível excluir um perfil que possui usuários vinculados' },
-        { status: 400 }
-      );
-    }
-
     await prisma.profile.delete({
       where: { id: params.id },
     });
@@ -86,7 +68,5 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
   } catch (error) {
     console.error('Erro ao remover perfil:', error);
     return NextResponse.json({ error: 'Erro ao remover perfil' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
   }
 }

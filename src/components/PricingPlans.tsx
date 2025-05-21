@@ -57,7 +57,9 @@ export default function PricingPlans({
   // Função para formatar valor monetário
   const formatCurrency = (value: number | null) => {
     if (value === null || value === undefined) return 'N/A';
-    return `R$ ${value.toFixed(2)}`;
+    const numValue = Number(value);
+    if (isNaN(numValue)) return 'N/A';
+    return `R$ ${numValue.toFixed(2)}`;
   };
 
   return (
@@ -154,13 +156,13 @@ export default function PricingPlans({
                   {plan.extraUserPrice !== null && (
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <CheckCircleIcon sx={{ mr: 1, color: 'primary.main' }} fontSize="small" />
-                      <Typography>
+                      <Typography variant="body2" color="textSecondary">
                         {t('pricing.extraUserPrice')}:{' '}
-                        <strong>{formatCurrency(plan.extraUserPrice)}</strong>
+                        <strong>{formatCurrency(Number(plan.extraUserPrice))}</strong>
                       </Typography>
                     </Box>
                   )}
-                  {/* {plan.extraUnitPrice !== null && (
+                  {plan.extraUnitPrice !== null && (
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <CheckCircleIcon sx={{ mr: 1, color: 'primary.main' }} fontSize="small" />
                       <Typography>
@@ -168,7 +170,7 @@ export default function PricingPlans({
                         <strong>{formatCurrency(plan.extraUnitPrice)}</strong>
                       </Typography>
                     </Box>
-                  )} */}
+                  )}
                 </Box>
               </CardContent>
               <Box sx={{ p: 2 }}>
