@@ -12,4 +12,5 @@ export * from './wizard.service';
 export * from './branch.service';
 export * from './log.service';
 export * from './checkout.service';
+export * from './stripe.service';
 export * from './webhook.service';

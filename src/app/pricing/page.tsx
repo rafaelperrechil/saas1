@@ -10,10 +10,13 @@ import FAQSection from '../../components/FAQSection';
 import CTASection from '../../components/CTASection';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import { Plan } from '@/services/api.types';
+import { planService } from '@/services';
+
+type PlanWithAction = Plan & { action?: 'current' | 'upgrade' };
 
 export default function PricingPage() {
   const { data: session } = useSession();
-  const [plans, setPlans] = useState<Plan[]>([]);
+  const [plans, setPlans] = useState<PlanWithAction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -26,7 +29,27 @@ export default function PricingPage() {
         }
         const data = await response.json();
         console.log('Planos carregados:', data); // Debug
-        setPlans(data);
+
+        let plansData: PlanWithAction[] = data.map((plan: Plan) => ({
+          ...plan,
+          action: 'upgrade' as const,
+        }));
+
+        // Se o usuário estiver logado, verificar se tem uma subscription ativa
+        if (session?.user?.id) {
+          const currentPlanResponse = await planService.getCurrentPlan();
+          const currentPlanId = currentPlanResponse.data?.id;
+
+          // Se o usuário tiver uma subscription ativa, marcar os planos adequadamente
+          if (currentPlanId) {
+            plansData = plansData.map((plan) => ({
+              ...plan,
+              action: plan.id === currentPlanId ? 'current' : 'upgrade',
+            }));
+          }
+        }
+
+        setPlans(plansData);
       } catch (err) {
         console.error('Erro ao carregar planos:', err); // Debug
         setError(err instanceof Error ? err.message : 'Erro ao carregar planos');
@@ -36,7 +59,7 @@ export default function PricingPage() {
     };
 
     fetchPlans();
-  }, []);
+  }, [session]);
 
   if (loading) {
     return (

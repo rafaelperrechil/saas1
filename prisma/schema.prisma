@@ -223,6 +223,7 @@ model Payment {
   amount                Decimal        @map("amount")
   currency              String         @default("BRL")
   status                PaymentStatus  @default(REQUIRES_PAYMENT_METHOD)
+  error                 String?        @map("error")
   paidAt                DateTime?      @map("paid_at")
   createdAt             DateTime       @default(now()) @map("created_at")
   updatedAt             DateTime       @updatedAt      @map("updated_at")
@@ -250,4 +251,18 @@ model CheckoutSession {
   @@index([customerId])
   @@index([organizationId])
   @@index([planId])
+}
+
+model WebhookEvent {
+  id          String   @id @default(uuid())
+  type        String   // Tipo do evento (ex: checkout.session.completed)
+  stripeId    String   @unique // ID do evento no Stripe
+  data        Json     // Dados completos do evento
+  processed   Boolean  @default(false) // Se o evento foi processado com sucesso
+  error       String?  // Mensagem de erro, se houver
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([type])
+  @@index([processed])
 }

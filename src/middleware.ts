@@ -20,9 +20,14 @@ const publicRoutes = [
 const exemptRoutesPanel = ['/panel/wizard'];
 
 // Rotas de API que são públicas
-const publicApiRoutes = ['/api/auth', '/api/check-email', '/api/plans'];
+const publicApiRoutes = ['/api/auth', '/api/check-email', '/api/plans', '/api/webhook'];
 
 export async function middleware(request: NextRequest) {
+  // Se for webhook, não faz nada
+  if (request.nextUrl.pathname === '/api/webhook') {
+    return NextResponse.next();
+  }
+
   const token = await getToken({ req: request });
 
   // Se não estiver autenticado, redireciona para o login
@@ -55,6 +60,11 @@ export async function middleware(request: NextRequest) {
 
 export default withAuth(
   async function middleware(req) {
+    // Se for webhook, não faz nada
+    if (req.nextUrl.pathname === '/api/webhook') {
+      return NextResponse.next();
+    }
+
     const pathname = req.nextUrl.pathname;
     const isPublicRoute = publicRoutes.some((route) => pathname.startsWith(route));
     const isPublicApiRoute = publicApiRoutes.some((route) => pathname.startsWith(route));
@@ -106,6 +116,11 @@ export default withAuth(
   {
     callbacks: {
       authorized: ({ token, req }) => {
+        // Se for webhook, sempre permite
+        if (req.nextUrl.pathname === '/api/webhook') {
+          return true;
+        }
+
         const pathname = req.nextUrl.pathname;
         // Permite acesso a rotas públicas mesmo sem token
         if (
@@ -128,6 +143,6 @@ export const config = {
     '/panel/:path*',
 
     // APIs protegidas (excluindo auth, verificação de email e plans)
-    '/api/((?!auth|check-email|plans).*)',
+    '/api/((?!auth|check-email|plans|webhook).*)',
   ],
 };

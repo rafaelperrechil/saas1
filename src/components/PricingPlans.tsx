@@ -6,7 +6,7 @@ import { useSession } from 'next-auth/react';
 import { Grid, Card, CardContent, Typography, Button, Box, useTheme, Divider } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useTranslation } from 'react-i18next';
-import { planService } from '@/services';
+import { planService, stripeService } from '@/services';
 
 // Plan type matching Prisma response
 interface Plan {
@@ -47,9 +47,9 @@ export default function PricingPlans({
     }
 
     try {
-      // Usar o serviço de planos para criar a sessão de checkout
+      // Criar a sessão de checkout diretamente
       const response = await planService.createCheckoutSession(planId);
-      
+
       if (response.error) {
         throw new Error(response.error);
       }
