@@ -61,8 +61,6 @@ class Api {
       }
 
       const fullUrl = this.getFullUrl(endpoint);
-      console.log('Fazendo requisição para:', fullUrl);
-
       const response = await fetch(fullUrl, {
         ...fetchOptions,
         headers: requestHeaders,

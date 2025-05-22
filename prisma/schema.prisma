@@ -42,6 +42,7 @@ model User {
   status           String       @default("ACTIVE")
 
   departmentLinks  DepartmentResponsible[]
+  checkoutSessions CheckoutSession[]
 
   @@map("users")
 }
@@ -70,6 +71,7 @@ model Organization {
 
   users          User[]    @relation("OrgUsers")
   branches       Branch[]
+  checkoutSessions CheckoutSession[]
 
   @@map("organizations")
 }
@@ -151,6 +153,7 @@ model Plan {
   updatedAt        DateTime       @updatedAt      @map("updated_at")
 
   subscriptions    Subscription[]
+  checkoutSessions CheckoutSession[]
 
   @@map("plans")
 }
@@ -226,4 +229,25 @@ model Payment {
   invoice               Invoice?       @relation("InvoicePayment")
 
   @@map("payments")
+}
+
+model CheckoutSession {
+  id             String   @id @default(cuid())
+  status         String   // pending, completed, failed
+  amount         Float
+  currency       String
+  customerId     String
+  organizationId String
+  planId         String
+  paymentMethod  String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  customer     User         @relation(fields: [customerId], references: [id])
+  organization Organization @relation(fields: [organizationId], references: [id])
+  plan         Plan         @relation(fields: [planId], references: [id])
+
+  @@index([customerId])
+  @@index([organizationId])
+  @@index([planId])
 }

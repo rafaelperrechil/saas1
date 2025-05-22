@@ -28,15 +28,20 @@ export default function RegisterPage() {
     }
   }, [status, router]);
 
-  // Se estiver carregando a sessão ou já estiver autenticado, não mostra o formulário
-  if (status === 'loading' || status === 'authenticated') {
+  // Se estiver carregando a sessão, mostra o loading
+  if (status === 'loading') {
     return (
       <Box
         sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
       >
-        <CircularProgress />
+        <CircularProgress role="progressbar" />
       </Box>
     );
+  }
+
+  // Se já estiver autenticado, não mostra nada
+  if (status === 'authenticated') {
+    return null;
   }
 
   const handleEmailChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -180,7 +185,7 @@ export default function RegisterPage() {
             </Alert>
           )}
 
-          <form onSubmit={handleSubmit} role="form">
+          <form onSubmit={handleSubmit} role="form" data-testid="register-form">
             <TextField
               margin="normal"
               required

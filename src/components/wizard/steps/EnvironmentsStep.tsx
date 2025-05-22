@@ -40,6 +40,7 @@ import { useRouter } from 'next/navigation';
 import { saveWizardData } from '@/lib/wizard/saveWizardData';
 import { useSession } from 'next-auth/react';
 import { useTranslation } from 'react-i18next';
+import { wizardService } from '@/services/wizard.service';
 
 interface Environment {
   id: number;
@@ -256,18 +257,11 @@ export default function EnvironmentsStep({
 
         console.log('Data to save:', dataToSave); // Debug
 
-        // Salvar os dados via API
-        const response = await fetch('/api/wizard', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(dataToSave),
-        });
+        // Salvar os dados via serviço
+        const response = await wizardService.saveWizardData(dataToSave);
 
-        if (!response.ok) {
-          const error = await response.json();
-          throw new Error(error.error || 'Erro ao salvar dados');
+        if (response.error) {
+          throw new Error(response.error);
         }
 
         // Redirecionar para o dashboard

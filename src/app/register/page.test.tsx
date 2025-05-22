@@ -4,6 +4,7 @@ import RegisterPage from './page';
 import '@testing-library/jest-dom';
 import { renderWithSession } from '@/test/test-utils';
 import { signIn } from 'next-auth/react';
+import { authService } from '@/services/auth.service';
 
 // Mock do next/navigation
 const mockRouter = {
@@ -18,6 +19,17 @@ const mockRouter = {
 jest.mock('next/navigation', () => ({
   useRouter: () => mockRouter,
 }));
+
+// Mock do next-auth/react
+jest.mock('next-auth/react', () => {
+  const originalModule = jest.requireActual('next-auth/react');
+  return {
+    __esModule: true,
+    ...originalModule,
+    useSession: () => ({ data: null, status: 'unauthenticated' }),
+    signIn: jest.fn(),
+  };
+});
 
 // Mock das traduções
 jest.mock('react-i18next', () => ({
@@ -37,6 +49,8 @@ jest.mock('react-i18next', () => ({
         'auth.register.confirmPassword': 'Confirmar senha',
         'auth.register.title': 'Criar conta',
         'auth.register.subtitle': 'Preencha os dados abaixo para criar sua conta',
+        'auth.register.alreadyHaveAccount': 'Já tem uma conta?',
+        'auth.register.signIn': 'Faça login',
       };
       return translations[key] || key;
     },
@@ -46,7 +60,7 @@ jest.mock('react-i18next', () => ({
 describe('RegisterPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (global.fetch as jest.Mock).mockClear();
+    (global.fetch as jest.Mock) = jest.fn();
   });
 
   const renderRegisterPage = async () => {
@@ -57,6 +71,11 @@ describe('RegisterPage', () => {
     // Aguarda o loading inicial terminar
     await waitFor(() => {
       expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+    });
+
+    // Aguarda o formulário ser renderizado
+    await waitFor(() => {
+      expect(screen.getByTestId('register-form')).toBeInTheDocument();
     });
 
     return result;
@@ -91,7 +110,7 @@ describe('RegisterPage', () => {
     await renderRegisterPage();
 
     await act(async () => {
-      fireEvent.submit(screen.getByRole('form'));
+      fireEvent.submit(screen.getByTestId('register-form'));
     });
 
     await waitFor(() => {
@@ -111,11 +130,11 @@ describe('RegisterPage', () => {
     await fillForm();
 
     await act(async () => {
-      fireEvent.submit(screen.getByRole('form'));
+      fireEvent.submit(screen.getByTestId('register-form'));
     });
 
     await waitFor(() => {
-      expect(screen.getByText('Email já cadastrado')).toBeInTheDocument();
+      expect(screen.getAllByText('Email já cadastrado').length).toBeGreaterThan(0);
       expect(global.fetch).toHaveBeenCalledWith('/api/check-email', expect.any(Object));
     });
   });
@@ -125,7 +144,7 @@ describe('RegisterPage', () => {
     await fillForm({ confirmPassword: 'diferente' });
 
     await act(async () => {
-      fireEvent.submit(screen.getByRole('form'));
+      fireEvent.submit(screen.getByTestId('register-form'));
     });
 
     await waitFor(() => {
@@ -138,7 +157,7 @@ describe('RegisterPage', () => {
     await fillForm({ email: 'emailinvalido' });
 
     await act(async () => {
-      fireEvent.submit(screen.getByRole('form'));
+      fireEvent.submit(screen.getByTestId('register-form'));
     });
 
     await waitFor(() => {
@@ -147,58 +166,56 @@ describe('RegisterPage', () => {
   });
 
   it('registra com sucesso e redireciona', async () => {
-    (global.fetch as jest.Mock)
-      .mockImplementationOnce(() =>
-        Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve({ exists: false }),
-        })
-      )
-      .mockImplementationOnce(() =>
-        Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve({ success: true }),
-        })
-      );
-
-    (signIn as jest.Mock).mockResolvedValueOnce({ ok: true });
+    // Mockar authService.register e authService.login para simular sucesso
+    jest.spyOn(authService, 'register').mockResolvedValue({ data: { success: true } });
+    jest.spyOn(authService, 'login').mockResolvedValue({
+      data: {
+        user: {
+          id: '1',
+          email: 'teste@email.com',
+          name: 'Usuário Teste',
+          profile: null
+        }
+      }
+    });
+    jest.spyOn(authService, 'checkEmail').mockResolvedValue({ data: { exists: false } });
 
     await renderRegisterPage();
     await fillForm();
 
     await act(async () => {
-      fireEvent.submit(screen.getByRole('form'));
+      fireEvent.submit(screen.getByTestId('register-form'));
     });
 
     await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith('/api/check-email', expect.any(Object));
-      expect(global.fetch).toHaveBeenCalledWith('/api/auth/register', expect.any(Object));
-      expect(signIn).toHaveBeenCalled();
+      expect(authService.checkEmail).toHaveBeenCalledWith('teste@email.com');
+      expect(authService.register).toHaveBeenCalledWith({
+        name: 'Usuário Teste',
+        email: 'teste@email.com',
+        password: '123456',
+        confirmPassword: '123456'
+      });
+      expect(authService.login).toHaveBeenCalledWith({
+        email: 'teste@email.com',
+        password: '123456'
+      });
       expect(mockRouter.replace).toHaveBeenCalledWith('/panel/dashboard');
     });
   });
 
   it('exibe erro quando o registro falha', async () => {
-    (global.fetch as jest.Mock)
-      .mockImplementationOnce(() =>
-        Promise.resolve({
-          ok: true,
-          json: () => Promise.resolve({ exists: false }),
-        })
-      )
-      .mockImplementationOnce(() =>
-        Promise.resolve({
-          ok: false,
-          status: 500,
-          json: () => Promise.resolve({ message: 'Erro ao criar conta' }),
-        })
-      );
+    // Mockar authService para simular erro
+    jest.spyOn(authService, 'checkEmail').mockResolvedValue({ data: { exists: false } });
+    jest.spyOn(authService, 'register').mockResolvedValue({ 
+      error: 'Erro ao criar conta',
+      data: { success: false }
+    });
 
     await renderRegisterPage();
     await fillForm();
 
     await act(async () => {
-      fireEvent.submit(screen.getByRole('form'));
+      fireEvent.submit(screen.getByTestId('register-form'));
     });
 
     await waitFor(() => {
@@ -209,8 +226,8 @@ describe('RegisterPage', () => {
   describe('Acessibilidade', () => {
     it('tem título e descrição apropriados', async () => {
       await renderRegisterPage();
-      expect(screen.getByRole('heading', { name: 'Criar conta' })).toBeInTheDocument();
-      expect(screen.getByText('Preencha os dados abaixo para criar sua conta')).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: /criar conta/i })).toBeInTheDocument();
+      expect(screen.getByText(/preencha os dados abaixo para criar sua conta/i)).toBeInTheDocument();
     });
 
     it('tem labels apropriados para todos os campos', async () => {
@@ -223,7 +240,7 @@ describe('RegisterPage', () => {
 
     it('tem links com texto descritivo', async () => {
       await renderRegisterPage();
-      const loginLink = screen.getByRole('link', { name: 'auth.register.signIn' });
+      const loginLink = screen.getByRole('link', { name: /faça login/i });
       expect(loginLink).toBeInTheDocument();
       expect(loginLink).toHaveAttribute('href', '/login');
     });

@@ -146,6 +146,7 @@ export interface CheckoutSession {
   paymentMethod: string;
   createdAt: string;
   updatedAt: string;
+  url?: string;
 }
 
 export interface CreateCheckoutSessionData {

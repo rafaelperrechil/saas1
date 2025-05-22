@@ -41,9 +41,9 @@ export const planService = {
     });
   },
 
-  async createCheckoutSession(planId: string): Promise<ApiResponse<CheckoutSession>> {
-    return api.post<CheckoutSession>(
-      '/api/checkout/session',
+  async createCheckoutSession(planId: string): Promise<ApiResponse<{ url: string; sessionId: string }>> {
+    return api.post<{ url: string; sessionId: string }>(
+      '/api/checkout',
       { planId },
       {
         requiresAuth: true,
@@ -53,14 +53,14 @@ export const planService = {
   },
 
   async getCheckoutSession(sessionId: string): Promise<ApiResponse<CheckoutSession>> {
-    return api.get<CheckoutSession>(`/api/checkout/session/${sessionId}`, {
+    return api.get<CheckoutSession>(`/api/checkout/sessions/${sessionId}`, {
       requiresAuth: true,
     });
   },
 
   async cancelCheckoutSession(sessionId: string): Promise<ApiResponse<{ success: boolean }>> {
     return api.post<{ success: boolean }>(
-      `/api/checkout/session/${sessionId}/cancel`,
+      `/api/checkout/sessions/${sessionId}/cancel`,
       {},
       {
         requiresAuth: true,

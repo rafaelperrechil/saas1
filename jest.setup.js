@@ -2,6 +2,23 @@ import '@testing-library/jest-dom';
 import 'isomorphic-fetch';
 import React from 'react';
 
+// Mock para next/navigation
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    prefetch: jest.fn(),
+    back: jest.fn(),
+  }),
+  usePathname: () => '',
+  useSearchParams: () => new URLSearchParams(),
+}));
+
+// Mock para next-auth
+jest.mock('next-auth', () => ({
+  getServerSession: jest.fn(() => null),
+}));
+
 const mockSession = {
   expires: new Date(Date.now() + 2 * 86400).toISOString(),
   user: {
@@ -21,13 +38,13 @@ jest.mock('next-auth/react', () => {
     __esModule: true,
     ...originalModule,
     useSession: jest.fn(() => ({
-      data: null,
-      status: 'unauthenticated',
+      data: mockSession,
+      status: 'authenticated',
       update: jest.fn(),
     })),
     signIn: jest.fn(),
     signOut: jest.fn(),
-    getSession: jest.fn(() => null),
+    getSession: jest.fn(() => mockSession),
   };
 });
 

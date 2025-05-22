@@ -90,12 +90,12 @@ describe('ADMIN - Profiles CRUD', () => {
     });
 
     it('deve mostrar mensagem de erro se falhar ao carregar perfis', async () => {
-      (global.fetch as jest.Mock).mockRejectedValueOnce(new Error('Erro ao carregar'));
+      global.fetch = jest.fn().mockRejectedValueOnce(new Error('Erro de autenticação'));
 
       render(<ProfilesPage />);
 
       await waitFor(() => {
-        expect(screen.getByText('Erro ao carregar')).toBeInTheDocument();
+        expect(screen.getByText('Erro de autenticação')).toBeInTheDocument();
       });
     });
   });

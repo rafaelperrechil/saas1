@@ -295,11 +295,13 @@ export default function UsersPage() {
             disabled={isLoading}
           />
           <FormControl fullWidth margin="normal">
-            <InputLabel>Perfil</InputLabel>
+            <InputLabel id="profile-label">Perfil</InputLabel>
             <Select
+              labelId="profile-label"
+              id="profile"
               value={formData.profileId}
+              label="Perfil"
               onChange={(e) => setFormData({ ...formData, profileId: e.target.value })}
-              disabled={isLoading}
             >
               {profiles.map((profile) => (
                 <MenuItem key={profile.id} value={profile.id}>

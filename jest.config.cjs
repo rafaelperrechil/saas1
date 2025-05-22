@@ -8,4 +8,7 @@ module.exports = {
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
   },
+  transformIgnorePatterns: [
+    '/node_modules/(?!(jose|openid-client|@panva|oidc-token-hash|oidc-token-verifier|@panva|oidc-token-hash|oidc-token-verifier)/)',
+  ],
 };

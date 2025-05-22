@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import { Grid, Card, CardContent, Typography, Button, Box, useTheme, Divider } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useTranslation } from 'react-i18next';
+import { planService } from '@/services';
 
 // Plan type matching Prisma response
 interface Plan {
@@ -44,14 +45,22 @@ export default function PricingPlans({
       router.push('/login');
       return;
     }
-    // proceed to checkout
-    const res = await fetch('/api/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ planId }),
-    });
-    const data = await res.json();
-    if (data.url) window.location.href = data.url;
+
+    try {
+      // Usar o serviço de planos para criar a sessão de checkout
+      const response = await planService.createCheckoutSession(planId);
+      
+      if (response.error) {
+        throw new Error(response.error);
+      }
+
+      if (response.data?.url) {
+        window.location.href = response.data.url;
+      }
+    } catch (error) {
+      console.error('Erro ao criar sessão de checkout:', error);
+      // Aqui você pode adicionar uma notificação de erro se desejar
+    }
   };
 
   // Função para formatar valor monetário

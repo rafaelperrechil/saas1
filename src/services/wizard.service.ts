@@ -4,7 +4,7 @@ import { WizardStep, ApiResponse } from './api.types';
 interface WizardData {
   organization: {
     name: string;
-    employeesCount: string;
+    employeesCount: number;
     country: string;
     city: string;
     nicheId: string;
@@ -63,6 +63,13 @@ export const wizardService = {
 
   async processWizardData(userId: string, data: WizardData): Promise<ApiResponse<any>> {
     return api.post('/api/wizard/process', data, {
+      requiresAuth: true,
+      requiresCSRF: true,
+    });
+  },
+
+  async saveWizardData(data: WizardData): Promise<ApiResponse<{ success: boolean }>> {
+    return api.post<{ success: boolean }>('/api/wizard', data, {
       requiresAuth: true,
       requiresCSRF: true,
     });
