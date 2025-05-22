@@ -28,7 +28,7 @@ export default function PricingPage() {
           throw new Error('Falha ao carregar planos');
         }
         const data = await response.json();
-        console.log('Planos carregados:', data); // Debug
+        //console.log('Planos carregados:', data); // Debug
 
         let plansData: PlanWithAction[] = data.map((plan: Plan) => ({
           ...plan,
