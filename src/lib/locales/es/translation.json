@@ -105,6 +105,26 @@
         "generic": "Error al procesar tu solicitud. Por favor, inténtalo de nuevo.",
         "invalidEmail": "Correo electrónico inválido"
       }
+    },
+    "resetPassword": {
+      "title": "Restablecer Contraseña",
+      "subtitle": "Ingrese su nueva contraseña",
+      "newPassword": "Nueva contraseña",
+      "confirmPassword": "Confirmar nueva contraseña",
+      "submit": "Restablecer Contraseña",
+      "backToLogin": "Volver al inicio de sesión",
+      "success": {
+        "title": "¡Contraseña restablecida con éxito!",
+        "message": "Serás redirigido a la página de inicio de sesión en unos momentos..."
+      },
+      "error": {
+        "required": "Se requieren token, contraseña y confirmación de contraseña",
+        "passwordMismatch": "Las contraseñas no coinciden",
+        "invalidToken": "Token inválido",
+        "expiredToken": "El enlace de restablecimiento de contraseña es inválido o ha expirado.",
+        "passwordLength": "La contraseña debe tener al menos 6 caracteres",
+        "generic": "Error al restablecer la contraseña"
+      }
     }
   },
   "pricing": {

@@ -101,6 +101,26 @@
         "generic": "Erro ao processar sua solicitação. Tente novamente.",
         "invalidEmail": "E-mail inválido"
       }
+    },
+    "resetPassword": {
+      "title": "Redefinir Senha",
+      "subtitle": "Digite sua nova senha",
+      "newPassword": "Nova senha",
+      "confirmPassword": "Confirmar nova senha",
+      "submit": "Redefinir Senha",
+      "backToLogin": "Voltar para o login",
+      "success": {
+        "title": "Senha redefinida com sucesso!",
+        "message": "Você será redirecionado para a página de login em instantes..."
+      },
+      "error": {
+        "required": "Token, senha e confirmação de senha são obrigatórios",
+        "passwordMismatch": "As senhas não coincidem",
+        "invalidToken": "Token inválido",
+        "expiredToken": "O link de redefinição de senha é inválido ou expirou.",
+        "passwordLength": "A senha deve ter pelo menos 6 caracteres",
+        "generic": "Erro ao redefinir senha"
+      }
     }
   },
   "pricing": {

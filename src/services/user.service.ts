@@ -131,10 +131,6 @@ export const userService = {
     });
   },
 
-  async forgotPassword(email: string): Promise<ApiResponse<{ message: string }>> {
-    return api.post<{ message: string }>('/api/auth/forgot-password', { email });
-  },
-
   async resetPassword(token: string, password: string): Promise<ApiResponse<{ message: string }>> {
     return api.post<{ message: string }>('/api/auth/reset-password', { token, password });
   },

@@ -20,6 +20,7 @@ interface ResetPasswordData {
   token: string;
   password: string;
   confirmPassword: string;
+  lang?: string;
 }
 
 interface AuthResponse {

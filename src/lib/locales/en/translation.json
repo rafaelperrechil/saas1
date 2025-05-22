@@ -107,6 +107,26 @@
         "generic": "Error processing your request. Please try again.",
         "invalidEmail": "Invalid email"
       }
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "subtitle": "Enter your new password",
+      "newPassword": "New password",
+      "confirmPassword": "Confirm new password",
+      "submit": "Reset Password",
+      "backToLogin": "Back to login",
+      "success": {
+        "title": "Password reset successfully!",
+        "message": "You will be redirected to the login page in a moment..."
+      },
+      "error": {
+        "required": "Token, password and password confirmation are required",
+        "passwordMismatch": "Passwords do not match",
+        "invalidToken": "Invalid token",
+        "expiredToken": "The password reset link is invalid or has expired.",
+        "passwordLength": "Password must be at least 6 characters long",
+        "generic": "Error resetting password"
+      }
     }
   },
   "pricing": {

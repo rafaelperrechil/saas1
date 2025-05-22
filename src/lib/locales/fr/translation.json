@@ -105,6 +105,26 @@
         "generic": "Erreur lors du traitement de votre demande. Veuillez réessayer.",
         "invalidEmail": "E-mail invalide"
       }
+    },
+    "resetPassword": {
+      "title": "Réinitialiser le Mot de Passe",
+      "subtitle": "Entrez votre nouveau mot de passe",
+      "newPassword": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le nouveau mot de passe",
+      "submit": "Réinitialiser le Mot de Passe",
+      "backToLogin": "Retour à la connexion",
+      "success": {
+        "title": "Mot de passe réinitialisé avec succès!",
+        "message": "Vous serez redirigé vers la page de connexion dans quelques instants..."
+      },
+      "error": {
+        "required": "Le token, le mot de passe et la confirmation du mot de passe sont requis",
+        "passwordMismatch": "Les mots de passe ne correspondent pas",
+        "invalidToken": "Token invalide",
+        "expiredToken": "Le lien de réinitialisation du mot de passe est invalide ou a expiré.",
+        "passwordLength": "Le mot de passe doit contenir au moins 6 caractères",
+        "generic": "Erreur lors de la réinitialisation du mot de passe"
+      }
     }
   },
   "pricing": {

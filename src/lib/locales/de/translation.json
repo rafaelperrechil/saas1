@@ -105,6 +105,26 @@
         "generic": "Fehler bei der Bearbeitung Ihrer Anfrage. Bitte versuchen Sie es erneut.",
         "invalidEmail": "Ungültige E-Mail"
       }
+    },
+    "resetPassword": {
+      "title": "Passwort zurücksetzen",
+      "subtitle": "Geben Sie Ihr neues Passwort ein",
+      "newPassword": "Neues Passwort",
+      "confirmPassword": "Neues Passwort bestätigen",
+      "submit": "Passwort zurücksetzen",
+      "backToLogin": "Zurück zur Anmeldung",
+      "success": {
+        "title": "Passwort erfolgreich zurückgesetzt!",
+        "message": "Sie werden in wenigen Augenblicken zur Anmeldeseite weitergeleitet..."
+      },
+      "error": {
+        "required": "Token, Passwort und Passwortbestätigung sind erforderlich",
+        "passwordMismatch": "Passwörter stimmen nicht überein",
+        "invalidToken": "Ungültiger Token",
+        "expiredToken": "Der Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen.",
+        "passwordLength": "Das Passwort muss mindestens 6 Zeichen lang sein",
+        "generic": "Fehler beim Zurücksetzen des Passworts"
+      }
     }
   },
   "pricing": {

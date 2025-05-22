@@ -11,7 +11,9 @@ class Api {
 
   constructor() {
     // Em desenvolvimento, usa a URL base do servidor
-    this.baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    this.baseUrl =
+      process.env.NEXT_PUBLIC_API_URL ||
+      (typeof window === 'undefined' ? 'http://localhost:3000' : '');
   }
 
   private getFullUrl(endpoint: string): string {

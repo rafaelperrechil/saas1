@@ -106,6 +106,26 @@
         "generic": "处理您的请求时出错。请重试。",
         "invalidEmail": "电子邮件无效"
       }
+    },
+    "resetPassword": {
+      "title": "重置密码",
+      "subtitle": "请输入您的新密码",
+      "newPassword": "新密码",
+      "confirmPassword": "确认新密码",
+      "submit": "重置密码",
+      "backToLogin": "返回登录",
+      "success": {
+        "title": "密码重置成功！",
+        "message": "您将在几秒钟内被重定向到登录页面..."
+      },
+      "error": {
+        "required": "需要令牌、密码和密码确认",
+        "passwordMismatch": "密码不匹配",
+        "invalidToken": "无效的令牌",
+        "expiredToken": "密码重置链接无效或已过期。",
+        "passwordLength": "密码长度必须至少为6个字符",
+        "generic": "重置密码时出错"
+      }
     }
   },
   "pricing": {
