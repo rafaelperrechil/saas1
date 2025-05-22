@@ -122,6 +122,14 @@ export async function POST(req: Request) {
       },
     });
 
+    // Atualizar o branch para marcar o wizard como completo
+    await prisma.branch.update({
+      where: { id: branch.id },
+      data: {
+        wizardCompleted: true,
+      },
+    });
+
     return NextResponse.json({
       success: true,
       data: {
