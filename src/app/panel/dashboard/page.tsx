@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import useSWR from 'swr';
 import { Grid, Typography, Box, Card, CardContent, CircularProgress } from '@mui/material';
@@ -11,7 +11,8 @@ import {
   Apartment as ApartmentIcon,
   MeetingRoom as MeetingRoomIcon,
 } from '@mui/icons-material';
-import { dashboardService } from '@/services';
+import { dashboardService, organizationService } from '@/services';
+import { useRouter } from 'next/navigation';
 
 interface DashboardStats {
   totalUsers: number;
@@ -31,7 +32,8 @@ const fetcher = async (url: string): Promise<DashboardStats> => {
 };
 
 export default function DashboardPage() {
-  const { status } = useSession();
+  const { status, data: session } = useSession();
+  const router = useRouter();
   const {
     data: stats,
     error,
@@ -40,6 +42,23 @@ export default function DashboardPage() {
     status === 'authenticated' ? '/api/dashboard/stats' : null,
     fetcher
   );
+
+  useEffect(() => {
+    const checkOrganization = async () => {
+      if (!session?.user?.id) return;
+
+      try {
+        const response = await organizationService.getCompletedWizardData(session.user.id);
+        if (!response.data?.hasCompletedWizard) {
+          router.replace('/panel/wizard');
+        }
+      } catch (error) {
+        console.error('Erro ao verificar organização:', error);
+      }
+    };
+
+    checkOrganization();
+  }, [session, router]);
 
   const StatCard = ({
     title,

@@ -26,10 +26,8 @@ interface Payment {
   status: string;
   createdAt: string;
   description?: string;
-  subscription?: {
-    plan?: {
-      name: string;
-    };
+  plan?: {
+    name: string;
   };
 }
 
@@ -53,7 +51,7 @@ export default function BillingHistoryCard({ payments, translations }: BillingHi
     amount: 'Amount',
     date: 'Date',
     status: 'Status',
-    noInvoices: 'No invoices yet',
+    noInvoices: 'Nenhuma fatura encontrada',
   };
 
   // Detectar o idioma atual baseado no navegador para formatação de data
@@ -102,36 +100,6 @@ export default function BillingHistoryCard({ payments, translations }: BillingHi
     handleMenuClose();
   };
 
-  // Usar dados estáticos para demonstração se os pagamentos estiverem vazios
-  const demoPayments: Payment[] = [
-    {
-      id: 'pay_1234',
-      amount: 119.0,
-      status: 'succeeded',
-      createdAt: '2023-06-15',
-      description: 'Assinatura - Plano Business',
-      subscription: {
-        plan: {
-          name: 'Business',
-        },
-      },
-    },
-    {
-      id: 'pay_5678',
-      amount: 119.0,
-      status: 'succeeded',
-      createdAt: '2023-05-15',
-      description: 'Assinatura - Plano Business',
-      subscription: {
-        plan: {
-          name: 'Business',
-        },
-      },
-    },
-  ];
-
-  const displayPayments = payments.length > 0 ? payments : demoPayments;
-
   return (
     <Card sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
@@ -141,41 +109,45 @@ export default function BillingHistoryCard({ payments, translations }: BillingHi
         </Typography>
       </Box>
 
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Data</TableCell>
-              <TableCell>Descrição</TableCell>
-              <TableCell>Valor</TableCell>
-              <TableCell>Status</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {displayPayments.map((payment) => (
-              <TableRow
-                key={payment.id}
-                onClick={(e) => handleMenuClick(e, payment.id)}
-                sx={{ cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
-              >
-                <TableCell>{formatDate(new Date(payment.createdAt))}</TableCell>
-                <TableCell>
-                  {payment.description || payment.subscription?.plan?.name || 'N/A'}
-                </TableCell>
-                <TableCell>{formatCurrency(Number(payment.amount))}</TableCell>
-                <TableCell>
-                  <Chip
-                    label={text.succeeded}
-                    color="success"
-                    size="small"
-                    sx={{ fontWeight: 'bold' }}
-                  />
-                </TableCell>
+      {payments.length === 0 ? (
+        <Box sx={{ textAlign: 'center', py: 4 }}>
+          <Typography color="textSecondary">{text.noInvoices}</Typography>
+        </Box>
+      ) : (
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Data</TableCell>
+                <TableCell>Descrição</TableCell>
+                <TableCell>Valor</TableCell>
+                <TableCell>Status</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {payments.map((payment) => (
+                <TableRow
+                  key={payment.id}
+                  onClick={(e) => handleMenuClick(e, payment.id)}
+                  sx={{ cursor: 'pointer', '&:hover': { bgcolor: 'action.hover' } }}
+                >
+                  <TableCell>{formatDate(new Date(payment.createdAt))}</TableCell>
+                  <TableCell>{payment.description || payment.plan?.name || 'N/A'}</TableCell>
+                  <TableCell>{formatCurrency(Number(payment.amount))}</TableCell>
+                  <TableCell>
+                    <Chip
+                      label={text.succeeded}
+                      color="success"
+                      size="small"
+                      sx={{ fontWeight: 'bold' }}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
 
       <Menu
         id={`menu-${activeRowId}`}

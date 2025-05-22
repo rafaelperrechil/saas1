@@ -72,6 +72,17 @@ export async function POST(req: Request) {
         data: { status: 'completed' },
       });
 
+      // Atualizar todas as assinaturas ativas do usuário para EXPIRED
+      await prisma.subscription.updateMany({
+        where: {
+          userId: session.metadata.userId,
+          status: 'ACTIVE',
+        },
+        data: {
+          status: 'EXPIRED',
+        },
+      });
+
       // Criar assinatura
       const subscription = await prisma.subscription.create({
         data: {

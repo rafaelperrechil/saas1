@@ -10,23 +10,19 @@ export async function GET() {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
-    const payments = await prisma.payment.findMany({
+    const checkoutSessions = await prisma.checkoutSession.findMany({
       where: {
-        userId: session.user.id,
+        customerId: session.user.id,
       },
       include: {
-        subscription: {
-          include: {
-            plan: true,
-          },
-        },
+        plan: true,
       },
       orderBy: {
         createdAt: 'desc',
       },
     });
 
-    return NextResponse.json(payments);
+    return NextResponse.json(checkoutSessions);
   } catch (error: any) {
     console.error('Erro ao buscar histórico de pagamentos:', error);
     return NextResponse.json(

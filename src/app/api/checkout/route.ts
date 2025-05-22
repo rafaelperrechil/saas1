@@ -47,6 +47,17 @@ export async function POST(request: Request) {
 
     // Se o usuário não tem uma organização, criar uma temporária com nome em branco
     if (!user.organization) {
+      // Buscar um nicho padrão (Tecnologia)
+      const defaultNiche = await prisma.niche.findFirst({
+        where: {
+          name: 'Tecnologia',
+        },
+      });
+
+      if (!defaultNiche) {
+        return NextResponse.json({ error: 'Nicho padrão não encontrado' }, { status: 404 });
+      }
+
       const organization = await prisma.organization.create({
         data: {
           name: '', // Nome em branco para ser preenchido depois no wizard
@@ -54,7 +65,7 @@ export async function POST(request: Request) {
           country: 'Brasil', // Valor temporário
           city: 'São Paulo', // Valor temporário
           niche: {
-            connect: { id: 'cmaysrevf0006n70rce4xzup1' },
+            connect: { id: defaultNiche.id },
           },
           users: {
             connect: { id: user.id },
@@ -73,8 +84,26 @@ export async function POST(request: Request) {
       }
     }
 
+    // Se o usuário não tem uma conta Stripe, criar uma
     if (!user.stripeCustomerId) {
-      return NextResponse.json({ error: 'Usuário não possui uma conta Stripe' }, { status: 400 });
+      const customer = await stripe.customers.create({
+        email: user.email || undefined,
+        name: user.name || undefined,
+        metadata: {
+          userId: user.id,
+        },
+      });
+
+      // Atualizar usuário com o ID do cliente Stripe
+      user = await prisma.user.update({
+        where: { id: user.id },
+        data: { stripeCustomerId: customer.id },
+        include: { organization: true },
+      });
+
+      if (!user) {
+        return NextResponse.json({ error: 'Erro ao atualizar usuário' }, { status: 500 });
+      }
     }
 
     if (!process.env.NEXT_PUBLIC_APP_URL) {
@@ -89,7 +118,7 @@ export async function POST(request: Request) {
 
     // Criar sessão de checkout no Stripe
     const stripeSession = await stripe.checkout.sessions.create({
-      customer: user.stripeCustomerId,
+      customer: user.stripeCustomerId || undefined,
       payment_method_types: ['card'],
       line_items: [
         {
