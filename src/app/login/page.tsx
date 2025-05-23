@@ -9,6 +9,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useTranslation } from 'react-i18next';
 import { authService } from '@/services';
+import { organizationService } from '@/services';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -44,7 +45,17 @@ export default function LoginPage() {
       if (response.error) {
         setError(t('auth.login.error.invalid'));
       } else if (response.data) {
-        router.replace('/panel/dashboard');
+        // Verificar se o usuário tem uma organização
+        const orgResponse = await organizationService.getCompletedWizardData(response.data.user.id);
+
+        if (orgResponse.error) {
+          console.error('Erro ao verificar organização:', orgResponse.error);
+          router.replace('/panel/dashboard');
+        } else if (!orgResponse.data?.hasCompletedWizard) {
+          router.replace('/panel/wizard');
+        } else {
+          router.replace('/panel/dashboard');
+        }
       }
     } catch (err) {
       console.error('Erro no login:', err);
