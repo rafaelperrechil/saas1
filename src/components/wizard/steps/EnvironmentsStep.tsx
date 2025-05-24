@@ -346,7 +346,7 @@ export default function EnvironmentsStep({
               bgcolor: '#1F3251',
             },
           }}
-          data-testid="next-button"
+          data-testid="environments-step-next-button"
         >
           {isSaving ? t('wizard.common.saving') : t('wizard.common.finish')}
         </Button>

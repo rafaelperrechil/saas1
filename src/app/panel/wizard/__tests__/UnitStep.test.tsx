@@ -47,7 +47,8 @@ describe('UnitStep', () => {
         />
       </I18nextProvider>
     );
-    const nextButton = screen.getByText('Próximo');
+    const nextButtons = screen.getAllByTestId('unit-step-next-button');
+    const nextButton = nextButtons[1];
     expect(nextButton).not.toBeDisabled();
     fireEvent.click(nextButton);
     expect(mockOnNext).toHaveBeenCalledTimes(1);

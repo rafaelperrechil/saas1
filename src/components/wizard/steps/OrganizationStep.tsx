@@ -171,7 +171,12 @@ export default function OrganizationStep({
             value={data.country}
             onChange={(_, newValue) => handleChange('country', newValue || '')}
             renderInput={(params) => (
-              <TextField {...params} label={t('wizard.organization.country')} required />
+              <TextField
+                {...params}
+                label={t('wizard.organization.country')}
+                required
+                inputProps={{ 'data-testid': 'country' }}
+              />
             )}
             disabled={readOnly}
           />
@@ -183,7 +188,12 @@ export default function OrganizationStep({
             value={data.city}
             onChange={(_, newValue) => handleChange('city', newValue || '')}
             renderInput={(params) => (
-              <TextField {...params} label={t('wizard.organization.city')} required />
+              <TextField
+                {...params}
+                label={t('wizard.organization.city')}
+                required
+                inputProps={{ 'data-testid': 'city' }}
+              />
             )}
             disabled={readOnly || !data.country}
           />
@@ -201,6 +211,7 @@ export default function OrganizationStep({
                 {...params}
                 label={t('wizard.organization.niche')}
                 required
+                disabled={readOnly}
                 InputProps={{
                   ...params.InputProps,
                   endAdornment: (
@@ -210,9 +221,9 @@ export default function OrganizationStep({
                     </>
                   ),
                 }}
+                inputProps={{ ...params.inputProps, 'data-testid': 'niche-select' }}
               />
             )}
-            disabled={readOnly}
           />
         </Grid>
       </Grid>
@@ -231,7 +242,7 @@ export default function OrganizationStep({
               bgcolor: '#1F3251',
             },
           }}
-          data-testid="next-button"
+          data-testid="organization-step-next-button"
         >
           {t('wizard.common.next')}
         </Button>

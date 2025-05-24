@@ -70,7 +70,7 @@ export default function UnitStep({ data, onChange, onBack, onNext }: UnitStepPro
               bgcolor: '#1F3251',
             },
           }}
-          data-testid="next-button"
+          data-testid="unit-step-next-button"
         >
           {t('wizard.common.next')}
         </Button>

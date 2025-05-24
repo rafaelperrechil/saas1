@@ -61,69 +61,55 @@ describe('OrganizationStep', () => {
 
   it('deve validar campos obrigatórios', async () => {
     renderComponent();
-    const nextButton = screen.getByText('Próximo');
-    fireEvent.click(nextButton);
 
-    // Espera pela mensagem de erro do nome
-    fireEvent.click(nextButton);
-    await waitFor(() => {
-      expect(screen.queryByTestId('error-message')).toBeInTheDocument();
-    });
-    expect(screen.getByTestId('error-message')).toHaveTextContent(
-      'Nome da organização é obrigatório'
+    // Tenta clicar no botão próximo com campos vazios
+    const nextButton = screen.getByTestId('organization-step-next-button');
+    expect(nextButton).toBeDisabled();
+
+    // Preenche os campos obrigatórios
+    const nameInput = screen.getByTestId('organization-name');
+    const employeesInput = screen.getByTestId('employees-count');
+
+    fireEvent.change(nameInput, { target: { value: 'Empresa Teste' } });
+    fireEvent.change(employeesInput, { target: { value: '100' } });
+
+    // Simula abertura e seleção do país
+    const countryInput = screen.getByTestId('country');
+    const countryDropdownButton = countryInput.parentElement?.querySelector(
+      'button[aria-label="Open"]'
     );
-
-    // Preenche o nome e tenta novamente
-    fireEvent.change(screen.getByTestId('organization-name'), {
-      target: { value: 'Empresa Teste' },
-    });
+    if (countryDropdownButton) fireEvent.mouseDown(countryDropdownButton);
     await waitFor(() => {
-      expect(screen.getByTestId('organization-name')).toHaveValue('Empresa Teste');
+      expect(document.body.querySelector('li[data-option-index]')).toBeInTheDocument();
     });
-    fireEvent.click(nextButton);
+    fireEvent.click(document.body.querySelector('li[data-option-index]'));
+
+    // Simula abertura e seleção da cidade
+    const cityInput = screen.getByTestId('city');
+    const cityDropdownButton = cityInput.parentElement?.querySelector('button[aria-label="Open"]');
+    if (cityDropdownButton) fireEvent.mouseDown(cityDropdownButton);
     await waitFor(() => {
-      expect(screen.getByTestId('error-message')).toHaveTextContent(
-        'Número de funcionários é obrigatório'
-      );
+      expect(document.body.querySelector('li[data-option-index]')).toBeInTheDocument();
     });
+    fireEvent.click(document.body.querySelector('li[data-option-index]'));
 
-    // Preenche o número de funcionários e tenta novamente
-    fireEvent.change(screen.getByTestId('employees-count'), { target: { value: '10' } });
-    fireEvent.click(nextButton);
+    // Simula abertura e seleção do nicho
+    const nicheSelect = screen.getByTestId('niche-select');
+    const nicheDropdownButton = nicheSelect.parentElement?.querySelector(
+      'button[aria-label="Open"]'
+    );
+    if (nicheDropdownButton) fireEvent.mouseDown(nicheDropdownButton);
     await waitFor(() => {
-      expect(screen.getByTestId('error-message')).toHaveTextContent('País é obrigatório');
+      expect(document.body.querySelector('li[data-option-index]')).toBeInTheDocument();
     });
+    fireEvent.click(document.body.querySelector('li[data-option-index]'));
 
-    // Simula seleção do país
-    const comboboxes = screen.getAllByRole('combobox');
-    const countryInput = comboboxes[0];
-    fireEvent.change(countryInput, { target: { value: 'Brasil' } });
-    fireEvent.keyDown(countryInput, { key: 'ArrowDown' });
-    fireEvent.keyDown(countryInput, { key: 'Enter' });
-
-    fireEvent.click(nextButton);
+    // Aguarda o botão ser habilitado
     await waitFor(() => {
-      expect(screen.getByTestId('error-message')).toHaveTextContent('Cidade é obrigatória');
+      expect(nextButton).not.toBeDisabled();
     });
 
-    // Simula seleção da cidade
-    const cityInput = comboboxes[1];
-    fireEvent.change(cityInput, { target: { value: 'São Paulo' } });
-    fireEvent.keyDown(cityInput, { key: 'ArrowDown' });
-    fireEvent.keyDown(cityInput, { key: 'Enter' });
-
-    fireEvent.click(nextButton);
-    await waitFor(() => {
-      expect(screen.getByTestId('error-message')).toHaveTextContent('Nicho é obrigatório');
-    });
-
-    // Simula seleção do nicho
-    const nicheInput = comboboxes[2];
-    fireEvent.change(nicheInput, { target: { value: 'Tecnologia' } });
-    fireEvent.keyDown(nicheInput, { key: 'ArrowDown' });
-    fireEvent.keyDown(nicheInput, { key: 'Enter' });
-
-    // Agora todos os campos estão preenchidos, o próximo clique deve chamar onNext
+    // Clica no botão próximo
     fireEvent.click(nextButton);
     expect(mockOnNext).toHaveBeenCalled();
   });
