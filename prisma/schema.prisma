@@ -44,6 +44,7 @@ model User {
   departmentLinks  DepartmentResponsible[]
   checkoutSessions CheckoutSession[]
   passwordResetTokens PasswordResetToken[]
+  checklistExecutions ChecklistExecution[]
 
   @@map("users")
 }
@@ -100,6 +101,7 @@ model Branch {
 
   departments    Department[]
   environments   Environment[]
+  checklists     Checklist[]
 
   @@map("branches")
 }
@@ -113,6 +115,7 @@ model Department {
   updatedAt DateTime                @updatedAt      @map("updated_at")
 
   responsibles DepartmentResponsible[]
+  checklistItems ChecklistItem[]
 
   @@map("departments")
 }
@@ -136,6 +139,8 @@ model Environment {
   position  Int?
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt      @map("updated_at")
+
+  checklists Checklist[]
 
   @@map("environments")
 }
@@ -278,4 +283,126 @@ model PasswordResetToken {
   updatedAt DateTime @updatedAt
 
   @@map("password_reset_tokens")
+}
+
+model Checklist {
+  id          String            @id @default(cuid())
+  name        String
+  description String?
+  
+  branchId    String            @map("branch_id")
+  branch      Branch            @relation(fields: [branchId], references: [id])
+
+  environmentId String          @map("environment_id")
+  environment   Environment     @relation(fields: [environmentId], references: [id])
+
+  actived     Boolean           @default(true)
+
+  sections    ChecklistSection[]
+  executions  ChecklistExecution[]
+
+  createdAt   DateTime          @default(now()) @map("created_at")
+  updatedAt   DateTime          @updatedAt      @map("updated_at")
+
+  @@map("checklists")
+}
+
+model ChecklistSection {
+  id           String           @id @default(cuid())
+  name         String
+  checklistId  String           @map("checklist_id")
+  checklist    Checklist        @relation(fields: [checklistId], references: [id])
+
+  items        ChecklistItem[]
+
+  position     Int?
+
+  createdAt    DateTime         @default(now()) @map("created_at")
+  updatedAt    DateTime         @updatedAt      @map("updated_at")
+
+  @@map("checklist_sections")
+}
+
+model ChecklistItem {
+  id                     String                  @id @default(cuid())
+  name                   String
+  description            String?
+  checklistSectionId     String                  @map("checklist_section_id")
+  checklistSection       ChecklistSection        @relation(fields: [checklistSectionId], references: [id])
+
+  position               Int?
+  departmentId           String?                 @map("department_id")
+  department             Department?             @relation(fields: [departmentId], references: [id])
+
+  checklistResponseTypeId String                 @map("checklist_response_type_id")
+  checklistResponseType   ChecklistResponseType  @relation(fields: [checklistResponseTypeId], references: [id])
+
+  allowNotApplicable     Boolean                 @default(true)
+
+  executionItems         ChecklistExecutionItem[]
+
+  createdAt              DateTime                @default(now()) @map("created_at")
+  updatedAt              DateTime                @updatedAt      @map("updated_at")
+
+  @@map("checklist_items")
+}
+
+model ChecklistResponseType {
+  id             String          @id @default(cuid())
+  name           String          // Ex.: "Sim/Não", "Conforme/Não conforme"
+  positiveLabel  String          // Label da resposta positiva (ex.: "Sim")
+  negativeLabel  String          // Label da resposta negativa (ex.: "Não")
+  description    String?
+
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt      @map("updated_at")
+
+  checklistItems ChecklistItem[]
+
+  @@map("checklist_response_types")
+}
+
+enum ExecutionStatus {
+  IN_PROGRESS
+  COMPLETED
+  CANCELED
+}
+
+model ChecklistExecution {
+  id               String             @id @default(cuid())
+  checklistId      String             @map("checklist_id")
+  checklist        Checklist          @relation(fields: [checklistId], references: [id])
+
+  performedById    String             @map("performed_by_id")
+  performedBy      User               @relation(fields: [performedById], references: [id])
+
+  status           ExecutionStatus    @default(IN_PROGRESS)
+
+  items            ChecklistExecutionItem[]
+
+  startedAt        DateTime           @default(now()) @map("started_at")
+  completedAt      DateTime?          @map("completed_at")
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @updatedAt      @map("updated_at")
+
+  @@map("checklist_executions")
+}
+
+model ChecklistExecutionItem {
+  id                     String                @id @default(cuid())
+  checklistExecutionId    String                @map("checklist_execution_id")
+  checklistExecution      ChecklistExecution   @relation(fields: [checklistExecutionId], references: [id])
+
+  checklistItemId         String               @map("checklist_item_id")
+  checklistItem           ChecklistItem        @relation(fields: [checklistItemId], references: [id])
+
+  isPositive              Boolean              // true = resposta positiva, false = negativa
+
+  note                    String?              @db.Text
+  photoUrl                String?              @map("photo_url")
+
+  createdAt               DateTime             @default(now()) @map("created_at")
+  updatedAt               DateTime             @updatedAt      @map("updated_at")
+
+  @@map("checklist_execution_items")
 }

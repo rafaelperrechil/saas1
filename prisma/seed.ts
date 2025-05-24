@@ -177,7 +177,7 @@ async function main() {
 
   // Criar ambientes
   console.log('Criando ambientes...');
-  const environments = ['Sala', 'Quintal'];
+  const environments = ['Sala', 'Escritorio 01'];
   for (const envName of environments) {
     await prisma.environment.create({
       data: {
@@ -244,6 +244,141 @@ async function main() {
   }
 
   console.log('Planos criados com sucesso!');
+
+  console.log('Criando tipos de resposta...');
+  const responseTypesData = [
+    {
+      name: 'Sim/Não',
+      positiveLabel: 'Sim',
+      negativeLabel: 'Não',
+      description: 'Resposta padrão Sim ou Não',
+    },
+    {
+      name: 'Conforme/Não Conforme',
+      positiveLabel: 'Conforme',
+      negativeLabel: 'Não Conforme',
+      description: 'Verificar se o item está em conformidade',
+    },
+    {
+      name: 'Funcionando/Com Defeito',
+      positiveLabel: 'Funcionando',
+      negativeLabel: 'Com Defeito',
+      description: 'Verificar se o item está operando corretamente',
+    },
+    {
+      name: 'Limpo/Sujo',
+      positiveLabel: 'Limpo',
+      negativeLabel: 'Sujo',
+      description: 'Avaliar condições de limpeza',
+    },
+    {
+      name: 'Presente/Ausente',
+      positiveLabel: 'Presente',
+      negativeLabel: 'Ausente',
+      description: 'Checar se o item está disponível ou ausente',
+    },
+  ];
+
+  const responseTypes = [];
+
+  for (const type of responseTypesData) {
+    const createdType = await prisma.checklistResponseType.create({
+      data: type,
+    });
+    responseTypes.push(createdType);
+  }
+
+  console.log('Tipos de resposta criados com sucesso!');
+
+  // Buscar ambiente 'Escritorio 01'
+  const escritorio01 = await prisma.environment.findFirst({
+    where: {
+      name: 'Escritorio 01',
+    },
+  });
+
+  if (!escritorio01) {
+    throw new Error('Ambiente "Escritorio 01" não encontrado');
+  }
+
+  // Criar checklist
+  console.log('Criando checklist...');
+  const checklist = await prisma.checklist.create({
+    data: {
+      name: 'Checklist de Inspeção - Escritorio 01',
+      description: 'Checklist padrão de inspeção para o escritório 01',
+      branch: {
+        connect: {
+          id: branch.id,
+        },
+      },
+      environment: {
+        connect: {
+          id: escritorio01.id,
+        },
+      },
+      actived: true,
+    },
+  });
+  console.log('Checklist criado com sucesso!');
+
+  // Criar seção
+  console.log('Criando seção...');
+  const section = await prisma.checklistSection.create({
+    data: {
+      name: 'Checklist Geral',
+      checklist: {
+        connect: {
+          id: checklist.id,
+        },
+      },
+      position: 1,
+    },
+  });
+  console.log('Seção criada com sucesso!');
+
+  // Criar itens do checklist
+  console.log('Criando itens do checklist...');
+  const checklistItems = [
+    'Computadores estão funcionando?',
+    'Internet está operando normalmente?',
+    'Ar-condicionado funcionando?',
+    'Mesa de trabalho limpa?',
+    'Luzes funcionando corretamente?',
+  ];
+
+  const simNaoResponseType = responseTypes.find((rt) => rt.name === 'Sim/Não');
+  if (!simNaoResponseType) {
+    throw new Error('Tipo de resposta "Sim/Não" não encontrado');
+  }
+
+  for (let i = 0; i < checklistItems.length; i++) {
+    await prisma.checklistItem.create({
+      data: {
+        name: checklistItems[i],
+        description: null,
+        checklistSection: {
+          connect: {
+            id: section.id,
+          },
+        },
+        position: i + 1,
+        checklistResponseType: {
+          connect: {
+            id: simNaoResponseType.id,
+          },
+        },
+        department: {
+          connect: {
+            id: department.id,
+          },
+        },
+        allowNotApplicable: true,
+      },
+    });
+  }
+
+  console.log('Itens do checklist criados com sucesso!');
 
   console.log('Seed concluído com sucesso!');
 }
