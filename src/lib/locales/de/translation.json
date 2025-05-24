@@ -432,5 +432,71 @@
       "delete": "Abteilung löschen",
       "addResponsible": "Verantwortlichen hinzufügen"
     }
+  },
+  "checklists": {
+    "title": "Neue Checkliste",
+    "steps": {
+      "general": "Allgemeine Einstellungen",
+      "checklist": "Checkliste"
+    },
+    "fields": {
+      "name": "Name der Checkliste",
+      "description": "Beschreibung (optional)",
+      "responsibles": "Verantwortliche der Checkliste",
+      "frequency": "Häufigkeit",
+      "weekdays": "Wochentage für die Ausführung",
+      "time": "Uhrzeit"
+    },
+    "frequencies": {
+      "daily": "Täglich",
+      "weekly": "Wöchentlich",
+      "monthly": "Monatlich",
+      "quarterly": "Vierteljährlich",
+      "semiannual": "Halbjährlich",
+      "annual": "Jährlich"
+    },
+    "weekdays": {
+      "sun": "So",
+      "mon": "Mo",
+      "tue": "Di",
+      "wed": "Mi",
+      "thu": "Do",
+      "fri": "Fr",
+      "sat": "Sa"
+    },
+    "categories": {
+      "title": "Kategorien",
+      "add": "Kategorie hinzufügen",
+      "addFirst": "Erste Kategorie hinzufügen",
+      "name": "Name der Kategorie",
+      "empty": "Noch keine Kategorien erstellt.",
+      "modal": {
+        "title": "Kategorie hinzufügen",
+        "name": "Name der Kategorie"
+      }
+    },
+    "questions": {
+      "text": "Frage-Text",
+      "responseType": "Antworttyp",
+      "department": "Verantwortliche Abteilung",
+      "positiveLabel": "Positives Label",
+      "negativeLabel": "Negatives Label",
+      "add": "Weitere Frage hinzufügen",
+      "addFirst": "Erste Frage hinzufügen"
+    },
+    "buttons": {
+      "next": "Weiter",
+      "back": "Zurück",
+      "cancel": "Abbrechen",
+      "save": "Checkliste speichern",
+      "add": "Hinzufügen"
+    },
+    "errors": {
+      "nameRequired": "Name ist erforderlich",
+      "responsiblesRequired": "Wählen Sie mindestens einen Verantwortlichen",
+      "frequencyRequired": "Wählen Sie die Häufigkeit",
+      "weekdaysRequired": "Wählen Sie mindestens einen Tag",
+      "timeRequired": "Geben Sie die Uhrzeit ein"
+    }
   }
 }

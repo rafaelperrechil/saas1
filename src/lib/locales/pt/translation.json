@@ -432,5 +432,71 @@
       "delete": "Excluir departamento",
       "addResponsible": "Adicionar colaborador"
     }
+  },
+  "checklists": {
+    "title": "Novo Checklist",
+    "steps": {
+      "general": "Configurações Gerais",
+      "checklist": "Checklist"
+    },
+    "fields": {
+      "name": "Nome do Checklist",
+      "description": "Descrição (opcional)",
+      "responsibles": "Responsáveis pelo Checklist",
+      "frequency": "Frequência",
+      "weekdays": "Dias da Semana para execução",
+      "time": "Horário"
+    },
+    "frequencies": {
+      "daily": "Diário",
+      "weekly": "Semanal",
+      "monthly": "Mensal",
+      "quarterly": "Trimestral",
+      "semiannual": "Semestral",
+      "annual": "Anual"
+    },
+    "weekdays": {
+      "sun": "Dom",
+      "mon": "Seg",
+      "tue": "Ter",
+      "wed": "Qua",
+      "thu": "Qui",
+      "fri": "Sex",
+      "sat": "Sáb"
+    },
+    "categories": {
+      "title": "Categorias",
+      "add": "Adicionar Categoria",
+      "addFirst": "Adicionar Primeira Categoria",
+      "name": "Nome da Categoria",
+      "empty": "Nenhuma categoria criada ainda.",
+      "modal": {
+        "title": "Adicionar Categoria",
+        "name": "Nome da Categoria"
+      }
+    },
+    "questions": {
+      "text": "Texto da Pergunta",
+      "responseType": "Tipo de Resposta",
+      "department": "Departamento Responsável",
+      "positiveLabel": "Rótulo Positivo",
+      "negativeLabel": "Rótulo Negativo",
+      "add": "Adicionar Outra Pergunta",
+      "addFirst": "Adicionar Primeira Pergunta"
+    },
+    "buttons": {
+      "next": "Próximo",
+      "back": "Voltar",
+      "cancel": "Cancelar",
+      "save": "Salvar Checklist",
+      "add": "Adicionar"
+    },
+    "errors": {
+      "nameRequired": "Nome obrigatório",
+      "responsiblesRequired": "Selecione pelo menos um responsável",
+      "frequencyRequired": "Selecione a frequência",
+      "weekdaysRequired": "Selecione pelo menos um dia",
+      "timeRequired": "Informe o horário"
+    }
   }
 }

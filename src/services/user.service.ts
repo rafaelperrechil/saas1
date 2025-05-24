@@ -181,4 +181,11 @@ export const userService = {
       return { error: 'Erro ao registrar usuário' };
     }
   },
+
+  async getUsersByOrganization(organizationId: string) {
+    const response = await api.get(
+      `/api/users?organizationId=${encodeURIComponent(organizationId)}`
+    );
+    return response.data;
+  },
 };

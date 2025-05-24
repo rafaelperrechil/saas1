@@ -68,4 +68,10 @@ export const departmentService = {
   async removeResponsible(departmentId: string, userId: string): Promise<ApiResponse<void>> {
     return api.delete(`/api/departments/${departmentId}/responsibles/${userId}`);
   },
+
+  async getDepartmentsByBranch(branchId: string) {
+    const response = await api.get(`/api/departments?branchId=${encodeURIComponent(branchId)}`);
+    if (!response.data || !response.data.data) return [];
+    return (response.data.data as any[]).map((d) => ({ id: d.id, name: d.name }));
+  },
 };

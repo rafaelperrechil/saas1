@@ -434,5 +434,71 @@
       "delete": "Delete department",
       "addResponsible": "Add responsible"
     }
+  },
+  "checklists": {
+    "title": "New Checklist",
+    "steps": {
+      "general": "General Settings",
+      "checklist": "Checklist"
+    },
+    "fields": {
+      "name": "Checklist Name",
+      "description": "Description (optional)",
+      "responsibles": "Checklist Responsibles",
+      "frequency": "Frequency",
+      "weekdays": "Weekdays for execution",
+      "time": "Time"
+    },
+    "frequencies": {
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "quarterly": "Quarterly",
+      "semiannual": "Semi-annual",
+      "annual": "Annual"
+    },
+    "weekdays": {
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat"
+    },
+    "categories": {
+      "title": "Categories",
+      "add": "Add Category",
+      "addFirst": "Add First Category",
+      "name": "Category Name",
+      "empty": "No categories created yet.",
+      "modal": {
+        "title": "Add Category",
+        "name": "Category Name"
+      }
+    },
+    "questions": {
+      "text": "Question Text",
+      "responseType": "Response Type",
+      "department": "Responsible Department",
+      "positiveLabel": "Positive Label",
+      "negativeLabel": "Negative Label",
+      "add": "Add Another Question",
+      "addFirst": "Add First Question"
+    },
+    "buttons": {
+      "next": "Next",
+      "back": "Back",
+      "cancel": "Cancel",
+      "save": "Save Checklist",
+      "add": "Add"
+    },
+    "errors": {
+      "nameRequired": "Name is required",
+      "responsiblesRequired": "Select at least one responsible",
+      "frequencyRequired": "Select frequency",
+      "weekdaysRequired": "Select at least one day",
+      "timeRequired": "Enter time"
+    }
   }
 }

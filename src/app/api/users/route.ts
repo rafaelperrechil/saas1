@@ -4,14 +4,18 @@ import { authOptions } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
 // GET - Listar todos os usuários
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
+    const { searchParams } = new URL(request.url);
+    const organizationId = searchParams.get('organizationId');
+
     const users = await prisma.user.findMany({
+      where: organizationId ? { organizationId } : {},
       include: {
         profile: true,
       },

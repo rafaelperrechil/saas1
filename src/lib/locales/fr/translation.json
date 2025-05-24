@@ -352,11 +352,6 @@
       "all": "Toutes les Inspections",
       "create": "Créer une Inspection"
     },
-    "checklists": {
-      "title": "Checklists",
-      "all": "Toutes les Checklists",
-      "create": "Créer une Checklist"
-    },
     "environments": "Environnements",
     "departments": "Départements",
     "settings": "Paramètres",
@@ -422,6 +417,72 @@
     "tooltips": {
       "edit": "Modifier le département",
       "delete": "Supprimer le département"
+    }
+  },
+  "checklists": {
+    "title": "Nouvelle Liste de Contrôle",
+    "steps": {
+      "general": "Paramètres Généraux",
+      "checklist": "Liste de Contrôle"
+    },
+    "fields": {
+      "name": "Nom de la Liste",
+      "description": "Description (optionnelle)",
+      "responsibles": "Responsables de la Liste",
+      "frequency": "Fréquence",
+      "weekdays": "Jours de la semaine pour l'exécution",
+      "time": "Horaire"
+    },
+    "frequencies": {
+      "daily": "Quotidien",
+      "weekly": "Hebdomadaire",
+      "monthly": "Mensuel",
+      "quarterly": "Trimestriel",
+      "semiannual": "Semestriel",
+      "annual": "Annuel"
+    },
+    "weekdays": {
+      "sun": "Dim",
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Jeu",
+      "fri": "Ven",
+      "sat": "Sam"
+    },
+    "categories": {
+      "title": "Catégories",
+      "add": "Ajouter une Catégorie",
+      "addFirst": "Ajouter la Première Catégorie",
+      "name": "Nom de la Catégorie",
+      "empty": "Aucune catégorie créée pour le moment.",
+      "modal": {
+        "title": "Ajouter une Catégorie",
+        "name": "Nom de la Catégorie"
+      }
+    },
+    "questions": {
+      "text": "Texte de la Question",
+      "responseType": "Type de Réponse",
+      "department": "Département Responsable",
+      "positiveLabel": "Étiquette Positive",
+      "negativeLabel": "Étiquette Négative",
+      "add": "Ajouter une Autre Question",
+      "addFirst": "Ajouter la Première Question"
+    },
+    "buttons": {
+      "next": "Suivant",
+      "back": "Retour",
+      "cancel": "Annuler",
+      "save": "Enregistrer la Liste",
+      "add": "Ajouter"
+    },
+    "errors": {
+      "nameRequired": "Le nom est obligatoire",
+      "responsiblesRequired": "Sélectionnez au moins un responsable",
+      "frequencyRequired": "Sélectionnez la fréquence",
+      "weekdaysRequired": "Sélectionnez au moins un jour",
+      "timeRequired": "Entrez l'horaire"
     }
   }
 }

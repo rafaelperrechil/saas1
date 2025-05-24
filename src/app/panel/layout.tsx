@@ -251,7 +251,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </ListItemButton>
                 <ListItemButton
                   sx={{ pl: 4 }}
-                  onClick={() => handleItemClick('/panel/checklists/new')}
+                  onClick={() => handleItemClick('/panel/checklists/add')}
                 >
                   <ListItemText primary={t('menu.checklists.create')} sx={{ color: '#FFFFFF' }} />
                 </ListItemButton>

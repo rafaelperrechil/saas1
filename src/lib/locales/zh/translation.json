@@ -433,5 +433,71 @@
       "delete": "删除部门",
       "addResponsible": "添加负责人"
     }
+  },
+  "checklists": {
+    "title": "新建检查清单",
+    "steps": {
+      "general": "常规设置",
+      "checklist": "检查清单"
+    },
+    "fields": {
+      "name": "清单名称",
+      "description": "描述（可选）",
+      "responsibles": "清单负责人",
+      "frequency": "频率",
+      "weekdays": "执行工作日",
+      "time": "时间"
+    },
+    "frequencies": {
+      "daily": "每日",
+      "weekly": "每周",
+      "monthly": "每月",
+      "quarterly": "每季度",
+      "semiannual": "每半年",
+      "annual": "每年"
+    },
+    "weekdays": {
+      "sun": "日",
+      "mon": "一",
+      "tue": "二",
+      "wed": "三",
+      "thu": "四",
+      "fri": "五",
+      "sat": "六"
+    },
+    "categories": {
+      "title": "类别",
+      "add": "添加类别",
+      "addFirst": "添加第一个类别",
+      "name": "类别名称",
+      "empty": "尚未创建任何类别。",
+      "modal": {
+        "title": "添加类别",
+        "name": "类别名称"
+      }
+    },
+    "questions": {
+      "text": "问题文本",
+      "responseType": "回答类型",
+      "department": "负责部门",
+      "positiveLabel": "正面标签",
+      "negativeLabel": "负面标签",
+      "add": "添加另一个问题",
+      "addFirst": "添加第一个问题"
+    },
+    "buttons": {
+      "next": "下一步",
+      "back": "返回",
+      "cancel": "取消",
+      "save": "保存清单",
+      "add": "添加"
+    },
+    "errors": {
+      "nameRequired": "名称为必填项",
+      "responsiblesRequired": "请选择至少一个负责人",
+      "frequencyRequired": "请选择频率",
+      "weekdaysRequired": "请选择至少一个工作日",
+      "timeRequired": "请输入时间"
+    }
   }
 }

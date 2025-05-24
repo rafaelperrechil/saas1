@@ -432,5 +432,71 @@
       "delete": "Eliminar departamento",
       "addResponsible": "Agregar responsable"
     }
+  },
+  "checklists": {
+    "title": "Nuevo Checklist",
+    "steps": {
+      "general": "Configuración General",
+      "checklist": "Checklist"
+    },
+    "fields": {
+      "name": "Nombre del Checklist",
+      "description": "Descripción (opcional)",
+      "responsibles": "Responsables del Checklist",
+      "frequency": "Frecuencia",
+      "weekdays": "Días de la semana para ejecución",
+      "time": "Horario"
+    },
+    "frequencies": {
+      "daily": "Diario",
+      "weekly": "Semanal",
+      "monthly": "Mensual",
+      "quarterly": "Trimestral",
+      "semiannual": "Semestral",
+      "annual": "Anual"
+    },
+    "weekdays": {
+      "sun": "Dom",
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mié",
+      "thu": "Jue",
+      "fri": "Vie",
+      "sat": "Sáb"
+    },
+    "categories": {
+      "title": "Categorías",
+      "add": "Agregar Categoría",
+      "addFirst": "Agregar Primera Categoría",
+      "name": "Nombre de la Categoría",
+      "empty": "Aún no se han creado categorías.",
+      "modal": {
+        "title": "Agregar Categoría",
+        "name": "Nombre de la Categoría"
+      }
+    },
+    "questions": {
+      "text": "Texto de la Pregunta",
+      "responseType": "Tipo de Respuesta",
+      "department": "Departamento Responsable",
+      "positiveLabel": "Etiqueta Positiva",
+      "negativeLabel": "Etiqueta Negativa",
+      "add": "Agregar Otra Pregunta",
+      "addFirst": "Agregar Primera Pregunta"
+    },
+    "buttons": {
+      "next": "Siguiente",
+      "back": "Atrás",
+      "cancel": "Cancelar",
+      "save": "Guardar Checklist",
+      "add": "Agregar"
+    },
+    "errors": {
+      "nameRequired": "El nombre es obligatorio",
+      "responsiblesRequired": "Seleccione al menos un responsable",
+      "frequencyRequired": "Seleccione la frecuencia",
+      "weekdaysRequired": "Seleccione al menos un día",
+      "timeRequired": "Ingrese el horario"
+    }
   }
 }
