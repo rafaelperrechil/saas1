@@ -397,5 +397,42 @@
       "edit": "Edit",
       "delete": "Delete"
     }
+  },
+  "departments": {
+    "title": "Departments",
+    "name": "Name",
+    "actions": "Actions",
+    "responsibles": "Responsibles",
+    "noResponsibles": "No responsibles assigned",
+    "newDepartment": "New Department",
+    "editDepartment": "Edit Department",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirmDelete": "Confirm Deletion",
+    "confirmDeleteMessage": "Are you sure you want to delete the department {{name}}?",
+    "confirmDeleteResponsible": "Confirm Removal",
+    "confirmDeleteResponsibleMessage": "Are you sure you want to remove the responsible {{name}} from department {{department}}?",
+    "addResponsible": "Add Responsible",
+    "responsibleName": "Responsible Name",
+    "responsibleEmail": "Responsible Email",
+    "success": {
+      "created": "Department created successfully!",
+      "updated": "Department updated successfully!",
+      "deleted": "Department deleted successfully!",
+      "responsibleAdded": "Responsible added successfully!",
+      "responsibleRemoved": "Responsible removed successfully!"
+    },
+    "error": {
+      "nameRequired": "Department name is required",
+      "loadData": "Error loading departments",
+      "noBranch": "No branch selected",
+      "emailRequired": "Responsible email is required"
+    },
+    "tooltips": {
+      "edit": "Edit department",
+      "delete": "Delete department",
+      "addResponsible": "Add responsible"
+    }
   }
 }

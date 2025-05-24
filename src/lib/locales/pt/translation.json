@@ -395,5 +395,42 @@
       "edit": "Editar",
       "delete": "Excluir"
     }
+  },
+  "departments": {
+    "title": "Departamentos",
+    "name": "Nome",
+    "actions": "Ações",
+    "responsibles": "Colaboradores",
+    "noResponsibles": "Nenhum colaborador atribuído",
+    "newDepartment": "Novo Departamento",
+    "editDepartment": "Editar Departamento",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "confirmDelete": "Confirmar Exclusão",
+    "confirmDeleteMessage": "Tem certeza que deseja excluir o departamento {{name}}?",
+    "confirmDeleteResponsible": "Confirmar Remoção",
+    "confirmDeleteResponsibleMessage": "Tem certeza que deseja remover o colaborador {{name}} do departamento {{department}}?",
+    "addResponsible": "Adicionar Colaborador",
+    "responsibleName": "Nome do Colaborador",
+    "responsibleEmail": "E-mail do Colaborador",
+    "success": {
+      "created": "Departamento criado com sucesso!",
+      "updated": "Departamento atualizado com sucesso!",
+      "deleted": "Departamento excluído com sucesso!",
+      "responsibleAdded": "Colaborador adicionado com sucesso!",
+      "responsibleRemoved": "Colaborador removido com sucesso!"
+    },
+    "error": {
+      "nameRequired": "O nome do departamento é obrigatório",
+      "loadData": "Erro ao carregar departamentos",
+      "noBranch": "Nenhuma filial selecionada",
+      "emailRequired": "O e-mail do colaborador é obrigatório"
+    },
+    "tooltips": {
+      "edit": "Editar departamento",
+      "delete": "Excluir departamento",
+      "addResponsible": "Adicionar colaborador"
+    }
   }
 }

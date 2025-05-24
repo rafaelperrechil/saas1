@@ -50,6 +50,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import LoadingScreen from '@/components/common/LoadingScreen';
 
 interface EnvironmentFormData {
   id?: string;
@@ -322,13 +323,7 @@ export default function EnvironmentsPage() {
   }
 
   if (!environments) {
-    return (
-      <Box
-        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
-      >
-        <CircularProgress />
-      </Box>
-    );
+    return <LoadingScreen />;
   }
 
   return (

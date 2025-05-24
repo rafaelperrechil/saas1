@@ -396,5 +396,42 @@
       "edit": "编辑",
       "delete": "删除"
     }
+  },
+  "departments": {
+    "title": "部门",
+    "name": "名称",
+    "actions": "操作",
+    "responsibles": "负责人",
+    "noResponsibles": "未分配负责人",
+    "newDepartment": "新部门",
+    "editDepartment": "编辑部门",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "confirmDelete": "确认删除",
+    "confirmDeleteMessage": "您确定要删除部门 {{name}} 吗？",
+    "confirmDeleteResponsible": "确认移除",
+    "confirmDeleteResponsibleMessage": "您确定要从部门 {{department}} 中移除负责人 {{name}} 吗？",
+    "addResponsible": "添加负责人",
+    "responsibleName": "负责人姓名",
+    "responsibleEmail": "负责人邮箱",
+    "success": {
+      "created": "部门创建成功！",
+      "updated": "部门更新成功！",
+      "deleted": "部门删除成功！",
+      "responsibleAdded": "负责人添加成功！",
+      "responsibleRemoved": "负责人移除成功！"
+    },
+    "error": {
+      "nameRequired": "部门名称是必填项",
+      "loadData": "加载部门数据出错",
+      "noBranch": "未选择分支机构",
+      "emailRequired": "负责人邮箱是必填项"
+    },
+    "tooltips": {
+      "edit": "编辑部门",
+      "delete": "删除部门",
+      "addResponsible": "添加负责人"
+    }
   }
 }

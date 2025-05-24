@@ -395,5 +395,42 @@
       "edit": "Editar",
       "delete": "Eliminar"
     }
+  },
+  "departments": {
+    "title": "Departamentos",
+    "name": "Nombre",
+    "actions": "Acciones",
+    "responsibles": "Responsables",
+    "noResponsibles": "Sin responsables asignados",
+    "newDepartment": "Nuevo Departamento",
+    "editDepartment": "Editar Departamento",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "confirmDelete": "Confirmar Eliminación",
+    "confirmDeleteMessage": "¿Está seguro de que desea eliminar el departamento {{name}}?",
+    "confirmDeleteResponsible": "Confirmar Eliminación",
+    "confirmDeleteResponsibleMessage": "¿Está seguro de que desea eliminar el responsable {{name}} del departamento {{department}}?",
+    "addResponsible": "Agregar Responsable",
+    "responsibleName": "Nombre del Responsable",
+    "responsibleEmail": "Correo del Responsable",
+    "success": {
+      "created": "¡Departamento creado con éxito!",
+      "updated": "¡Departamento actualizado con éxito!",
+      "deleted": "¡Departamento eliminado con éxito!",
+      "responsibleAdded": "¡Responsable agregado con éxito!",
+      "responsibleRemoved": "¡Responsable eliminado con éxito!"
+    },
+    "error": {
+      "nameRequired": "El nombre del departamento es obligatorio",
+      "loadData": "Error al cargar los departamentos",
+      "noBranch": "Ninguna sucursal seleccionada",
+      "emailRequired": "El correo del responsable es obligatorio"
+    },
+    "tooltips": {
+      "edit": "Editar departamento",
+      "delete": "Eliminar departamento",
+      "addResponsible": "Agregar responsable"
+    }
   }
 }

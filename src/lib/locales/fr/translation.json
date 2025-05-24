@@ -395,5 +395,33 @@
       "edit": "Modifier",
       "delete": "Supprimer"
     }
+  },
+  "departments": {
+    "title": "Départements",
+    "name": "Nom",
+    "actions": "Actions",
+    "responsibles": "Responsables",
+    "noResponsibles": "Aucun responsable assigné",
+    "newDepartment": "Nouveau Département",
+    "editDepartment": "Modifier le Département",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "confirmDelete": "Confirmer la Suppression",
+    "confirmDeleteMessage": "Êtes-vous sûr de vouloir supprimer le département {{name}} ?",
+    "success": {
+      "created": "Département créé avec succès !",
+      "updated": "Département mis à jour avec succès !",
+      "deleted": "Département supprimé avec succès !"
+    },
+    "error": {
+      "nameRequired": "Le nom du département est obligatoire",
+      "loadData": "Erreur lors du chargement des départements",
+      "noBranch": "Aucune succursale sélectionnée"
+    },
+    "tooltips": {
+      "edit": "Modifier le département",
+      "delete": "Supprimer le département"
+    }
   }
 }

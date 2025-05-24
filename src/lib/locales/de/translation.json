@@ -395,5 +395,42 @@
       "edit": "Bearbeiten",
       "delete": "Löschen"
     }
+  },
+  "departments": {
+    "title": "Abteilungen",
+    "name": "Name",
+    "actions": "Aktionen",
+    "responsibles": "Verantwortliche",
+    "noResponsibles": "Keine Verantwortlichen zugewiesen",
+    "newDepartment": "Neue Abteilung",
+    "editDepartment": "Abteilung bearbeiten",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "confirmDelete": "Löschung bestätigen",
+    "confirmDeleteMessage": "Sind Sie sicher, dass Sie die Abteilung {{name}} löschen möchten?",
+    "confirmDeleteResponsible": "Entfernung bestätigen",
+    "confirmDeleteResponsibleMessage": "Sind Sie sicher, dass Sie den Verantwortlichen {{name}} aus der Abteilung {{department}} entfernen möchten?",
+    "addResponsible": "Verantwortlichen hinzufügen",
+    "responsibleName": "Name des Verantwortlichen",
+    "responsibleEmail": "E-Mail des Verantwortlichen",
+    "success": {
+      "created": "Abteilung erfolgreich erstellt!",
+      "updated": "Abteilung erfolgreich aktualisiert!",
+      "deleted": "Abteilung erfolgreich gelöscht!",
+      "responsibleAdded": "Verantwortlicher erfolgreich hinzugefügt!",
+      "responsibleRemoved": "Verantwortlicher erfolgreich entfernt!"
+    },
+    "error": {
+      "nameRequired": "Der Name der Abteilung ist erforderlich",
+      "loadData": "Fehler beim Laden der Abteilungen",
+      "noBranch": "Keine Filiale ausgewählt",
+      "emailRequired": "Die E-Mail des Verantwortlichen ist erforderlich"
+    },
+    "tooltips": {
+      "edit": "Abteilung bearbeiten",
+      "delete": "Abteilung löschen",
+      "addResponsible": "Verantwortlichen hinzufügen"
+    }
   }
 }

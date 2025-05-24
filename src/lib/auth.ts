@@ -122,11 +122,11 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      console.log('[Auth] Atualizando sessão com dados do token:', {
-        userId: token.id,
-        hasProfile: !!token.profile,
-        hasBranch: !!token.branch,
-      });
+      // console.log('[Auth] Atualizando sessão com dados do token:', {
+      //   userId: token.id,
+      //   hasProfile: !!token.profile,
+      //   hasBranch: !!token.branch,
+      // });
 
       session.user = {
         ...session.user,
