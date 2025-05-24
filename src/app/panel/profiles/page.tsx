@@ -209,9 +209,11 @@ export default function ProfilesPage() {
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell>Nome</TableCell>
-              <TableCell align="right">Ações</TableCell>
+            <TableRow sx={{ backgroundColor: 'primary.dark' }}>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Nome</TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold' }} align="right">
+                Ações
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -220,15 +222,25 @@ export default function ProfilesPage() {
                 <TableCell>{profile.name}</TableCell>
                 <TableCell align="right">
                   <IconButton
-                    color="primary"
                     onClick={() => handleOpenDialog(profile)}
+                    sx={{
+                      color: 'grey.600',
+                      '&:hover': {
+                        color: '#1976d2'
+                      }
+                    }}
                     data-testid="edit-button"
                   >
                     <EditIcon />
                   </IconButton>
                   <IconButton
-                    color="error"
                     onClick={() => handleOpenDeleteDialog(profile)}
+                    sx={{
+                      color: 'grey.600',
+                      '&:hover': {
+                        color: 'error.main',
+                      },
+                    }}
                     data-testid="delete-button"
                   >
                     <DeleteIcon />

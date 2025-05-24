@@ -14,3 +14,4 @@ export * from './log.service';
 export * from './checkout.service';
 export * from './stripe.service';
 export * from './webhook.service';
+export * from './environment.service';

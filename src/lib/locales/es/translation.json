@@ -368,5 +368,32 @@
       "plans": "Planes",
       "history": "Historial"
     }
+  },
+  "environments": {
+    "title": "Ambientes",
+    "newEnvironment": "Nuevo Ambiente",
+    "editEnvironment": "Editar Ambiente",
+    "name": "Nombre",
+    "actions": "Acciones",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "confirmDelete": "Confirmar Eliminación",
+    "confirmDeleteMessage": "¿Está seguro de que desea eliminar el ambiente \"{{name}}\"?",
+    "success": {
+      "orderUpdated": "¡Orden de ambientes actualizado con éxito!",
+      "created": "¡Ambiente creado con éxito!",
+      "updated": "¡Ambiente actualizado con éxito!",
+      "deleted": "¡Ambiente eliminado con éxito!"
+    },
+    "error": {
+      "loadData": "Error al cargar datos",
+      "updateOrder": "Error al actualizar el orden de los ambientes",
+      "nameRequired": "El nombre del ambiente es obligatorio"
+    },
+    "tooltips": {
+      "edit": "Editar",
+      "delete": "Eliminar"
+    }
   }
 }

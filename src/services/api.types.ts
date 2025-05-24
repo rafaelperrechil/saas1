@@ -221,3 +221,12 @@ export interface LogFilters {
   userId?: string;
   organizationId?: string;
 }
+
+export interface Environment {
+  id: string;
+  name: string;
+  position: number;
+  branchId: string;
+  createdAt: string;
+  updatedAt: string;
+}

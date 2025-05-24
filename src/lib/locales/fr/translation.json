@@ -368,5 +368,32 @@
       "plans": "Plans",
       "history": "Historique"
     }
+  },
+  "environments": {
+    "title": "Environnements",
+    "newEnvironment": "Nouvel Environnement",
+    "editEnvironment": "Modifier l'Environnement",
+    "name": "Nom",
+    "actions": "Actions",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "confirmDelete": "Confirmer la Suppression",
+    "confirmDeleteMessage": "Êtes-vous sûr de vouloir supprimer l'environnement \"{{name}}\"?",
+    "success": {
+      "orderUpdated": "Ordre des environnements mis à jour avec succès !",
+      "created": "Environnement créé avec succès !",
+      "updated": "Environnement mis à jour avec succès !",
+      "deleted": "Environnement supprimé avec succès !"
+    },
+    "error": {
+      "loadData": "Erreur lors du chargement des données",
+      "updateOrder": "Erreur lors de la mise à jour de l'ordre des environnements",
+      "nameRequired": "Le nom de l'environnement est obligatoire"
+    },
+    "tooltips": {
+      "edit": "Modifier",
+      "delete": "Supprimer"
+    }
   }
 }

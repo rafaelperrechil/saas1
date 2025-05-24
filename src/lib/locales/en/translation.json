@@ -370,5 +370,32 @@
       "plans": "Plans",
       "history": "History"
     }
+  },
+  "environments": {
+    "title": "Environments",
+    "newEnvironment": "New Environment",
+    "editEnvironment": "Edit Environment",
+    "name": "Name",
+    "actions": "Actions",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "confirmDelete": "Confirm Deletion",
+    "confirmDeleteMessage": "Are you sure you want to delete the environment \"{{name}}\"?",
+    "success": {
+      "orderUpdated": "Environment order updated successfully!",
+      "created": "Environment created successfully!",
+      "updated": "Environment updated successfully!",
+      "deleted": "Environment deleted successfully!"
+    },
+    "error": {
+      "loadData": "Error loading data",
+      "updateOrder": "Error updating environment order",
+      "nameRequired": "Environment name is required"
+    },
+    "tooltips": {
+      "edit": "Edit",
+      "delete": "Delete"
+    }
   }
 }

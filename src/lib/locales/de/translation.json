@@ -368,5 +368,32 @@
       "plans": "Pläne",
       "history": "Verlauf"
     }
+  },
+  "environments": {
+    "title": "Umgebungen",
+    "newEnvironment": "Neue Umgebung",
+    "editEnvironment": "Umgebung bearbeiten",
+    "name": "Name",
+    "actions": "Aktionen",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "confirmDelete": "Löschung bestätigen",
+    "confirmDeleteMessage": "Sind Sie sicher, dass Sie die Umgebung \"{{name}}\" löschen möchten?",
+    "success": {
+      "orderUpdated": "Umgebungsreihenfolge erfolgreich aktualisiert!",
+      "created": "Umgebung erfolgreich erstellt!",
+      "updated": "Umgebung erfolgreich aktualisiert!",
+      "deleted": "Umgebung erfolgreich gelöscht!"
+    },
+    "error": {
+      "loadData": "Fehler beim Laden der Daten",
+      "updateOrder": "Fehler beim Aktualisieren der Umgebungsreihenfolge",
+      "nameRequired": "Der Name der Umgebung ist erforderlich"
+    },
+    "tooltips": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen"
+    }
   }
 }

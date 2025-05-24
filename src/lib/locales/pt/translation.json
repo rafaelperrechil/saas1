@@ -368,5 +368,32 @@
   "common": {
     "saving": "Salvando...",
     "save": "Salvar"
+  },
+  "environments": {
+    "title": "Ambientes",
+    "newEnvironment": "Novo Ambiente",
+    "editEnvironment": "Editar Ambiente",
+    "name": "Nome",
+    "actions": "Ações",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "confirmDelete": "Confirmar Exclusão",
+    "confirmDeleteMessage": "Tem certeza que deseja excluir o ambiente \"{{name}}\"?",
+    "success": {
+      "orderUpdated": "Ordem dos ambientes atualizada com sucesso!",
+      "created": "Ambiente criado com sucesso!",
+      "updated": "Ambiente editado com sucesso!",
+      "deleted": "Ambiente excluído com sucesso!"
+    },
+    "error": {
+      "loadData": "Erro ao carregar dados",
+      "updateOrder": "Erro ao atualizar ordem dos ambientes",
+      "nameRequired": "O nome do ambiente é obrigatório"
+    },
+    "tooltips": {
+      "edit": "Editar",
+      "delete": "Excluir"
+    }
   }
 }

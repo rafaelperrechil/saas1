@@ -226,12 +226,13 @@ export default function UsersPage() {
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
-            <TableRow>
-              <TableCell>Nome</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Perfil</TableCell>
-              <TableCell>Data de Criação</TableCell>
-              <TableCell align="right">Ações</TableCell>
+            <TableRow sx={{ backgroundColor: 'primary.dark' }}>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Nome</TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Email</TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Organização</TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold' }} align="right">
+                Ações
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -241,19 +242,30 @@ export default function UsersPage() {
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.profile.name}</TableCell>
-                  <TableCell>
-                    {format(new Date(user.createdAt), "dd 'de' MMMM 'de' yyyy", {
-                      locale: ptBR,
-                    })}
-                  </TableCell>
                   <TableCell align="right">
                     <Tooltip title="Editar">
-                      <IconButton onClick={() => handleOpenDialog(user)}>
+                      <IconButton
+                        onClick={() => handleOpenDialog(user)}
+                        sx={{
+                          color: 'grey.600',
+                          '&:hover': {
+                            color: '#1976d2',
+                          },
+                        }}
+                      >
                         <EditIcon />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Excluir">
-                      <IconButton onClick={() => handleOpenDeleteDialog(user)}>
+                      <IconButton
+                        onClick={() => handleOpenDeleteDialog(user)}
+                        sx={{
+                          color: 'grey.600',
+                          '&:hover': {
+                            color: 'error.main',
+                          },
+                        }}
+                      >
                         <DeleteIcon />
                       </IconButton>
                     </Tooltip>

@@ -243,19 +243,27 @@ export default function PlansPage() {
       )}
 
       <Paper>
-        <TableContainer>
+        <TableContainer component={Paper}>
           <Table>
             <TableHead>
-              <TableRow>
-                <TableCell>Nome</TableCell>
-                <TableCell>Preço</TableCell>
-                <TableCell>Unidades Incluídas</TableCell>
-                <TableCell>Máx. Usuários</TableCell>
-                <TableCell>Preço Usuário Extra</TableCell>
-                <TableCell>Máx. Checklists</TableCell>
-                <TableCell>Preço Unidade Extra</TableCell>
-                <TableCell>Personalizado?</TableCell>
-                <TableCell>Ações</TableCell>
+              <TableRow sx={{ backgroundColor: 'primary.dark' }}>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Nome</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Preço</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>
+                  Unidades Incluídas
+                </TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Máx. Usuários</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>
+                  Preço Usuário Extra
+                </TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Máx. Checklists</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>
+                  Preço Unidade Extra
+                </TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Personalizado?</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }} align="right">
+                  Ações
+                </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -271,12 +279,28 @@ export default function PlansPage() {
                   <TableCell>{plan.isCustom ? 'Sim' : 'Não'}</TableCell>
                   <TableCell>
                     <Tooltip title="Editar">
-                      <IconButton onClick={() => handleOpenDialog(plan)}>
+                      <IconButton
+                        onClick={() => handleOpenDialog(plan)}
+                        sx={{
+                          color: 'grey.600',
+                          '&:hover': {
+                            color: '#1976d2',
+                          },
+                        }}
+                      >
                         <EditIcon />
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Excluir">
-                      <IconButton onClick={() => handleOpenDeleteDialog(plan)}>
+                      <IconButton
+                        onClick={() => handleOpenDeleteDialog(plan)}
+                        sx={{
+                          color: 'grey.600',
+                          '&:hover': {
+                            color: 'error.main',
+                          },
+                        }}
+                      >
                         <DeleteIcon />
                       </IconButton>
                     </Tooltip>

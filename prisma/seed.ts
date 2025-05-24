@@ -49,7 +49,6 @@ async function main() {
     },
   });
 
-  
   // Criar usuário Bruno
   console.log('Criando usuário Bruno...');
   const hashedPasswordBruno = await bcrypt.hash('123123', 10);
@@ -63,7 +62,6 @@ async function main() {
   });
 
   console.log('Usuáriso criados com sucesso!');
-
 
   // Criar nichos
   console.log('Criando nichos...');
@@ -98,8 +96,8 @@ async function main() {
   console.log('Criando organização...');
   const technologyNiche = await prisma.niche.findFirst({
     where: {
-      name: 'Tecnologia'
-    }
+      name: 'Tecnologia',
+    },
   });
 
   const organization = await prisma.organization.create({
@@ -110,15 +108,15 @@ async function main() {
       city: 'São Paulo',
       niche: {
         connect: {
-          id: technologyNiche.id
-        }
+          id: technologyNiche.id,
+        },
       },
       users: {
         connect: {
-          id: user.id
-        }
-      }
-    }
+          id: user.id,
+        },
+      },
+    },
   });
   console.log('Organização criada com sucesso!');
 
@@ -127,15 +125,15 @@ async function main() {
   await prisma.user.update({
     where: { email: 'rafaelperrechil@hotmail.com' },
     data: {
-      organizationId: organization.id
-    }
+      organizationId: organization.id,
+    },
   });
 
   await prisma.user.update({
     where: { email: 'bruno@bol.com' },
     data: {
-      organizationId: organization.id
-    }
+      organizationId: organization.id,
+    },
   });
   console.log('Usuários atualizados com sucesso!');
 
@@ -144,18 +142,16 @@ async function main() {
   const branch = await prisma.branch.create({
     data: {
       name: 'Ilhabela',
+      wizardCompleted: true,
       organization: {
         connect: {
-          id: organization.id
-        }
-      }
-    }
+          id: organization.id,
+        },
+      },
+    },
   });
   console.log('Filial criada com sucesso!');
 
-
-
-    
   // Criar departamento
   console.log('Criando departamento...');
   const department = await prisma.department.create({
@@ -163,19 +159,19 @@ async function main() {
       name: 'TI',
       branch: {
         connect: {
-          id: branch.id
-        }
+          id: branch.id,
+        },
       },
       responsibles: {
         create: {
           user: {
             connect: {
-              id: brunoUser.id
-            }
-          }
-        }
-      }
-    }
+              id: brunoUser.id,
+            },
+          },
+        },
+      },
+    },
   });
   console.log('Departamento criado com sucesso!');
 
@@ -188,10 +184,10 @@ async function main() {
         name: envName,
         branch: {
           connect: {
-            id: branch.id
-          }
-        }
-      }
+            id: branch.id,
+          },
+        },
+      },
     });
   }
   console.log('Ambientes criados com sucesso!');
