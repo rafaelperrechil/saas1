@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
-import { Box } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { Box, CircularProgress, Alert } from '@mui/material';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import WelcomeStep from './steps/WelcomeStep';
 import OrganizationStep from './steps/OrganizationStep';
 import UnitStep from './steps/UnitStep';
@@ -29,6 +31,8 @@ interface WizardData {
 }
 
 export default function Wizard() {
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const [currentStep, setCurrentStep] = useState(0);
   const [wizardData, setWizardData] = useState<WizardData>({
     organization: {
@@ -44,8 +48,42 @@ export default function Wizard() {
     departments: [],
   });
 
-  const handleNext = () => {
-    setCurrentStep((prev) => prev + 1);
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user?.wizardCompleted) {
+      router.push('/panel/dashboard');
+    }
+  }, [status, session, router]);
+
+  if (status === 'loading') {
+    return (
+      <Box
+        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (status === 'error') {
+    return (
+      <Box sx={{ p: 3 }}>
+        <Alert severity="error">Erro ao carregar dados</Alert>
+      </Box>
+    );
+  }
+
+  const handleNext = async () => {
+    if (currentStep === 4) {
+      // Último passo - salvar dados e redirecionar
+      try {
+        // Aqui você pode adicionar a lógica para salvar os dados
+        await router.push('/panel/dashboard');
+      } catch (error) {
+        console.error('Erro ao redirecionar:', error);
+      }
+    } else {
+      setCurrentStep((prev) => prev + 1);
+    }
   };
 
   const handleBack = () => {

@@ -118,9 +118,10 @@ export default function OrganizationStep({
   };
 
   const handleNext = () => {
-    if (validate()) {
-      onNext();
+    if (!validate()) {
+      return;
     }
+    onNext();
   };
 
   return (
@@ -133,7 +134,7 @@ export default function OrganizationStep({
       </Typography>
 
       {error && (
-        <Alert severity="error" sx={{ mb: 2 }} role="alert">
+        <Alert severity="error" sx={{ mb: 2 }} role="alert" data-testid="error-message">
           {error}
         </Alert>
       )}
@@ -230,6 +231,7 @@ export default function OrganizationStep({
               bgcolor: '#1F3251',
             },
           }}
+          data-testid="next-button"
         >
           {t('wizard.common.next')}
         </Button>

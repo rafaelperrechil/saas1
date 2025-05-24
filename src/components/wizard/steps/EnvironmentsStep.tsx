@@ -205,8 +205,7 @@ export default function EnvironmentsStep({
     if (validate()) {
       try {
         setIsSaving(true);
-
-        console.log('Wizard data:', wizardData); // Debug
+        setError(''); // Limpar erro anterior
 
         // Validar dados do wizard
         if (!wizardData?.organization) {
@@ -222,7 +221,6 @@ export default function EnvironmentsStep({
           !organization.city ||
           !organization.nicheId
         ) {
-          console.log('Organization data:', organization); // Debug
           throw new Error('Dados da organização incompletos');
         }
 
@@ -255,8 +253,6 @@ export default function EnvironmentsStep({
           })),
         };
 
-        console.log('Data to save:', dataToSave); // Debug
-
         // Salvar os dados via serviço
         const response = await wizardService.saveWizardData(dataToSave);
 
@@ -264,8 +260,8 @@ export default function EnvironmentsStep({
           throw new Error(response.error);
         }
 
-        // Redirecionar para o dashboard
-        router.push('/panel/dashboard');
+        // Chamar onNext após salvar com sucesso
+        onNext();
       } catch (error) {
         console.error('Erro ao salvar dados:', error);
         setError(
@@ -295,72 +291,65 @@ export default function EnvironmentsStep({
       </Typography>
 
       <Box sx={{ flex: 1 }}>
-        <Box sx={{ mb: 4 }}>
-          <Box
-            sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}
-          >
-            <Typography variant="h6">{t('wizard.environments.title')}</Typography>
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              onClick={addEnvironment}
-              color="primary"
-              size="small"
-            >
-              {t('wizard.environments.addEnvironment')}
-            </Button>
-          </Box>
-
-          {error && (
-            <Alert severity="error" sx={{ mb: 2 }}>
-              {error}
-            </Alert>
-          )}
-
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext items={data} strategy={verticalListSortingStrategy}>
-              <List>
-                {data.map((environment, index) => (
-                  <SortableItem
-                    key={environment.id}
-                    environment={environment}
-                    onChange={(id, value) => updateEnvironment(id, value)}
-                    onDelete={(id) => deleteEnvironment(id)}
-                  />
-                ))}
-              </List>
-            </SortableContext>
-          </DndContext>
-
-          {data.length > 0 && (
-            <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
-              {t('wizard.environments.dragToReorder')}
-            </Typography>
-          )}
-        </Box>
-
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-          <Button variant="outlined" onClick={onBack} startIcon={<ArrowBack />} disabled={isSaving}>
-            {t('wizard.common.back')}
-          </Button>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6">{t('wizard.environments.title')}</Typography>
           <Button
             variant="contained"
-            onClick={handleNext}
-            disabled={isSaving}
-            sx={{
-              bgcolor: '#2AB7CA',
-              '&:hover': {
-                bgcolor: '#1F3251',
-              },
-            }}
+            startIcon={<AddIcon />}
+            onClick={addEnvironment}
+            color="primary"
+            size="small"
           >
-            {isSaving ? t('wizard.common.saving') : t('wizard.common.finish')}
+            {t('wizard.environments.addEnvironment')}
           </Button>
         </Box>
+
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }} role="alert">
+            {error}
+          </Alert>
+        )}
+
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={data} strategy={verticalListSortingStrategy}>
+            <List>
+              {data.map((environment, index) => (
+                <SortableItem
+                  key={environment.id}
+                  environment={environment}
+                  onChange={(id, value) => updateEnvironment(id, value)}
+                  onDelete={(id) => deleteEnvironment(id)}
+                />
+              ))}
+            </List>
+          </SortableContext>
+        </DndContext>
+
+        {data.length > 0 && (
+          <Typography variant="body2" color="textSecondary" sx={{ mt: 2 }}>
+            {t('wizard.environments.dragToReorder')}
+          </Typography>
+        )}
+      </Box>
+
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+        <Button variant="outlined" onClick={onBack} startIcon={<ArrowBack />} disabled={isSaving}>
+          {t('wizard.common.back')}
+        </Button>
+        <Button
+          variant="contained"
+          onClick={handleNext}
+          disabled={isSaving}
+          sx={{
+            bgcolor: '#2AB7CA',
+            '&:hover': {
+              bgcolor: '#1F3251',
+            },
+          }}
+          data-testid="next-button"
+        >
+          {isSaving ? t('wizard.common.saving') : t('wizard.common.finish')}
+        </Button>
       </Box>
     </Box>
   );

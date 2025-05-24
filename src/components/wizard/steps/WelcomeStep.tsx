@@ -41,6 +41,7 @@ export default function WelcomeStep({ onNext }: WelcomeStepProps) {
             bgcolor: '#1F3251',
           },
         }}
+        data-testid="next-button"
       >
         {t('wizard.common.next')}
       </Button>

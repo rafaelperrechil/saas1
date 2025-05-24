@@ -39,6 +39,7 @@ export default function UnitStep({ data, onChange, onBack, onNext }: UnitStepPro
         value={data.name}
         onChange={(e) => onChange({ name: e.target.value })}
         required
+        inputProps={{ 'data-testid': 'branch-name' }}
         // helperText="Cada organização tem apenas uma unidade por padrão. Adicionar mais sob consulta."
       />
 
@@ -69,6 +70,7 @@ export default function UnitStep({ data, onChange, onBack, onNext }: UnitStepPro
               bgcolor: '#1F3251',
             },
           }}
+          data-testid="next-button"
         >
           {t('wizard.common.next')}
         </Button>

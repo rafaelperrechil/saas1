@@ -177,7 +177,17 @@ export default function DepartmentsStep({ data, onChange, onBack, onNext }: Depa
   };
 
   const validate = () => {
-    return data.length > 0;
+    if (data.length === 0) {
+      return false;
+    }
+
+    // Verifica se todos os departamentos têm nome e pelo menos um responsável
+    return data.every(
+      (dept) =>
+        dept.name.trim() &&
+        dept.responsibles.length > 0 &&
+        dept.responsibles.every((r) => r.email.trim())
+    );
   };
 
   return (
@@ -207,6 +217,7 @@ export default function DepartmentsStep({ data, onChange, onBack, onNext }: Depa
               onClick={handleOpenDepartmentDialog}
               color="primary"
               size="small"
+              aria-label="Adicionar Departamento"
             >
               {t('wizard.departments.addDepartment')}
             </Button>
@@ -262,6 +273,7 @@ export default function DepartmentsStep({ data, onChange, onBack, onNext }: Depa
                           color="error"
                           size="small"
                           onClick={() => removeDepartment(dept.id)}
+                          aria-label="Deletar Departamento"
                         >
                           <DeleteIcon />
                         </IconButton>
@@ -275,17 +287,19 @@ export default function DepartmentsStep({ data, onChange, onBack, onNext }: Depa
         </Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
-          <Button variant="outlined" onClick={onBack} startIcon={<ArrowBack />}>
-            {t('wizard.common.back')}
+          <Button variant="outlined" startIcon={<ArrowBack />} onClick={onBack} aria-label="Voltar">
+            {t('common.back')}
           </Button>
 
           <Button
             variant="contained"
+            endIcon={<ArrowForward />}
             onClick={onNext}
             disabled={!validate()}
-            endIcon={<ArrowForward />}
+            aria-label="Próximo"
+            data-testid="next-button"
           >
-            {t('wizard.common.next')}
+            {t('common.next')}
           </Button>
         </Box>
       </Box>
@@ -296,14 +310,13 @@ export default function DepartmentsStep({ data, onChange, onBack, onNext }: Depa
         onClose={handleCloseDepartmentDialog}
         maxWidth="sm"
         fullWidth
+        role="dialog"
       >
-        <DialogTitle>{t('wizard.departments.addDepartment')}</DialogTitle>
+        <DialogTitle>{t('wizard.departments.newDepartment')}</DialogTitle>
         <DialogContent>
           <TextField
-            autoFocus
-            margin="dense"
-            label={t('wizard.departments.name')}
             fullWidth
+            label={t('wizard.departments.name')}
             value={newDepartmentName}
             onChange={(e) => {
               setNewDepartmentName(e.target.value);
@@ -311,6 +324,20 @@ export default function DepartmentsStep({ data, onChange, onBack, onNext }: Depa
             }}
             error={!!departmentNameError}
             helperText={departmentNameError}
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            fullWidth
+            label={t('wizard.departments.responsibleEmail')}
+            value={currentResponsibleEmail}
+            onChange={(e) => {
+              setCurrentResponsibleEmail(e.target.value);
+              if (responsibleEmailError) setResponsibleEmailError('');
+            }}
+            error={!!responsibleEmailError}
+            helperText={responsibleEmailError}
+            sx={{ mb: 2 }}
+            aria-label="E-mail do Responsável"
           />
 
           <Typography variant="subtitle1" sx={{ mt: 3, mb: 2 }}>
@@ -319,26 +346,13 @@ export default function DepartmentsStep({ data, onChange, onBack, onNext }: Depa
 
           <Stack spacing={2}>
             <Box sx={{ display: 'flex', gap: 1 }}>
-              <TextField
-                size="small"
-                label={t('wizard.departments.email')}
-                fullWidth
-                value={currentResponsibleEmail}
-                onChange={(e) => {
-                  setCurrentResponsibleEmail(e.target.value);
-                  if (responsibleEmailError) setResponsibleEmailError('');
-                }}
-                error={!!responsibleEmailError}
-                helperText={responsibleEmailError}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    e.preventDefault();
-                    addResponsibleToList();
-                  }
-                }}
-              />
-              <Button variant="outlined" onClick={addResponsibleToList} startIcon={<AddIcon />}>
-                {t('wizard.departments.addResponsible')}
+              <Button
+                variant="contained"
+                onClick={() => addResponsibleToList()}
+                startIcon={<PersonAdd />}
+                aria-label="Adicionar"
+              >
+                {t('common.add')}
               </Button>
             </Box>
 
@@ -365,11 +379,8 @@ export default function DepartmentsStep({ data, onChange, onBack, onNext }: Depa
         </DialogContent>
         <DialogActions sx={{ p: 2, pt: 0 }}>
           <Button onClick={handleCloseDepartmentDialog}>{t('wizard.common.back')}</Button>
-          <Button onClick={() => addDepartment()} variant="outlined">
-            {t('wizard.departments.addDepartment')}
-          </Button>
-          <Button onClick={() => addDepartment()} variant="contained" color="primary">
-            {t('wizard.departments.addDepartment')}
+          <Button variant="contained" onClick={() => addDepartment(false)} aria-label="Salvar">
+            {t('common.save')}
           </Button>
         </DialogActions>
       </Dialog>

@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom';
 import 'isomorphic-fetch';
 import React from 'react';
+import 'jest-environment-jsdom';
 
 // Mock para next/navigation
 jest.mock('next/navigation', () => ({
@@ -55,6 +56,9 @@ global.fetch = jest.fn(() =>
     json: () => Promise.resolve({}),
   })
 );
+
+// Mock do console.error para evitar logs desnecessários
+console.error = jest.fn();
 
 // Mock para window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
