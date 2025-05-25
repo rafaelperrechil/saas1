@@ -236,6 +236,7 @@ function SectionBox({
                       </span>
                       <TextField
                         fullWidth
+                        id={`question-text-${question.id}`}
                         label={t('checklists.questions.text')}
                         value={question.text}
                         onChange={(e) => updateQuestionText(question.id, e.target.value)}
@@ -246,6 +247,7 @@ function SectionBox({
                       <FormControl sx={{ minWidth: 160, flex: 1 }}>
                         <InputLabel>{t('checklists.questions.responseType')}</InputLabel>
                         <Select
+                          id={`response-type-${question.id}`}
                           label={t('checklists.questions.responseType')}
                           value={question.responseType}
                           onChange={(e) => updateResponseType(question.id, e.target.value)}
@@ -265,6 +267,7 @@ function SectionBox({
                         </Select>
                       </FormControl>
                       <FormControl
+                        id={`department-select-${question.id}`}
                         sx={{ minWidth: 180, flex: 1 }}
                         error={!!errors[`department-${question.id}`]}
                       >
@@ -309,12 +312,14 @@ function SectionBox({
                         <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
                           <TextField
                             fullWidth
+                            id={`positive-label-${question.id}`}
                             label={t('checklists.questions.positiveLabel')}
                             value={question.positiveLabel}
                             onChange={(e) => updatePositiveLabel(question.id, e.target.value)}
                           />
                           <TextField
                             fullWidth
+                            id={`negative-label-${question.id}`}
                             label={t('checklists.questions.negativeLabel')}
                             value={question.negativeLabel}
                             onChange={(e) => updateNegativeLabel(question.id, e.target.value)}
@@ -346,7 +351,6 @@ function SectionBox({
 
 export default function AddChecklistPage() {
   const { data: session } = useSession();
-  console.log('Sessão do usuário:', session);
   const [checklistName, setChecklistName] = useState('');
   const [description, setDescription] = useState('');
   const [sections, setSections] = useState<Section[]>([]);
@@ -422,7 +426,7 @@ export default function AddChecklistPage() {
     if (orgId) {
       setLoadingUsers(true);
       userService.getUsersByOrganization(orgId).then((data) => {
-        setUsers(data || []);
+        setUsers((data as User[]) || []);
         setLoadingUsers(false);
       });
     }
@@ -620,6 +624,7 @@ export default function AddChecklistPage() {
           </Typography>
           <TextField
             fullWidth
+            id="checklist-name-input"
             label={t('checklists.fields.name')}
             margin="normal"
             value={checklistName}
@@ -627,9 +632,11 @@ export default function AddChecklistPage() {
             sx={{ mb: 2 }}
             error={!!errors.checklistName}
             helperText={errors.checklistName}
+            inputProps={{ 'data-testid': 'checklist-name-input' }}
           />
           <TextField
             fullWidth
+            id="checklist-description-input"
             label={t('checklists.fields.description')}
             multiline
             rows={3}
@@ -641,6 +648,8 @@ export default function AddChecklistPage() {
           <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.environment}>
             <InputLabel>{t('checklists.fields.environment')}</InputLabel>
             <Select
+              id="environment-select"
+              data-testid="environment-select"
               label={t('checklists.fields.environment')}
               value={selectedEnvironment}
               onChange={(e) => setSelectedEnvironment(e.target.value)}
@@ -656,7 +665,6 @@ export default function AddChecklistPage() {
                 </MenuItem>
               ) : (
                 environments.map((env) => {
-                  console.log('Renderizando ambiente:', env);
                   return (
                     <MenuItem key={env.id} value={env.id}>
                       {env.name}
@@ -668,6 +676,8 @@ export default function AddChecklistPage() {
             {errors.environment && <FormHelperText>{errors.environment}</FormHelperText>}
           </FormControl>
           <Autocomplete
+            id="responsibles-autocomplete"
+            data-testid="responsibles-autocomplete"
             multiple
             options={users}
             getOptionLabel={(option) => option.name + (option.email ? ` (${option.email})` : '')}
@@ -690,6 +700,8 @@ export default function AddChecklistPage() {
           <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.frequency}>
             <InputLabel>{t('checklists.fields.frequency')}</InputLabel>
             <Select
+              id="frequency-select"
+              data-testid="frequency-select"
               label={t('checklists.fields.frequency')}
               value={frequency}
               onChange={(e) => setFrequency(e.target.value)}
@@ -716,6 +728,7 @@ export default function AddChecklistPage() {
                 InputLabelProps={{ shrink: true }}
                 error={!!errors.executionTime}
                 helperText={errors.executionTime}
+                inputProps={{ 'data-testid': 'execution-time-input' }}
               />
             </Box>
             <Box sx={{ display: 'flex', gap: 2 }}>
@@ -750,6 +763,7 @@ export default function AddChecklistPage() {
               {t('checklists.buttons.cancel')}
             </Button>
             <Button
+              data-testid="next-step-button"
               variant="contained"
               color="primary"
               onClick={() => {
@@ -772,7 +786,13 @@ export default function AddChecklistPage() {
               {(provided) => (
                 <Box ref={provided.innerRef} {...provided.droppableProps} sx={{ mb: 3 }}>
                   <Box sx={{ mb: 2 }}>
-                    <Button variant="outlined" onClick={handleOpenSectionModal} sx={{ ml: 0 }}>
+                    <Button
+                      id="add-section-button"
+                      data-testid="add-section-button"
+                      variant="outlined"
+                      onClick={handleOpenSectionModal}
+                      sx={{ ml: 0 }}
+                    >
                       + {t('checklists.categories.add')}
                     </Button>
                   </Box>
@@ -785,6 +805,8 @@ export default function AddChecklistPage() {
                         {t('checklists.categories.empty')}
                       </Typography>
                       <Button
+                        id="add-first-section-button"
+                        data-testid="add-first-section-button"
                         variant="contained"
                         color="primary"
                         startIcon={<AddIcon />}
@@ -835,7 +857,12 @@ export default function AddChecklistPage() {
               <Button variant="outlined" sx={{ mr: 2 }} href="/panel/checklists">
                 {t('checklists.buttons.cancel')}
               </Button>
-              <Button variant="contained" color="primary" onClick={handleSaveChecklist}>
+              <Button
+                data-testid="save-checklist-button"
+                variant="contained"
+                color="primary"
+                onClick={handleSaveChecklist}
+              >
                 {t('checklists.buttons.save')}
               </Button>
             </Box>
@@ -862,16 +889,23 @@ export default function AddChecklistPage() {
           </Typography>
           <TextField
             fullWidth
+            id="section-name-input"
             label={t('checklists.categories.modal.name')}
             value={sectionName}
             onChange={(e) => setSectionName(e.target.value)}
             sx={{ mb: 2 }}
+            inputProps={{ 'data-testid': 'section-name-input' }}
           />
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-            <Button onClick={handleCloseSectionModal} sx={{ mr: 2 }}>
+            <Button id="cancel-section-button" onClick={handleCloseSectionModal} sx={{ mr: 2 }}>
               {t('checklists.buttons.cancel')}
             </Button>
-            <Button variant="contained" onClick={handleAddSection} disabled={!sectionName.trim()}>
+            <Button
+              id="confirm-section-button"
+              variant="contained"
+              onClick={handleAddSection}
+              disabled={!sectionName.trim()}
+            >
               {t('checklists.buttons.add')}
             </Button>
           </Box>

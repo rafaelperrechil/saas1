@@ -22,7 +22,7 @@ export const authOptions: NextAuthOptions = {
             return null;
           }
 
-          console.log('[Auth] Iniciando autenticação para:', credentials.email);
+          //console.log('[Auth] Iniciando autenticação para:', credentials.email);
 
           // Buscar usuário no banco de dados
           const user = await prisma.user.findUnique({
@@ -42,12 +42,12 @@ export const authOptions: NextAuthOptions = {
             return null;
           }
 
-          console.log('[Auth] Usuário encontrado:', {
-            id: user.id,
-            hasProfile: !!user.profile,
-            hasOrganization: !!user.organization,
-            branchCount: user.organization?.branches.length || 0,
-          });
+          // console.log('[Auth] Usuário encontrado:', {
+          //   id: user.id,
+          //   hasProfile: !!user.profile,
+          //   hasOrganization: !!user.organization,
+          //   branchCount: user.organization?.branches.length || 0,
+          // });
 
           // Verificar e corrigir data inválida
           if (!user.updatedAt || user.updatedAt < new Date('2000-01-01')) {
@@ -75,11 +75,11 @@ export const authOptions: NextAuthOptions = {
           // Pega a primeira branch da organização (se existir)
           const branch = user.organization?.branches[0];
 
-          console.log('[Auth] Login bem sucedido:', {
-            userId: user.id,
-            hasBranch: !!branch,
-            branchId: branch?.id,
-          });
+          // console.log('[Auth] Login bem sucedido:', {
+          //   userId: user.id,
+          //   hasBranch: !!branch,
+          //   branchId: branch?.id,
+          // });
 
           return {
             id: user.id,
@@ -104,11 +104,11 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user, trigger, session }) {
       if (user) {
-        console.log('[Auth] Atualizando token com dados do usuário:', {
-          userId: user.id,
-          hasProfile: !!user.profile,
-          hasBranch: !!user.branch,
-        });
+        // console.log('[Auth] Atualizando token com dados do usuário:', {
+        //   userId: user.id,
+        //   hasProfile: !!user.profile,
+        //   hasBranch: !!user.branch,
+        // });
         token.id = user.id;
         token.profile = user.profile;
         token.branch = user.branch || undefined;

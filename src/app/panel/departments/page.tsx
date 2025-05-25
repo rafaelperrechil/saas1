@@ -150,7 +150,12 @@ export default function DepartmentsPage() {
         : await departmentService.createDepartment(data);
 
       if (response.error) {
-        throw new Error(response.error);
+        if (response.error.includes('Já existe um departamento com este nome')) {
+          setError(t('departments.error.duplicateName'));
+        } else {
+          setError(response.error);
+        }
+        return;
       }
 
       await mutateDepartments();
@@ -319,11 +324,6 @@ export default function DepartmentsPage() {
           {successMessage}
         </Alert>
       )}
-      {error && (
-        <Alert severity="error" sx={{ mb: 2 }}>
-          {error}
-        </Alert>
-      )}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" component="h1">
           {t('departments.title')}
@@ -338,124 +338,139 @@ export default function DepartmentsPage() {
         </Button>
       </Box>
 
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} sx={{ mb: 3 }}>
         <Table>
-          <TableHead>
-            <TableRow sx={{ backgroundColor: 'primary.dark' }}>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>
-                {t('departments.name')}
-              </TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>
-                {t('departments.responsibles')}
-              </TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }} align="right">
+          <TableHead sx={{ bgcolor: '#f5f5f5' }}>
+            <TableRow>
+              <TableCell>{t('departments.name')}</TableCell>
+              <TableCell>{t('departments.responsibles')}</TableCell>
+              <TableCell width="120px" align="right">
                 {t('departments.actions')}
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {departments.map((department) => (
-              <TableRow key={department.id}>
-                <TableCell>{department.name}</TableCell>
-                <TableCell>
-                  {department.responsibles && department.responsibles.length > 0 ? (
-                    <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, flexWrap: 'wrap' }}>
-                      {department.responsibles.map((responsible) => (
-                        <Box
-                          key={responsible.id}
-                          sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 0.5,
-                            border: '1px solid black',
-                            borderRadius: '4px',
-                            padding: '8px',
-                            background: '#ebebeb',
-                          }}
-                        >
-                          <Box>
-                            <Typography variant="body2" fontWeight="bold">
-                              {responsible.name}
-                            </Typography>
-                            <Typography
-                              variant="body2"
-                              component="small"
-                              display="block"
-                              fontSize="0.85em"
-                              color="text.secondary"
-                            >
-                              {responsible.email}
-                            </Typography>
-                          </Box>
-                          <IconButton
-                            size="small"
-                            onClick={() =>
-                              handleOpenDeleteResponsibleDialog(responsible, department)
-                            }
-                            sx={{
-                              padding: '2px',
-                              '&:hover': {
-                                color: 'error.main',
-                              },
-                            }}
-                          >
-                            <CloseIcon fontSize="small" />
-                          </IconButton>
-                        </Box>
-                      ))}
-                    </Box>
-                  ) : (
-                    <Typography variant="body2" color="text.secondary">
-                      {t('departments.noResponsibles')}
+            {departments.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={3}>
+                  <Paper
+                    sx={{
+                      p: 3,
+                      textAlign: 'center',
+                      bgcolor: '#f5f5f5',
+                      border: '1px dashed #ccc',
+                    }}
+                  >
+                    <Typography data-testid="no-departments-message" color="textSecondary">
+                      {t('departments.noDepartments')}
                     </Typography>
-                  )}
-                </TableCell>
-                <TableCell align="right">
-                  <Tooltip title={t('departments.tooltips.addResponsible')}>
-                    <IconButton
-                      onClick={() => handleOpenResponsibleDialog(department)}
-                      sx={{
-                        color: 'grey.600',
-                        '&:hover': {
-                          color: 'success.main',
-                        },
-                      }}
-                      size="small"
-                    >
-                      <PersonAddIcon />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title={t('departments.tooltips.edit')}>
-                    <IconButton
-                      onClick={() => handleOpenDialog(department)}
-                      sx={{
-                        color: 'grey.600',
-                        '&:hover': {
-                          color: '#1976d2',
-                        },
-                      }}
-                      size="small"
-                    >
-                      <EditIcon />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title={t('departments.tooltips.delete')}>
-                    <IconButton
-                      onClick={() => handleOpenDeleteDialog(department)}
-                      sx={{
-                        color: 'grey.600',
-                        '&:hover': {
-                          color: 'error.main',
-                        },
-                      }}
-                      size="small"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </Tooltip>
+                  </Paper>
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              departments.map((department) => (
+                <TableRow key={department.id}>
+                  <TableCell>{department.name}</TableCell>
+                  <TableCell>
+                    {department.responsibles && department.responsibles.length > 0 ? (
+                      <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, flexWrap: 'wrap' }}>
+                        {department.responsibles.map((responsible) => (
+                          <Box
+                            key={responsible.id}
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 0.5,
+                              border: '1px solid black',
+                              borderRadius: '4px',
+                              padding: '8px',
+                              background: '#ebebeb',
+                            }}
+                          >
+                            <Box>
+                              <Typography variant="body2" fontWeight="bold">
+                                {responsible.name}
+                              </Typography>
+                              <Typography
+                                variant="body2"
+                                component="small"
+                                display="block"
+                                fontSize="0.85em"
+                                color="text.secondary"
+                              >
+                                {responsible.email}
+                              </Typography>
+                            </Box>
+                            <IconButton
+                              size="small"
+                              onClick={() =>
+                                handleOpenDeleteResponsibleDialog(responsible, department)
+                              }
+                              sx={{
+                                padding: '2px',
+                                '&:hover': {
+                                  color: 'error.main',
+                                },
+                              }}
+                            >
+                              <CloseIcon fontSize="small" />
+                            </IconButton>
+                          </Box>
+                        ))}
+                      </Box>
+                    ) : (
+                      <Typography variant="body2" color="text.secondary">
+                        {t('departments.noResponsibles')}
+                      </Typography>
+                    )}
+                  </TableCell>
+                  <TableCell align="right">
+                    <Tooltip title={t('departments.tooltips.addResponsible')}>
+                      <IconButton
+                        onClick={() => handleOpenResponsibleDialog(department)}
+                        sx={{
+                          color: 'grey.600',
+                          '&:hover': {
+                            color: 'success.main',
+                          },
+                        }}
+                        size="small"
+                      >
+                        <PersonAddIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title={t('departments.tooltips.edit')}>
+                      <IconButton
+                        onClick={() => handleOpenDialog(department)}
+                        sx={{
+                          color: 'grey.600',
+                          '&:hover': {
+                            color: '#1976d2',
+                          },
+                        }}
+                        size="small"
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title={t('departments.tooltips.delete')}>
+                      <IconButton
+                        onClick={() => handleOpenDeleteDialog(department)}
+                        sx={{
+                          color: 'grey.600',
+                          '&:hover': {
+                            color: 'error.main',
+                          },
+                        }}
+                        size="small"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>
@@ -472,6 +487,11 @@ export default function DepartmentsPage() {
             {selectedDepartment ? t('departments.editDepartment') : t('departments.newDepartment')}
           </DialogTitle>
           <DialogContent>
+            {error && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {error}
+              </Alert>
+            )}
             <Box sx={{ mt: 2 }}>
               <TextField
                 fullWidth

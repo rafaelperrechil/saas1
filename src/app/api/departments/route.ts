@@ -60,6 +60,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Nome e ID da filial são obrigatórios' }, { status: 400 });
     }
 
+    // Verificar se já existe um departamento com o mesmo nome na mesma filial
+    const existingDepartment = await prisma.department.findFirst({
+      where: {
+        AND: [
+          {
+            name: {
+              equals: name,
+            },
+          },
+          {
+            branchId: branchId,
+          },
+        ],
+      },
+    });
+
+    if (existingDepartment) {
+      return NextResponse.json(
+        { error: 'Já existe um departamento com este nome nesta filial' },
+        { status: 200 }
+      );
+    }
+
     const department = await prisma.department.create({
       data: {
         name,

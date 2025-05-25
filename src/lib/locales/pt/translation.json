@@ -402,6 +402,7 @@
     "actions": "Ações",
     "responsibles": "Colaboradores",
     "noResponsibles": "Nenhum colaborador atribuído",
+    "noDepartments": "Nenhum departamento encontrado. Clique no botão 'Novo Departamento' para adicionar.",
     "newDepartment": "Novo Departamento",
     "editDepartment": "Editar Departamento",
     "save": "Salvar",
@@ -422,10 +423,11 @@
       "responsibleRemoved": "Colaborador removido com sucesso!"
     },
     "error": {
-      "nameRequired": "O nome do departamento é obrigatório",
+      "nameRequired": "Nome do departamento é obrigatório",
       "loadData": "Erro ao carregar departamentos",
       "noBranch": "Nenhuma filial selecionada",
-      "emailRequired": "O e-mail do colaborador é obrigatório"
+      "emailRequired": "Email do responsável é obrigatório",
+      "duplicateName": "Já existe um departamento com este nome nesta filial"
     },
     "tooltips": {
       "edit": "Editar departamento",

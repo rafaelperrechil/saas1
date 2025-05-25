@@ -74,6 +74,9 @@ class Api {
       }
 
       const data = await response.json();
+      if (data && data.error) {
+        return { error: data.error };
+      }
       return { data };
     } catch (error) {
       console.error('Erro na requisição:', error);

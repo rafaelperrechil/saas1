@@ -41,6 +41,43 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: 'Nome é obrigatório' }, { status: 400 });
     }
 
+    // Buscar o departamento atual para obter o branchId
+    const currentDepartment = await prisma.department.findUnique({
+      where: { id: params.id },
+    });
+
+    if (!currentDepartment) {
+      return NextResponse.json({ error: 'Departamento não encontrado' }, { status: 404 });
+    }
+
+    // Verificar se já existe outro departamento com o mesmo nome na mesma filial
+    const existingDepartment = await prisma.department.findFirst({
+      where: {
+        AND: [
+          {
+            name: {
+              equals: name,
+            },
+          },
+          {
+            branchId: currentDepartment.branchId,
+          },
+          {
+            id: {
+              not: params.id,
+            },
+          },
+        ],
+      },
+    });
+
+    if (existingDepartment) {
+      return NextResponse.json(
+        { error: 'Já existe um departamento com este nome nesta filial' },
+        { status: 200 }
+      );
+    }
+
     const department = await prisma.department.update({
       where: {
         id: params.id,

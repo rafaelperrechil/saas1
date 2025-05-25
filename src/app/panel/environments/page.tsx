@@ -51,6 +51,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import LoadingScreen from '@/components/common/LoadingScreen';
+import { useSession } from 'next-auth/react';
 
 interface EnvironmentFormData {
   id?: string;
@@ -90,7 +91,7 @@ function SortableTableRow({
 
   return (
     <TableRow ref={setNodeRef} style={style}>
-      <TableCell>
+      <TableCell data-testid={`env-name-${environment.id}`}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <IconButton
             size="small"
@@ -139,6 +140,7 @@ function SortableTableRow({
 
 export default function EnvironmentsPage() {
   const { t } = useTranslation();
+  const { data: session } = useSession();
   const {
     data: environments = [],
     error: environmentsError,
@@ -149,6 +151,7 @@ export default function EnvironmentsPage() {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [selectedEnvironment, setSelectedEnvironment] = useState<Environment | null>(null);
   const [error, setError] = useState('');
+  const [formError, setFormError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = useState(false);
@@ -219,7 +222,7 @@ export default function EnvironmentsPage() {
       });
     }
     setOpenDialog(true);
-    setError('');
+    setFormError('');
   };
 
   useEffect(() => {
@@ -243,16 +246,36 @@ export default function EnvironmentsPage() {
   const handleSubmit = async () => {
     try {
       if (!formData.name.trim()) {
-        setError(t('environments.error.nameRequired'));
+        setFormError(t('environments.error.nameRequired'));
+        return;
+      }
+
+      const branchId = session?.user?.branch?.id;
+      if (!branchId) {
+        setFormError('Filial (branch) não encontrada.');
+        return;
+      }
+
+      // Verificação de nome duplicado para o mesmo branchId
+      const nomeNormalizado = formData.name.trim().toLowerCase();
+      const ambienteDuplicado = environments.find(
+        (env) =>
+          env.name.trim().toLowerCase() === nomeNormalizado &&
+          env.branchId === branchId &&
+          (!selectedEnvironment || env.id !== selectedEnvironment.id)
+      );
+      if (ambienteDuplicado) {
+        setFormError('Já existe um ambiente com esse nome para esta filial!');
         return;
       }
 
       setIsLoading(true);
-      setError('');
+      setFormError('');
 
       const data = {
         name: formData.name.trim(),
         position: selectedEnvironment ? selectedEnvironment.position : environments.length + 1,
+        branchId,
       };
 
       const response = selectedEnvironment
@@ -273,7 +296,7 @@ export default function EnvironmentsPage() {
         setSuccessMessage('');
       }, 5000);
     } catch (error: any) {
-      setError(error.message);
+      setFormError(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -396,6 +419,11 @@ export default function EnvironmentsPage() {
           </DialogTitle>
           <DialogContent>
             <Box sx={{ mt: 2 }}>
+              {formError && (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                  {formError}
+                </Alert>
+              )}
               <TextField
                 fullWidth
                 label={t('environments.name')}
