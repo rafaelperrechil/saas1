@@ -50,8 +50,9 @@ const LanguageSelector = () => {
         <Image
           src={currentFlag}
           alt={`Idioma atual: ${languages[currentLang as keyof typeof languages]?.name || 'Português'}`}
-          width={28}
-          height={28}
+          width={40}
+          height={40}
+          style={{ maxWidth: 40, width: 40, height: 40, objectFit: 'cover', borderRadius: '50%' }}
         />
       </IconButton>
 

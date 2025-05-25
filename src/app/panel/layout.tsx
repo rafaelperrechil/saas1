@@ -93,7 +93,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <PanelHeader />
+      <PanelHeader open={open} />
       <Drawer
         variant="permanent"
         open={open}
@@ -244,7 +244,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   <ListItemIcon>
                     <BugReportIcon sx={{ color: '#FFFFFF' }} />
                   </ListItemIcon>
-                  <ListItemText primary={'Tickets & Chamados'} sx={{ color: '#FFFFFF' }} />
+                  <ListItemText primary={'Tickets'} sx={{ color: '#FFFFFF' }} />
                 </ListItemButton>
               </Tooltip>
             </ListItem>

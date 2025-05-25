@@ -49,3 +49,44 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Erro ao salvar execução do checklist' }, { status: 500 });
   }
 }
+
+export async function GET() {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      return new NextResponse('Não autorizado', { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+
+    if (!user) {
+      return new NextResponse('Usuário não encontrado', { status: 404 });
+    }
+
+    const executions = await prisma.checklistExecution.findMany({
+      where: {
+        performedById: user.id,
+      },
+      include: {
+        checklist: true,
+        items: {
+          include: {
+            checklistItem: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      take: 10,
+    });
+
+    return NextResponse.json(executions);
+  } catch (error) {
+    console.error('Erro ao buscar execuções:', error);
+    return new NextResponse('Erro interno do servidor', { status: 500 });
+  }
+}

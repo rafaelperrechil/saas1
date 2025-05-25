@@ -132,9 +132,10 @@ export default function InspectionPage({ params }: { params: Promise<{ id: strin
         throw new Error('Erro ao salvar inspeção');
       }
 
+      const data = await response.json();
       setSuccess('Inspeção finalizada com sucesso!');
       setTimeout(() => {
-        router.push('/panel/inspections');
+        router.push(`/panel/inspections/results/${data.id}`);
       }, 2000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao salvar inspeção');
