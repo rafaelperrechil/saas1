@@ -91,7 +91,6 @@ export default function Wizard() {
   };
 
   const handleOrganizationData = (data: WizardData['organization']) => {
-    console.log('Organization data:', data); // Debug
     setWizardData((prev) => ({
       ...prev,
       organization: data,
@@ -99,7 +98,6 @@ export default function Wizard() {
   };
 
   const handleBranchData = (data: WizardData['branch']) => {
-    console.log('Branch data:', data); // Debug
     setWizardData((prev) => ({
       ...prev,
       branch: data,
@@ -107,7 +105,6 @@ export default function Wizard() {
   };
 
   const handleDepartmentsData = (data: Department[]) => {
-    console.log('Departments data:', data); // Debug
     setWizardData((prev) => ({
       ...prev,
       departments: data,
@@ -115,8 +112,6 @@ export default function Wizard() {
   };
 
   const renderStep = () => {
-    console.log('Current wizard data:', wizardData); // Debug
-
     switch (currentStep) {
       case 0:
         return <WelcomeStep onNext={handleNext} />;

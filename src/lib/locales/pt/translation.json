@@ -534,5 +534,12 @@
       "saved": "Checklist salvo com sucesso!",
       "updated": "Checklist atualizado com sucesso!"
     }
+  },
+  "inspections": {
+    "title": "Inspeções Disponíveis",
+    "noChecklists": "Não há checklists disponíveis para inspeção no momento.",
+    "noDescription": "Sem descrição",
+    "questions": "perguntas",
+    "startInspection": "Iniciar Inspeção"
   }
 }

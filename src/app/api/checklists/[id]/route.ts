@@ -31,19 +31,18 @@ interface ChecklistSection {
   items: ChecklistItem[];
 }
 
-export async function GET(request: Request, context: any) {
-  const params = await context.params;
-
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user) {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
     const checklist = await prisma.checklist.findUnique({
       where: {
-        id: params.id,
+        id: id,
       },
       include: {
         sections: {
@@ -51,20 +50,8 @@ export async function GET(request: Request, context: any) {
             items: {
               include: {
                 checklistResponseType: true,
-                department: true,
-              },
-              orderBy: {
-                position: 'asc',
               },
             },
-          },
-          orderBy: {
-            position: 'asc',
-          },
-        },
-        checklistUsers: {
-          include: {
-            user: true,
           },
         },
       },
@@ -74,49 +61,15 @@ export async function GET(request: Request, context: any) {
       return NextResponse.json({ error: 'Checklist não encontrado' }, { status: 404 });
     }
 
-    // Transformar os dados para o formato esperado pelo frontend
-    const transformedChecklist = {
-      id: checklist.id,
-      name: checklist.name,
-      description: checklist.description,
-      frequency: checklist.frequency,
-      time: checklist.time,
-      daysOfWeek: checklist.daysOfWeek,
-      environmentId: checklist.environmentId,
-      responsibles: checklist.checklistUsers.map((cu: ChecklistUser) => ({
-        id: cu.user.id,
-        name: cu.user.name,
-        email: cu.user.email,
-      })),
-      sections: checklist.sections.map((section: ChecklistSection) => ({
-        id: section.id,
-        name: section.name,
-        items: section.items.map((item: ChecklistItem) => ({
-          id: item.id,
-          name: item.name,
-          description: item.description,
-          checklistResponseTypeId: item.checklistResponseTypeId,
-          departmentId: item.departmentId,
-          checklistResponseType: {
-            id: item.checklistResponseType.id,
-            name: item.checklistResponseType.name,
-            positiveLabel: item.checklistResponseType.positiveLabel,
-            negativeLabel: item.checklistResponseType.negativeLabel,
-          },
-        })),
-      })),
-    };
-
-    return NextResponse.json(transformedChecklist);
+    return NextResponse.json(checklist);
   } catch (error) {
     console.error('Erro ao buscar checklist:', error);
     return NextResponse.json({ error: 'Erro ao buscar checklist' }, { status: 500 });
   }
 }
 
-export async function PUT(request: Request, context: any) {
-  const params = await context.params;
-
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   try {
     const session = await getServerSession(authOptions);
 
@@ -129,7 +82,7 @@ export async function PUT(request: Request, context: any) {
     // Primeiro, atualizar o checklist
     const updatedChecklist = await prisma.checklist.update({
       where: {
-        id: params.id,
+        id: id,
       },
       data: {
         name: data.name,
@@ -144,7 +97,7 @@ export async function PUT(request: Request, context: any) {
     // Buscar seções e itens existentes
     const existingSections = await prisma.checklistSection.findMany({
       where: {
-        checklistId: params.id,
+        checklistId: id,
       },
       include: {
         items: {
@@ -228,7 +181,7 @@ export async function PUT(request: Request, context: any) {
           data: {
             name: section.name,
             position: i,
-            checklistId: params.id,
+            checklistId: id,
             items: {
               create: section.questions.map((question: any, j: number) => ({
                 name: question.text,
@@ -263,13 +216,13 @@ export async function PUT(request: Request, context: any) {
     // Atualizar responsáveis
     await prisma.checklistUser.deleteMany({
       where: {
-        checklistId: params.id,
+        checklistId: id,
       },
     });
 
     await prisma.checklistUser.createMany({
       data: data.responsibles.map((responsible: any) => ({
-        checklistId: params.id,
+        checklistId: id,
         userId: responsible.id,
       })),
     });

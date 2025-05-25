@@ -4,46 +4,46 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { ChecklistFrequency } from '@prisma/client';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    if (!session) {
+
+    if (!session?.user?.email) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
-    const { searchParams } = new URL(request.url);
-    const branchId = searchParams.get('branchId');
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
 
-    if (!branchId) {
-      return NextResponse.json({ error: 'ID da filial é obrigatório' }, { status: 400 });
+    if (!user) {
+      return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
     }
 
     const checklists = await prisma.checklist.findMany({
-      where: { branchId },
-      orderBy: { name: 'asc' },
+      where: {
+        checklistUsers: {
+          some: {
+            userId: user.id,
+          },
+        },
+      },
       include: {
         sections: {
           include: {
             items: true,
           },
         },
-        executions: {
-          where: {
-            status: 'COMPLETED',
+        _count: {
+          select: {
+            executions: true,
           },
         },
       },
     });
 
-    // Transformar os dados para incluir a contagem de itens e execuções
-    const checklistsWithCounts = checklists.map((checklist) => ({
-      ...checklist,
-      itemCount: checklist.sections.reduce((total, section) => total + section.items.length, 0),
-      completedExecutionsCount: checklist.executions.length,
-    }));
-
-    return NextResponse.json({ data: checklistsWithCounts });
-  } catch (error: any) {
+    return NextResponse.json(checklists);
+  } catch (error) {
     console.error('Erro ao buscar checklists:', error);
     return NextResponse.json({ error: 'Erro ao buscar checklists' }, { status: 500 });
   }
