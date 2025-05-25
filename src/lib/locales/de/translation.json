@@ -434,7 +434,30 @@
     }
   },
   "checklists": {
-    "title": "Neue Checkliste",
+    "title": "Checklisten",
+    "newChecklist": "Neue Checkliste",
+    "noChecklists": "Keine Checklisten für diese Filiale registriert.",
+    "table": {
+      "name": "Name",
+      "description": "Beschreibung",
+      "questionsCount": "Anz. Fragen",
+      "responses": "Antworten",
+      "actions": "Aktionen"
+    },
+    "tooltips": {
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "activate": "Aktivieren",
+      "deactivate": "Deaktivieren"
+    },
+    "success": {
+      "statusUpdated": "Checklisten-Status erfolgreich aktualisiert"
+    },
+    "error": {
+      "loadError": "Fehler beim Laden der Checklisten",
+      "statusUpdateError": "Fehler beim Aktualisieren des Checklisten-Status"
+    },
+    "edit": { "title": "Checkliste bearbeiten" },
     "steps": {
       "general": "Allgemeine Einstellungen",
       "checklist": "Checkliste"
@@ -445,7 +468,8 @@
       "responsibles": "Verantwortliche der Checkliste",
       "frequency": "Häufigkeit",
       "weekdays": "Wochentage für die Ausführung",
-      "time": "Uhrzeit"
+      "time": "Uhrzeit",
+      "environment": "Umgebung"
     },
     "frequencies": {
       "daily": "Täglich",
@@ -468,19 +492,19 @@
       "title": "Kategorien",
       "add": "Kategorie hinzufügen",
       "addFirst": "Erste Kategorie hinzufügen",
-      "name": "Name der Kategorie",
+      "name": "Kategoriename",
       "empty": "Noch keine Kategorien erstellt.",
       "modal": {
         "title": "Kategorie hinzufügen",
-        "name": "Name der Kategorie"
+        "name": "Kategoriename"
       }
     },
     "questions": {
-      "text": "Frage-Text",
+      "text": "Fragentext",
       "responseType": "Antworttyp",
       "department": "Verantwortliche Abteilung",
-      "positiveLabel": "Positives Label",
-      "negativeLabel": "Negatives Label",
+      "positiveLabel": "Positive Bezeichnung",
+      "negativeLabel": "Negative Bezeichnung",
       "add": "Weitere Frage hinzufügen",
       "addFirst": "Erste Frage hinzufügen"
     },
@@ -493,10 +517,20 @@
     },
     "errors": {
       "nameRequired": "Name ist erforderlich",
-      "responsiblesRequired": "Wählen Sie mindestens einen Verantwortlichen",
-      "frequencyRequired": "Wählen Sie die Häufigkeit",
-      "weekdaysRequired": "Wählen Sie mindestens einen Tag",
-      "timeRequired": "Geben Sie die Uhrzeit ein"
+      "responsiblesRequired": "Wählen Sie mindestens einen Verantwortlichen aus",
+      "frequencyRequired": "Wählen Sie die Häufigkeit aus",
+      "weekdaysRequired": "Wählen Sie mindestens einen Tag aus",
+      "timeRequired": "Geben Sie die Uhrzeit ein",
+      "environmentRequired": "Wählen Sie eine Umgebung aus",
+      "sectionsRequired": "Fügen Sie mindestens einen Abschnitt hinzu",
+      "sectionsWithoutQuestions": "Die Abschnitte {{sections}} haben keine Fragen",
+      "questionsWithoutDepartment": "Die Fragen {{questions}} haben keine verantwortliche Abteilung",
+      "missingFields": "Fehlende Pflichtfelder: {{fields}}",
+      "saveError": "Fehler beim Speichern der Checkliste"
+    },
+    "success": {
+      "saved": "Checkliste erfolgreich gespeichert!",
+      "updated": "Checkliste erfolgreich aktualisiert!"
     }
   }
 }

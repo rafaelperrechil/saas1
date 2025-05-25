@@ -434,7 +434,30 @@
     }
   },
   "checklists": {
-    "title": "Novo Checklist",
+    "title": "Checklists",
+    "newChecklist": "Novo Checklist",
+    "noChecklists": "Nenhum checklist cadastrado para esta filial.",
+    "table": {
+      "name": "Nome",
+      "description": "Descrição",
+      "questionsCount": "Qtd. Perguntas",
+      "responses": "Respostas",
+      "actions": "Ações"
+    },
+    "tooltips": {
+      "edit": "Editar",
+      "delete": "Excluir",
+      "activate": "Ativar",
+      "deactivate": "Desativar"
+    },
+    "success": {
+      "statusUpdated": "Status do checklist atualizado com sucesso"
+    },
+    "error": {
+      "loadError": "Erro ao carregar checklists",
+      "statusUpdateError": "Erro ao atualizar status do checklist"
+    },
+    "edit": { "title": "Editar Checklist" },
     "steps": {
       "general": "Configurações Gerais",
       "checklist": "Checklist"
@@ -506,7 +529,8 @@
       "saveError": "Erro ao salvar checklist"
     },
     "success": {
-      "saved": "Checklist salvo com sucesso!"
+      "saved": "Checklist salvo com sucesso!",
+      "updated": "Checklist atualizado com sucesso!"
     }
   }
 }

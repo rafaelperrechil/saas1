@@ -21,9 +21,28 @@ export async function GET(request: NextRequest) {
     const checklists = await prisma.checklist.findMany({
       where: { branchId },
       orderBy: { name: 'asc' },
+      include: {
+        sections: {
+          include: {
+            items: true,
+          },
+        },
+        executions: {
+          where: {
+            status: 'COMPLETED',
+          },
+        },
+      },
     });
 
-    return NextResponse.json({ data: checklists });
+    // Transformar os dados para incluir a contagem de itens e execuções
+    const checklistsWithCounts = checklists.map((checklist) => ({
+      ...checklist,
+      itemCount: checklist.sections.reduce((total, section) => total + section.items.length, 0),
+      completedExecutionsCount: checklist.executions.length,
+    }));
+
+    return NextResponse.json({ data: checklistsWithCounts });
   } catch (error: any) {
     console.error('Erro ao buscar checklists:', error);
     return NextResponse.json({ error: 'Erro ao buscar checklists' }, { status: 500 });

@@ -434,7 +434,29 @@
     }
   },
   "checklists": {
-    "title": "Nuevo Checklist",
+    "title": "Listas de Verificación",
+    "newChecklist": "Nueva Lista de Verificación",
+    "noChecklists": "No hay listas de verificación registradas para esta sucursal.",
+    "table": {
+      "name": "Nombre",
+      "description": "Descripción",
+      "questionsCount": "Cant. Preguntas",
+      "responses": "Respuestas",
+      "actions": "Acciones"
+    },
+    "tooltips": {
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "activate": "Activar",
+      "deactivate": "Desactivar"
+    },
+    "success": {
+      "statusUpdated": "Estado de la lista de verificación actualizado con éxito"
+    },
+    "error": {
+      "loadError": "Error al cargar las listas de verificación",
+      "statusUpdateError": "Error al actualizar el estado de la lista de verificación"
+    },
     "steps": {
       "general": "Configuración General",
       "checklist": "Checklist"
@@ -445,7 +467,8 @@
       "responsibles": "Responsables del Checklist",
       "frequency": "Frecuencia",
       "weekdays": "Días de la semana para ejecución",
-      "time": "Horario"
+      "time": "Horario",
+      "environment": "Ambiente"
     },
     "frequencies": {
       "daily": "Diario",
@@ -496,7 +519,17 @@
       "responsiblesRequired": "Seleccione al menos un responsable",
       "frequencyRequired": "Seleccione la frecuencia",
       "weekdaysRequired": "Seleccione al menos un día",
-      "timeRequired": "Ingrese el horario"
+      "timeRequired": "Ingrese el horario",
+      "environmentRequired": "Seleccione un ambiente",
+      "sectionsRequired": "Agregue al menos una sección",
+      "sectionsWithoutQuestions": "Las secciones {{sections}} no tienen preguntas",
+      "questionsWithoutDepartment": "Las preguntas {{questions}} no tienen departamento responsable",
+      "missingFields": "Campos obligatorios faltantes: {{fields}}",
+      "saveError": "Error al guardar el checklist"
+    },
+    "success": {
+      "saved": "¡Checklist guardado con éxito!",
+      "updated": "¡Checklist actualizado con éxito!"
     }
   }
 }

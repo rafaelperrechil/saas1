@@ -15,14 +15,19 @@ import {
   Alert,
   CircularProgress,
   Button,
+  Snackbar,
+  Tooltip,
+  IconButton,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import Link from 'next/link';
-import { getChecklistsByBranch } from '@/services/checklist.service';
+import { getChecklistsByBranch, toggleChecklistStatus } from '@/services/checklist.service';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import ToggleOffIcon from '@mui/icons-material/ToggleOff';
+import { useRouter } from 'next/navigation';
+import { useTranslation } from 'react-i18next';
 
 const fetcher = async (branchId: string) => {
   if (!branchId) return [];
@@ -31,19 +36,35 @@ const fetcher = async (branchId: string) => {
 };
 
 export default function ChecklistListPage() {
+  const { t } = useTranslation();
   const { data: session } = useSession();
   const branchId = session?.user?.branch?.id;
   const {
     data: checklists = [],
     error,
     isLoading,
-  } = useSWR(branchId ? ['checklists', branchId] : null, () => fetcher(branchId));
+    mutate,
+  } = useSWR(branchId ? ['checklists', branchId] : null, () => (branchId ? fetcher(branchId) : []));
+
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
+  const router = useRouter();
+  const handleToggleStatus = async (checklistId: string) => {
+    try {
+      await toggleChecklistStatus(checklistId);
+      await mutate();
+      setSuccessMessage(t('checklists.success.statusUpdated'));
+    } catch (error) {
+      console.error('Erro ao atualizar status do checklist:', error);
+      setErrorMessage(t('checklists.error.statusUpdateError'));
+    }
+  };
 
   return (
     <Box sx={{ p: 0 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" component="h1">
-          Checklists
+          {t('checklists.title')}
         </Typography>
         <Button
           variant="contained"
@@ -52,7 +73,7 @@ export default function ChecklistListPage() {
           component={Link}
           href="/panel/checklists/add"
         >
-          Novo Checklist
+          {t('checklists.newChecklist')}
         </Button>
       </Box>
       {isLoading && (
@@ -62,14 +83,12 @@ export default function ChecklistListPage() {
       )}
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          Erro ao carregar checklists
+          {t('checklists.error.loadError')}
         </Alert>
       )}
       {!isLoading && checklists.length === 0 && (
         <Paper sx={{ p: 3, textAlign: 'center', mb: 2 }}>
-          <Typography color="text.secondary">
-            Nenhum checklist cadastrado para esta filial.
-          </Typography>
+          <Typography color="text.secondary">{t('checklists.noChecklists')}</Typography>
         </Paper>
       )}
       {!isLoading && checklists.length > 0 && (
@@ -77,42 +96,72 @@ export default function ChecklistListPage() {
           <Table>
             <TableHead>
               <TableRow sx={{ backgroundColor: 'primary.dark' }}>
-                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Nome</TableCell>
-                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Descrição</TableCell>
-                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Ativo</TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>
+                  {t('checklists.table.name')}
+                </TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>
+                  {t('checklists.table.description')}
+                </TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }} align="center">
+                  {t('checklists.table.questionsCount')}
+                </TableCell>
+                <TableCell sx={{ color: 'white', fontWeight: 'bold' }} align="center">
+                  {t('checklists.table.responses')}
+                </TableCell>
                 <TableCell sx={{ color: 'white', fontWeight: 'bold' }} align="right">
-                  Ações
+                  {t('checklists.table.actions')}
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {checklists.map((checklist: any) => (
                 <TableRow key={checklist.id}>
-                  <TableCell>{checklist.name}</TableCell>
+                  <TableCell>
+                    <Link
+                      href={`/panel/checklists/edit/${checklist.id}`}
+                      style={{ textDecoration: 'none', color: 'inherit' }}
+                    >
+                      {checklist.name}
+                    </Link>
+                  </TableCell>
                   <TableCell>{checklist.description}</TableCell>
-                  <TableCell>{checklist.actived ? 'Sim' : 'Não'}</TableCell>
+                  <TableCell align="center">{checklist.itemCount}</TableCell>
+                  <TableCell align="center">{checklist.completedExecutionsCount}</TableCell>
                   <TableCell align="right">
-                    <Button
-                      size="small"
-                      color="primary"
-                      onClick={() => alert('Editar ' + checklist.id)}
+                    <Tooltip title={t('checklists.tooltips.edit')}>
+                      <IconButton
+                        onClick={() => router.push(`/panel/checklists/edit/${checklist.id}`)}
+                        sx={{
+                          color: 'grey.600',
+                          '&:hover': {
+                            color: '#1976d2',
+                          },
+                        }}
+                        size="small"
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip
+                      title={
+                        checklist.actived
+                          ? t('checklists.tooltips.deactivate')
+                          : t('checklists.tooltips.activate')
+                      }
                     >
-                      <EditIcon />
-                    </Button>
-                    <Button
-                      size="small"
-                      color="error"
-                      onClick={() => alert('Excluir ' + checklist.id)}
-                    >
-                      <DeleteIcon />
-                    </Button>
-                    <Button
-                      size="small"
-                      color={checklist.actived ? 'success' : 'inherit'}
-                      onClick={() => alert('Ativar/Desativar ' + checklist.id)}
-                    >
-                      {checklist.actived ? <ToggleOnIcon /> : <ToggleOffIcon />}
-                    </Button>
+                      <IconButton
+                        onClick={() => handleToggleStatus(checklist.id)}
+                        sx={{
+                          color: checklist.actived ? 'success.main' : 'grey.600',
+                          '&:hover': {
+                            color: checklist.actived ? 'grey.600' : 'success.main',
+                          },
+                        }}
+                        size="small"
+                      >
+                        {checklist.actived ? <ToggleOnIcon /> : <ToggleOffIcon />}
+                      </IconButton>
+                    </Tooltip>
                   </TableCell>
                 </TableRow>
               ))}
@@ -120,6 +169,26 @@ export default function ChecklistListPage() {
           </Table>
         </TableContainer>
       )}
+      <Snackbar
+        open={!!errorMessage}
+        autoHideDuration={6000}
+        onClose={() => setErrorMessage(null)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setErrorMessage(null)} severity="error" sx={{ width: '100%' }}>
+          {errorMessage}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={!!successMessage}
+        autoHideDuration={2000}
+        onClose={() => setSuccessMessage(null)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setSuccessMessage(null)} severity="success" sx={{ width: '100%' }}>
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

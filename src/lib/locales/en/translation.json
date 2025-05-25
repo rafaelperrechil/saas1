@@ -436,7 +436,30 @@
     }
   },
   "checklists": {
-    "title": "New Checklist",
+    "title": "Checklists",
+    "newChecklist": "New Checklist",
+    "noChecklists": "No checklists registered for this branch.",
+    "table": {
+      "name": "Name",
+      "description": "Description",
+      "questionsCount": "Questions",
+      "responses": "Responses",
+      "actions": "Actions"
+    },
+    "tooltips": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "activate": "Activate",
+      "deactivate": "Deactivate"
+    },
+    "success": {
+      "statusUpdated": "Checklist status updated successfully"
+    },
+    "error": {
+      "loadError": "Error loading checklists",
+      "statusUpdateError": "Error updating checklist status"
+    },
+    "edit": { "title": "Edit Checklist" },
     "steps": {
       "general": "General Settings",
       "checklist": "Checklist"
@@ -447,7 +470,8 @@
       "responsibles": "Checklist Responsibles",
       "frequency": "Frequency",
       "weekdays": "Weekdays for execution",
-      "time": "Time"
+      "time": "Time",
+      "environment": "Environment"
     },
     "frequencies": {
       "daily": "Daily",
@@ -498,7 +522,17 @@
       "responsiblesRequired": "Select at least one responsible",
       "frequencyRequired": "Select frequency",
       "weekdaysRequired": "Select at least one day",
-      "timeRequired": "Enter time"
+      "timeRequired": "Enter time",
+      "environmentRequired": "Select an environment",
+      "sectionsRequired": "Add at least one section",
+      "sectionsWithoutQuestions": "Sections {{sections}} have no questions",
+      "questionsWithoutDepartment": "Questions {{questions}} have no responsible department",
+      "missingFields": "Missing required fields: {{fields}}",
+      "saveError": "Error saving checklist"
+    },
+    "success": {
+      "saved": "Checklist saved successfully!",
+      "updated": "Checklist updated successfully!"
     }
   }
 }

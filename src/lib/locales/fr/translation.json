@@ -420,18 +420,42 @@
     }
   },
   "checklists": {
-    "title": "Nouvelle Liste de Contrôle",
+    "title": "Listes de Vérification",
+    "newChecklist": "Nouvelle Liste de Vérification",
+    "noChecklists": "Aucune liste de vérification enregistrée pour cette succursale.",
+    "table": {
+      "name": "Nom",
+      "description": "Description",
+      "questionsCount": "Qte. Questions",
+      "responses": "Réponses",
+      "actions": "Actions"
+    },
+    "tooltips": {
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "activate": "Activer",
+      "deactivate": "Désactiver"
+    },
+    "success": {
+      "statusUpdated": "Statut de la liste de vérification mis à jour avec succès"
+    },
+    "error": {
+      "loadError": "Erreur lors du chargement des listes de vérification",
+      "statusUpdateError": "Erreur lors de la mise à jour du statut de la liste de vérification"
+    },
+    "edit": { "title": "Modifier la Liste de Contrôle" },
     "steps": {
       "general": "Paramètres Généraux",
       "checklist": "Liste de Contrôle"
     },
     "fields": {
-      "name": "Nom de la Liste",
+      "name": "Nom de la Liste de Contrôle",
       "description": "Description (optionnelle)",
-      "responsibles": "Responsables de la Liste",
+      "responsibles": "Responsables de la Liste de Contrôle",
       "frequency": "Fréquence",
       "weekdays": "Jours de la semaine pour l'exécution",
-      "time": "Horaire"
+      "time": "Horaire",
+      "environment": "Environnement"
     },
     "frequencies": {
       "daily": "Quotidien",
@@ -474,7 +498,7 @@
       "next": "Suivant",
       "back": "Retour",
       "cancel": "Annuler",
-      "save": "Enregistrer la Liste",
+      "save": "Enregistrer la Liste de Contrôle",
       "add": "Ajouter"
     },
     "errors": {
@@ -482,7 +506,17 @@
       "responsiblesRequired": "Sélectionnez au moins un responsable",
       "frequencyRequired": "Sélectionnez la fréquence",
       "weekdaysRequired": "Sélectionnez au moins un jour",
-      "timeRequired": "Entrez l'horaire"
+      "timeRequired": "Entrez l'horaire",
+      "environmentRequired": "Sélectionnez un environnement",
+      "sectionsRequired": "Ajoutez au moins une section",
+      "sectionsWithoutQuestions": "Les sections {{sections}} n'ont pas de questions",
+      "questionsWithoutDepartment": "Les questions {{questions}} n'ont pas de département responsable",
+      "missingFields": "Champs obligatoires manquants : {{fields}}",
+      "saveError": "Erreur lors de l'enregistrement de la liste de contrôle"
+    },
+    "success": {
+      "saved": "Liste de contrôle enregistrée avec succès !",
+      "updated": "Liste de contrôle mise à jour avec succès !"
     }
   }
 }

@@ -5,19 +5,27 @@ const prisma = new PrismaClient();
 
 async function main() {
   // Limpar dados existentes na ordem correta
-  await prisma.invoice.deleteMany();
-  await prisma.payment.deleteMany();
-  await prisma.subscription.deleteMany();
+  await prisma.checklistExecutionItem.deleteMany();
+  await prisma.checklistExecution.deleteMany();
+  await prisma.checklistItem.deleteMany();
+  await prisma.checklistSection.deleteMany();
+  await prisma.checklistUser.deleteMany();
+  await prisma.checklist.deleteMany();
   await prisma.departmentResponsible.deleteMany();
   await prisma.department.deleteMany();
   await prisma.environment.deleteMany();
+  await prisma.invoice.deleteMany();
+  await prisma.payment.deleteMany();
+  await prisma.subscription.deleteMany();
   await prisma.loginLog.deleteMany();
+  await prisma.passwordResetToken.deleteMany();
   await prisma.branch.deleteMany();
   await prisma.organization.deleteMany();
   await prisma.user.deleteMany();
   await prisma.profile.deleteMany();
   await prisma.niche.deleteMany();
   await prisma.plan.deleteMany();
+  await prisma.checklistResponseType.deleteMany();
 
   // Criar perfis
   console.log('Criando perfis...');
@@ -320,10 +328,20 @@ async function main() {
       actived: true,
       frequency: 'DAILY',
       daysOfWeek: JSON.stringify([1, 2, 3, 4, 5]), // Segunda a Sexta
-      time: '08:00'
+      time: '08:00',
     },
   });
   console.log('Checklist criado com sucesso!');
+
+  // Vincular Bruno ao checklist criado
+  console.log('Vinculando Bruno ao checklist...');
+  await prisma.checklistUser.create({
+    data: {
+      checklistId: checklist.id,
+      userId: brunoUser.id,
+    },
+  });
+  console.log('Bruno vinculado ao checklist com sucesso!');
 
   // Criar seção
   console.log('Criando seção...');

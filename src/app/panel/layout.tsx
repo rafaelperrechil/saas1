@@ -46,8 +46,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const pathname = usePathname();
   const { status } = useSession();
   const [open, setOpen] = useState(false);
-  const [openInspections, setOpenInspections] = useState(false);
-  const [openChecklists, setOpenChecklists] = useState(false);
   const [openAdmin, setOpenAdmin] = useState(false);
   const theme = useTheme();
   const { t } = useTranslation();
@@ -55,11 +53,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const isWizardPage = pathname === '/panel/wizard';
 
   const handleDrawerToggle = () => {
-    if (open) {
-      setOpenInspections(false);
-      setOpenChecklists(false);
-      setOpenAdmin(false);
-    }
     setOpen(!open);
   };
 
@@ -170,51 +163,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 placement="right"
                 componentsProps={tooltipStyles}
               >
-                <ListItemButton
-                  onClick={() => {
-                    if (!open) {
-                      setOpen(true);
-                    } else {
-                      setOpenInspections(!openInspections);
-                    }
-                  }}
-                >
+                <ListItemButton onClick={() => handleItemClick('/panel/inspections')}>
                   <ListItemIcon>
                     <AssignmentTurnedInIcon sx={{ color: '#FFFFFF' }} />
                   </ListItemIcon>
                   <ListItemText
                     primary={t('menu.inspections.title')}
-                    sx={{
-                      color: '#FFFFFF',
-                      opacity: open ? 1 : 0,
-                      transition: 'opacity 200ms',
-                    }}
+                    sx={{ color: '#FFFFFF', opacity: open ? 1 : 0, transition: 'opacity 200ms' }}
                   />
-                  {open &&
-                    (openInspections ? (
-                      <ExpandLess sx={{ color: '#FFFFFF' }} />
-                    ) : (
-                      <ExpandMore sx={{ color: '#FFFFFF' }} />
-                    ))}
                 </ListItemButton>
               </Tooltip>
             </ListItem>
-            <Collapse in={openInspections} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                <ListItemButton
-                  sx={{ pl: 4 }}
-                  onClick={() => handleItemClick('/panel/inspections')}
-                >
-                  <ListItemText primary={t('menu.inspections.all')} sx={{ color: '#FFFFFF' }} />
-                </ListItemButton>
-                <ListItemButton
-                  sx={{ pl: 4 }}
-                  onClick={() => handleItemClick('/panel/inspections/new')}
-                >
-                  <ListItemText primary={t('menu.inspections.create')} sx={{ color: '#FFFFFF' }} />
-                </ListItemButton>
-              </List>
-            </Collapse>
 
             {/* Menu Checklists */}
             <ListItem disablePadding>
@@ -223,40 +182,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 placement="right"
                 componentsProps={tooltipStyles}
               >
-                <ListItemButton
-                  onClick={() => {
-                    if (!open) {
-                      setOpen(true);
-                    } else {
-                      setOpenChecklists(!openChecklists);
-                    }
-                  }}
-                >
+                <ListItemButton onClick={() => handleItemClick('/panel/checklists')}>
                   <ListItemIcon>
                     <ListAltIcon sx={{ color: '#FFFFFF' }} />
                   </ListItemIcon>
-                  <ListItemText primary={t('menu.checklists.title')} sx={{ color: '#FFFFFF' }} />
-                  {openChecklists ? (
-                    <ExpandLess sx={{ color: '#FFFFFF' }} />
-                  ) : (
-                    <ExpandMore sx={{ color: '#FFFFFF' }} />
-                  )}
+                  <ListItemText
+                    primary={t('menu.checklists.title')}
+                    sx={{ color: '#FFFFFF', opacity: open ? 1 : 0, transition: 'opacity 200ms' }}
+                  />
                 </ListItemButton>
               </Tooltip>
             </ListItem>
-            <Collapse in={openChecklists} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                <ListItemButton sx={{ pl: 4 }} onClick={() => handleItemClick('/panel/checklists')}>
-                  <ListItemText primary={t('menu.checklists.all')} sx={{ color: '#FFFFFF' }} />
-                </ListItemButton>
-                <ListItemButton
-                  sx={{ pl: 4 }}
-                  onClick={() => handleItemClick('/panel/checklists/add')}
-                >
-                  <ListItemText primary={t('menu.checklists.create')} sx={{ color: '#FFFFFF' }} />
-                </ListItemButton>
-              </List>
-            </Collapse>
 
             {/* Ambientes */}
             <ListItem disablePadding>

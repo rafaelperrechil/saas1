@@ -45,6 +45,7 @@ import StepLabel from '@mui/material/StepLabel';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
 import { environmentService } from '@/services/environment.service';
+import LoadingScreen from '@/components/common/LoadingScreen';
 
 const getDefaultLabels = (type: string) => {
   switch (type) {
@@ -101,6 +102,7 @@ function SectionBox({
   provided,
   innerRef,
   questionsDroppableId,
+  onRequestDeleteQuestion,
 }: {
   section: Section;
   onUpdateQuestions: (questions: Question[]) => void;
@@ -114,6 +116,7 @@ function SectionBox({
   provided: any;
   innerRef: any;
   questionsDroppableId: string;
+  onRequestDeleteQuestion: (questionId: string) => void;
 }) {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const { t } = useTranslation();
@@ -193,7 +196,6 @@ function SectionBox({
           <DragIndicatorIcon />
         </span>
       </Box>
-      {/* Box de perguntas */}
       <Droppable droppableId={questionsDroppableId} type="question">
         {(dropProvided) => (
           <Box ref={dropProvided.innerRef} {...dropProvided.droppableProps}>
@@ -297,12 +299,11 @@ function SectionBox({
                           color: 'error.main',
                           '&:hover': { bgcolor: 'error.light', color: 'white' },
                         }}
-                        onClick={() => removeQuestion(question.id)}
+                        onClick={() => onRequestDeleteQuestion(question.id)}
                       >
                         <DeleteIcon />
                       </IconButton>
                     </Box>
-                    {/* Caso o tipo de resposta seja customizado, mostrar os campos de rótulo embaixo, mas em linha também */}
                     {question.responseType &&
                       responseTypes.find((t) => t.id === question.responseType)?.name ===
                         'Customizado' && (
@@ -334,7 +335,7 @@ function SectionBox({
                 onClick={addQuestion}
                 sx={{ mt: 2, fontWeight: 700 }}
               >
-                {t('checklists.questions.add')}
+                Adicionar Outra Pergunta
               </Button>
             )}
           </Box>
@@ -344,9 +345,10 @@ function SectionBox({
   );
 }
 
-export default function AddChecklistPage() {
+export default function EditChecklistPage({ params }: { params: Promise<{ id: string }> }) {
+  const unwrappedParams = React.use(params);
+  const checklistId = unwrappedParams.id;
   const { data: session } = useSession();
-  console.log('Sessão do usuário:', session);
   const [checklistName, setChecklistName] = useState('');
   const [description, setDescription] = useState('');
   const [sections, setSections] = useState<Section[]>([]);
@@ -371,8 +373,68 @@ export default function AddChecklistPage() {
   const [environments, setEnvironments] = useState<Environment[]>([]);
   const [selectedEnvironment, setSelectedEnvironment] = useState<string>('');
   const [loadingEnvironments, setLoadingEnvironments] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [deleteTarget, setDeleteTarget] = useState<{
+    type: 'section' | 'question';
+    id: string;
+    sectionId?: string;
+  } | null>(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const steps = [t('checklists.steps.general'), t('checklists.steps.checklist')];
+
+  useEffect(() => {
+    const fetchChecklist = async () => {
+      try {
+        const response = await fetch(`/api/checklists/${checklistId}`);
+        if (!response.ok) {
+          throw new Error('Erro ao carregar checklist');
+        }
+        const data = await response.json();
+
+        const frequencyMapBackendToFrontend: Record<string, string> = {
+          DAILY: 'diario',
+          WEEKLY: 'semanal',
+          MONTHLY: 'mensal',
+          SEMESTRAL: 'semestral',
+          ANNUAL: 'anual',
+        };
+
+        setChecklistName(data.name);
+        setDescription(data.description || '');
+        setFrequency(frequencyMapBackendToFrontend[data.frequency] || 'diario');
+        setExecutionTime(data.time);
+        setWeekdays(data.daysOfWeek || []);
+        setSelectedEnvironment(data.environmentId);
+        setResponsibles(data.responsibles || []);
+
+        // Transformar as seções do formato do banco para o formato da interface
+        const transformedSections = data.sections.map((section: any) => ({
+          id: section.id,
+          name: section.name,
+          questions: section.items.map((item: any) => ({
+            id: item.id,
+            text: item.name,
+            responseType: item.checklistResponseTypeId,
+            positiveLabel: item.checklistResponseType.positiveLabel,
+            negativeLabel: item.checklistResponseType.negativeLabel,
+            department: item.departmentId || '',
+          })),
+        }));
+
+        setSections(transformedSections);
+        setLoading(false);
+      } catch (error) {
+        console.error('Erro ao carregar checklist:', error);
+        setErrorMessage('Erro ao carregar checklist');
+        setLoading(false);
+      }
+    };
+
+    if (checklistId) {
+      fetchChecklist();
+    }
+  }, [checklistId]);
 
   React.useEffect(() => {
     setLoadingTypes(true);
@@ -385,25 +447,12 @@ export default function AddChecklistPage() {
   useEffect(() => {
     if (session?.user?.branch?.id) {
       setLoadingEnvironments(true);
-      environmentService
-        .getEnvironments()
-        .then((response) => {
-          if (response.data) {
-            setEnvironments(response.data);
-            if (response.data.length > 0) {
-              setSelectedEnvironment(response.data[0].id);
-            }
-          } else if (response.error) {
-            console.error('Erro ao carregar ambientes:', response.error);
-          }
-          setLoadingEnvironments(false);
-        })
-        .catch((error) => {
-          console.error('Erro ao chamar environmentService:', error);
-          setLoadingEnvironments(false);
-        });
-    } else {
-      console.log('Branch ID não encontrado na sessão');
+      environmentService.getEnvironments().then((response) => {
+        if (response.data) {
+          setEnvironments(response.data);
+        }
+        setLoadingEnvironments(false);
+      });
     }
   }, [session?.user?.branch?.id]);
 
@@ -444,17 +493,40 @@ export default function AddChecklistPage() {
   const handleUpdateSectionQuestions = (sectionId: string, questions: Question[]) => {
     setSections(sections.map((s) => (s.id === sectionId ? { ...s, questions } : s)));
   };
-  const handleRemoveSection = (sectionId: string) => {
-    setSections(sections.filter((s) => s.id !== sectionId));
+  const handleRequestDeleteSection = (sectionId: string) => {
+    setDeleteTarget({ type: 'section', id: sectionId });
+    setDeleteModalOpen(true);
+  };
+  const handleRequestDeleteQuestion = (sectionId: string, questionId: string) => {
+    setDeleteTarget({ type: 'question', id: questionId, sectionId });
+    setDeleteModalOpen(true);
+  };
+  const handleConfirmDelete = () => {
+    if (!deleteTarget) return;
+    if (deleteTarget.type === 'section') {
+      setSections(sections.filter((s) => s.id !== deleteTarget.id));
+    } else if (deleteTarget.type === 'question' && deleteTarget.sectionId) {
+      setSections(
+        sections.map((s) =>
+          s.id === deleteTarget.sectionId
+            ? { ...s, questions: s.questions.filter((q) => q.id !== deleteTarget.id) }
+            : s
+        )
+      );
+    }
+    setDeleteModalOpen(false);
+    setDeleteTarget(null);
+  };
+  const handleCancelDelete = () => {
+    setDeleteModalOpen(false);
+    setDeleteTarget(null);
   };
   const handleUpdateSectionName = (sectionId: string, name: string) => {
     setSections(sections.map((s) => (s.id === sectionId ? { ...s, name } : s)));
   };
 
-  // Drag and drop handlers
   const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
-    // Section drag
     if (result.type === 'section') {
       const newSections = Array.from(sections);
       const [removed] = newSections.splice(result.source.index, 1);
@@ -462,7 +534,6 @@ export default function AddChecklistPage() {
       setSections(newSections);
       return;
     }
-    // Question drag (dentro ou entre sections)
     const sourceSectionIdx = sections.findIndex(
       (s) => `section-${s.id}` === result.source.droppableId
     );
@@ -475,13 +546,11 @@ export default function AddChecklistPage() {
     const sourceQuestions = Array.from(sourceSection.questions);
     const [removed] = sourceQuestions.splice(result.source.index, 1);
     if (sourceSectionIdx === destSectionIdx) {
-      // reorder dentro da mesma section
       sourceQuestions.splice(result.destination.index, 0, removed);
       const newSections = [...sections];
       newSections[sourceSectionIdx] = { ...sourceSection, questions: sourceQuestions };
       setSections(newSections);
     } else {
-      // mover para outra section
       const destQuestions = Array.from(destSection.questions);
       destQuestions.splice(result.destination.index, 0, removed);
       const newSections = [...sections];
@@ -504,14 +573,13 @@ export default function AddChecklistPage() {
     return Object.keys(newErrors).length === 0;
   }
 
-  const handleSaveChecklist = async () => {
+  const handleUpdateChecklist = async () => {
     try {
       if (sections.length === 0) {
         setErrors({ ...errors, sections: t('checklists.errors.sectionsRequired') });
         return;
       }
 
-      // Verificar se todas as seções têm pelo menos uma pergunta
       const sectionsWithoutQuestions = sections.filter((section) => section.questions.length === 0);
       if (sectionsWithoutQuestions.length > 0) {
         setErrors({
@@ -523,7 +591,6 @@ export default function AddChecklistPage() {
         return;
       }
 
-      // Verificar se todas as perguntas têm um departamento responsável
       const questionsWithoutDepartment = sections.flatMap((section) =>
         section.questions.filter((question) => !question.department)
       );
@@ -537,14 +604,13 @@ export default function AddChecklistPage() {
         return;
       }
 
-      // Mapear a frequência para o enum correto
       const frequencyMap: {
         [key: string]: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'SEMESTRAL' | 'ANNUAL';
       } = {
         diario: 'DAILY',
         semanal: 'WEEKLY',
         mensal: 'MONTHLY',
-        trimestral: 'MONTHLY', // Usando MONTHLY como fallback
+        trimestral: 'MONTHLY',
         semestral: 'SEMESTRAL',
         anual: 'ANNUAL',
       };
@@ -560,25 +626,8 @@ export default function AddChecklistPage() {
         environmentId: selectedEnvironment,
       };
 
-      console.log('Dados sendo enviados:', data);
-
-      // Verificar se todos os campos obrigatórios estão preenchidos
-      const missingFields = [];
-      if (!data.name) missingFields.push('name');
-      if (!data.frequency) missingFields.push('frequency');
-      if (!data.time) missingFields.push('time');
-      if (!data.daysOfWeek || data.daysOfWeek.length === 0) missingFields.push('daysOfWeek');
-      if (!data.responsibles || data.responsibles.length === 0) missingFields.push('responsibles');
-      if (!data.sections || data.sections.length === 0) missingFields.push('sections');
-      if (!data.environmentId) missingFields.push('environmentId');
-
-      if (missingFields.length > 0) {
-        setErrorMessage(t('checklists.errors.missingFields', { fields: missingFields.join(', ') }));
-        return;
-      }
-
-      const response = await fetch('/api/checklists', {
-        method: 'POST',
+      const response = await fetch(`/api/checklists/${checklistId}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -587,23 +636,27 @@ export default function AddChecklistPage() {
 
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.error || 'Erro ao salvar checklist');
+        throw new Error(error.error || 'Erro ao atualizar checklist');
       }
 
-      setSuccessMessage(t('checklists.success.saved'));
+      setSuccessMessage(t('checklists.success.updated'));
       setTimeout(() => {
         router.push('/panel/checklists');
       }, 2000);
     } catch (error: any) {
-      console.error('Erro ao salvar checklist:', error);
-      setErrorMessage(error.message || t('checklists.errors.saveError'));
+      console.error('Erro ao atualizar checklist:', error);
+      setErrorMessage(error.message || t('checklists.errors.updateError'));
     }
   };
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <Box sx={{ width: '100%', py: 4 }}>
       <Typography variant="h4" gutterBottom sx={{ mb: 4, fontWeight: 600 }}>
-        {t('checklists.title')}
+        {t('checklists.edit.title')}
       </Typography>
       <Stepper activeStep={step} sx={{ mb: 4 }}>
         {steps.map((label) => (
@@ -655,14 +708,11 @@ export default function AddChecklistPage() {
                   Nenhum ambiente disponível
                 </MenuItem>
               ) : (
-                environments.map((env) => {
-                  console.log('Renderizando ambiente:', env);
-                  return (
-                    <MenuItem key={env.id} value={env.id}>
-                      {env.name}
-                    </MenuItem>
-                  );
-                })
+                environments.map((env) => (
+                  <MenuItem key={env.id} value={env.id}>
+                    {env.name}
+                  </MenuItem>
+                ))
               )}
             </Select>
             {errors.environment && <FormHelperText>{errors.environment}</FormHelperText>}
@@ -807,7 +857,7 @@ export default function AddChecklistPage() {
                           onUpdateQuestions={(questions) =>
                             handleUpdateSectionQuestions(section.id, questions)
                           }
-                          onRemoveSection={() => handleRemoveSection(section.id)}
+                          onRemoveSection={() => handleRequestDeleteSection(section.id)}
                           onUpdateSectionName={(name) => handleUpdateSectionName(section.id, name)}
                           responseTypes={responseTypes}
                           departments={departments}
@@ -817,6 +867,9 @@ export default function AddChecklistPage() {
                           provided={provided}
                           innerRef={provided.innerRef}
                           questionsDroppableId={`section-${section.id}`}
+                          onRequestDeleteQuestion={(questionId) =>
+                            handleRequestDeleteQuestion(section.id, questionId)
+                          }
                         />
                       )}
                     </Draggable>
@@ -835,7 +888,7 @@ export default function AddChecklistPage() {
               <Button variant="outlined" sx={{ mr: 2 }} href="/panel/checklists">
                 {t('checklists.buttons.cancel')}
               </Button>
-              <Button variant="contained" color="primary" onClick={handleSaveChecklist}>
+              <Button variant="contained" color="primary" onClick={handleUpdateChecklist}>
                 {t('checklists.buttons.save')}
               </Button>
             </Box>
@@ -873,6 +926,38 @@ export default function AddChecklistPage() {
             </Button>
             <Button variant="contained" onClick={handleAddSection} disabled={!sectionName.trim()}>
               {t('checklists.buttons.add')}
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+      <Modal open={deleteModalOpen} onClose={handleCancelDelete}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+            minWidth: 320,
+          }}
+        >
+          <Typography variant="h6" gutterBottom>
+            Confirmar exclusão
+          </Typography>
+          <Typography sx={{ mb: 3 }}>
+            Tem certeza que deseja excluir{' '}
+            {deleteTarget?.type === 'section' ? 'esta categoria' : 'esta pergunta'}? Essa ação não
+            poderá ser desfeita.
+          </Typography>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+            <Button onClick={handleCancelDelete} sx={{ mr: 2 }}>
+              Cancelar
+            </Button>
+            <Button variant="contained" color="error" onClick={handleConfirmDelete}>
+              Excluir
             </Button>
           </Box>
         </Box>

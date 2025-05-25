@@ -435,10 +435,33 @@
     }
   },
   "checklists": {
-    "title": "新建检查清单",
+    "title": "检查清单",
+    "newChecklist": "新建检查清单",
+    "noChecklists": "该分支机构没有注册的检查清单。",
+    "table": {
+      "name": "名称",
+      "description": "描述",
+      "questionsCount": "问题数量",
+      "responses": "回答",
+      "actions": "操作"
+    },
+    "tooltips": {
+      "edit": "编辑",
+      "delete": "删除",
+      "activate": "激活",
+      "deactivate": "停用"
+    },
+    "success": {
+      "statusUpdated": "检查清单状态更新成功"
+    },
+    "error": {
+      "loadError": "加载检查清单时出错",
+      "statusUpdateError": "更新检查清单状态时出错"
+    },
+    "edit": { "title": "编辑清单" },
     "steps": {
       "general": "常规设置",
-      "checklist": "检查清单"
+      "checklist": "清单"
     },
     "fields": {
       "name": "清单名称",
@@ -446,7 +469,8 @@
       "responsibles": "清单负责人",
       "frequency": "频率",
       "weekdays": "执行工作日",
-      "time": "时间"
+      "time": "时间",
+      "environment": "环境"
     },
     "frequencies": {
       "daily": "每日",
@@ -494,10 +518,20 @@
     },
     "errors": {
       "nameRequired": "名称为必填项",
-      "responsiblesRequired": "请选择至少一个负责人",
+      "responsiblesRequired": "请至少选择一个负责人",
       "frequencyRequired": "请选择频率",
-      "weekdaysRequired": "请选择至少一个工作日",
-      "timeRequired": "请输入时间"
+      "weekdaysRequired": "请至少选择一天",
+      "timeRequired": "请输入时间",
+      "environmentRequired": "请选择环境",
+      "sectionsRequired": "请至少添加一个部分",
+      "sectionsWithoutQuestions": "部分 {{sections}} 没有问题",
+      "questionsWithoutDepartment": "问题 {{questions}} 没有负责部门",
+      "missingFields": "缺少必填字段：{{fields}}",
+      "saveError": "保存清单时出错"
+    },
+    "success": {
+      "saved": "清单保存成功！",
+      "updated": "清单更新成功！"
     }
   }
 }
