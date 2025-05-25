@@ -13,6 +13,12 @@ interface AppProfile {
 interface AppBranch {
   id: string;
   name: string;
+  organizationId: string;
+  environments?: Array<{
+    id: string;
+    name: string;
+    position: number;
+  }>;
   // wizardCompleted é opcional já que não vem do authService.login
   wizardCompleted?: boolean;
 }

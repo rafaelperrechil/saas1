@@ -1,22 +1,29 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   Typography,
   TextField,
   Button,
   Card,
+  CardContent,
   Grid,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  IconButton,
   Box,
-  Modal,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemSecondaryAction,
   Divider,
   FormHelperText,
+  Snackbar,
+  Alert,
   Paper,
+  Modal,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -26,16 +33,18 @@ import {
 import { useSession } from 'next-auth/react';
 import { getChecklistResponseTypes } from '@/services/checklist_response_type.service';
 import { departmentService } from '@/services/department.service';
+import { userService } from '@/services/user.service';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import Autocomplete from '@mui/material/Autocomplete';
 import Checkbox from '@mui/material/Checkbox';
-import { userService } from '@/services/user.service';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import { useTranslation } from 'react-i18next';
+import { useRouter } from 'next/navigation';
+import { environmentService } from '@/services/environment.service';
 
 const getDefaultLabels = (type: string) => {
   switch (type) {
@@ -65,6 +74,18 @@ interface Section {
   id: string;
   name: string;
   questions: Question[];
+}
+
+interface Environment {
+  id: string;
+  name: string;
+  position: number;
+}
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
 }
 
 function SectionBox({
@@ -333,6 +354,7 @@ function SectionBox({
 
 export default function AddChecklistPage() {
   const { data: session } = useSession();
+  console.log('Sessão do usuário:', session);
   const [checklistName, setChecklistName] = useState('');
   const [description, setDescription] = useState('');
   const [sections, setSections] = useState<Section[]>([]);
@@ -342,15 +364,21 @@ export default function AddChecklistPage() {
   const [departments, setDepartments] = useState<any[]>([]);
   const [loadingTypes, setLoadingTypes] = useState(true);
   const [loadingDepartments, setLoadingDepartments] = useState(true);
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
-  const [responsibles, setResponsibles] = useState<any[]>([]);
+  const [responsibles, setResponsibles] = useState<User[]>([]);
   const [frequency, setFrequency] = useState('diario');
   const [weekdays, setWeekdays] = useState<string[]>([]);
   const [executionTime, setExecutionTime] = useState('08:00');
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState<any>({});
   const { t } = useTranslation();
+  const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [environments, setEnvironments] = useState<Environment[]>([]);
+  const [selectedEnvironment, setSelectedEnvironment] = useState<string>('');
+  const [loadingEnvironments, setLoadingEnvironments] = useState(true);
 
   const steps = [t('checklists.steps.general'), t('checklists.steps.checklist')];
 
@@ -361,6 +389,32 @@ export default function AddChecklistPage() {
       setLoadingTypes(false);
     });
   }, []);
+
+  useEffect(() => {
+    if (session?.user?.branch?.id) {
+    
+      setLoadingEnvironments(true);
+      environmentService.getEnvironments().then((response) => {
+   
+        if (response.data) {
+       
+          setEnvironments(response.data);
+          if (response.data.length > 0) {
+      
+            setSelectedEnvironment(response.data[0].id);
+          }
+        } else if (response.error) {
+          console.error('Erro ao carregar ambientes:', response.error);
+        }
+        setLoadingEnvironments(false);
+      }).catch((error) => {
+        console.error('Erro ao chamar environmentService:', error);
+        setLoadingEnvironments(false);
+      });
+    } else {
+      console.log('Branch ID não encontrado na sessão');
+    }
+  }, [session?.user?.branch?.id]);
 
   React.useEffect(() => {
     if (session?.user?.branch?.id) {
@@ -454,9 +508,104 @@ export default function AddChecklistPage() {
     if (!frequency) newErrors.frequency = t('checklists.errors.frequencyRequired');
     if (weekdays.length === 0) newErrors.weekdays = t('checklists.errors.weekdaysRequired');
     if (!executionTime) newErrors.executionTime = t('checklists.errors.timeRequired');
+    if (!selectedEnvironment) newErrors.environment = t('checklists.errors.environmentRequired');
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
+
+  const handleSaveChecklist = async () => {
+    try {
+      if (sections.length === 0) {
+        setErrors({ ...errors, sections: t('checklists.errors.sectionsRequired') });
+        return;
+      }
+
+      // Verificar se todas as seções têm pelo menos uma pergunta
+      const sectionsWithoutQuestions = sections.filter(section => section.questions.length === 0);
+      if (sectionsWithoutQuestions.length > 0) {
+        setErrors({
+          ...errors,
+          sections: t('checklists.errors.sectionsWithoutQuestions', {
+            sections: sectionsWithoutQuestions.map(s => s.name).join(', ')
+          })
+        });
+        return;
+      }
+
+      // Verificar se todas as perguntas têm um departamento responsável
+      const questionsWithoutDepartment = sections.flatMap(section =>
+        section.questions.filter(question => !question.department)
+      );
+      if (questionsWithoutDepartment.length > 0) {
+        setErrors({
+          ...errors,
+          sections: t('checklists.errors.questionsWithoutDepartment', {
+            questions: questionsWithoutDepartment.map(q => q.text).join(', ')
+          })
+        });
+        return;
+      }
+
+      // Mapear a frequência para o enum correto
+      const frequencyMap: { [key: string]: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'SEMESTRAL' | 'ANNUAL' } = {
+        'diario': 'DAILY',
+        'semanal': 'WEEKLY',
+        'mensal': 'MONTHLY',
+        'trimestral': 'MONTHLY', // Usando MONTHLY como fallback
+        'semestral': 'SEMESTRAL',
+        'anual': 'ANNUAL'
+      };
+
+      const data = {
+        name: checklistName,
+        description,
+        frequency: frequencyMap[frequency] || 'DAILY',
+        time: executionTime,
+        daysOfWeek: weekdays,
+        responsibles,
+        sections,
+        environmentId: selectedEnvironment,
+      };
+
+      console.log('Dados sendo enviados:', data);
+
+      // Verificar se todos os campos obrigatórios estão preenchidos
+      const missingFields = [];
+      if (!data.name) missingFields.push('name');
+      if (!data.frequency) missingFields.push('frequency');
+      if (!data.time) missingFields.push('time');
+      if (!data.daysOfWeek || data.daysOfWeek.length === 0) missingFields.push('daysOfWeek');
+      if (!data.responsibles || data.responsibles.length === 0) missingFields.push('responsibles');
+      if (!data.sections || data.sections.length === 0) missingFields.push('sections');
+      if (!data.environmentId) missingFields.push('environmentId');
+
+      if (missingFields.length > 0) {
+        setErrorMessage(t('checklists.errors.missingFields', { fields: missingFields.join(', ') }));
+        return;
+      }
+
+      const response = await fetch('/api/checklists', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Erro ao salvar checklist');
+      }
+
+      setSuccessMessage(t('checklists.success.saved'));
+      setTimeout(() => {
+        router.push('/panel/checklists');
+      }, 2000);
+    } catch (error: any) {
+      console.error('Erro ao salvar checklist:', error);
+      setErrorMessage(error.message || t('checklists.errors.saveError'));
+    }
+  };
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
@@ -496,6 +645,35 @@ export default function AddChecklistPage() {
             onChange={(e) => setDescription(e.target.value)}
             sx={{ mb: 2 }}
           />
+          <FormControl fullWidth sx={{ mb: 2 }} error={!!errors.environment}>
+            <InputLabel>{t('checklists.fields.environment')}</InputLabel>
+            <Select
+              label={t('checklists.fields.environment')}
+              value={selectedEnvironment}
+              onChange={(e) => setSelectedEnvironment(e.target.value)}
+              disabled={loadingEnvironments}
+            >
+              {loadingEnvironments ? (
+                <MenuItem value="" disabled>
+                  Carregando...
+                </MenuItem>
+              ) : environments.length === 0 ? (
+                <MenuItem value="" disabled>
+                  Nenhum ambiente disponível
+                </MenuItem>
+              ) : (
+                environments.map((env) => {
+                  console.log('Renderizando ambiente:', env);
+                  return (
+                    <MenuItem key={env.id} value={env.id}>
+                      {env.name}
+                    </MenuItem>
+                  );
+                })
+              )}
+            </Select>
+            {errors.environment && <FormHelperText>{errors.environment}</FormHelperText>}
+          </FormControl>
           <Autocomplete
             multiple
             options={users}
@@ -626,6 +804,11 @@ export default function AddChecklistPage() {
                       </Button>
                     </Paper>
                   )}
+                  {errors.sections && (
+                    <FormHelperText error sx={{ mb: 2 }}>
+                      {errors.sections}
+                    </FormHelperText>
+                  )}
                   {sections.map((section, idx) => (
                     <Draggable key={section.id} draggableId={section.id} index={idx}>
                       {(provided) => (
@@ -662,7 +845,7 @@ export default function AddChecklistPage() {
               <Button variant="outlined" sx={{ mr: 2 }} href="/panel/checklists">
                 {t('checklists.buttons.cancel')}
               </Button>
-              <Button variant="contained" color="primary" disabled>
+              <Button variant="contained" color="primary" onClick={handleSaveChecklist}>
                 {t('checklists.buttons.save')}
               </Button>
             </Box>
@@ -704,6 +887,26 @@ export default function AddChecklistPage() {
           </Box>
         </Box>
       </Modal>
+      <Snackbar
+        open={!!errorMessage}
+        autoHideDuration={6000}
+        onClose={() => setErrorMessage(null)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setErrorMessage(null)} severity="error" sx={{ width: '100%' }}>
+          {errorMessage}
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={!!successMessage}
+        autoHideDuration={2000}
+        onClose={() => setSuccessMessage(null)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setSuccessMessage(null)} severity="success" sx={{ width: '100%' }}>
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

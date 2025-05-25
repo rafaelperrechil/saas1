@@ -445,7 +445,8 @@
       "responsibles": "Responsáveis pelo Checklist",
       "frequency": "Frequência",
       "weekdays": "Dias da Semana para execução",
-      "time": "Horário"
+      "time": "Horário",
+      "environment": "Ambiente"
     },
     "frequencies": {
       "daily": "Diário",
@@ -496,7 +497,16 @@
       "responsiblesRequired": "Selecione pelo menos um responsável",
       "frequencyRequired": "Selecione a frequência",
       "weekdaysRequired": "Selecione pelo menos um dia",
-      "timeRequired": "Informe o horário"
+      "timeRequired": "Informe o horário",
+      "environmentRequired": "Selecione um ambiente",
+      "sectionsRequired": "Adicione pelo menos uma seção",
+      "sectionsWithoutQuestions": "As seções {{sections}} não possuem perguntas",
+      "questionsWithoutDepartment": "As perguntas {{questions}} não possuem departamento responsável",
+      "missingFields": "Campos obrigatórios faltando: {{fields}}",
+      "saveError": "Erro ao salvar checklist"
+    },
+    "success": {
+      "saved": "Checklist salvo com sucesso!"
     }
   }
 }

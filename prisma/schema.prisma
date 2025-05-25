@@ -18,150 +18,388 @@ model Profile {
 }
 
 model User {
-  id               String       @id @default(cuid())
-  email            String       @unique
-  name             String?
-  emailVerified    DateTime?
-  image            String?
-  phone            String?
-  country          String?
-  timezone         String?
-  password         String
-  profileId        String
-  profile          Profile      @relation(fields: [profileId], references: [id])
-  resetToken       String?
-  resetTokenExpiry DateTime?
-  loginLogs        LoginLog[]
-  createdAt        DateTime     @default(now())
-  updatedAt        DateTime     @updatedAt
-  organization     Organization? @relation("OrgUsers", fields: [organizationId], references: [id])
-  organizationId   String?      @map("organization_id")
-  subscriptions    Subscription[]
-  payments         Payment[]
-  stripeCustomerId String?      @map("stripe_customer_id")
-  status           String       @default("ACTIVE")
-
-  departmentLinks  DepartmentResponsible[]
-  checkoutSessions CheckoutSession[]
-  passwordResetTokens PasswordResetToken[]
+  id                  String                  @id @default(cuid())
+  email               String                  @unique
+  name                String?
+  password            String
+  profileId           String
+  resetToken          String?
+  resetTokenExpiry    DateTime?
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+  stripeCustomerId    String?                 @map("stripe_customer_id")
+  emailVerified       DateTime?
+  image               String?
+  phone               String?
+  organizationId      String?                 @map("organization_id")
+  status              String                  @default("ACTIVE")
+  country             String?
+  timezone            String?
+  checklistUsers      ChecklistUser[]
   checklistExecutions ChecklistExecution[]
+  checkoutsession     checkoutsession[]
+  departmentLinks     DepartmentResponsible[]
+  loginLogs           LoginLog[]
+  passwordResetTokens PasswordResetToken[]
+  payments            Payment[]
+  subscriptions       Subscription[]
+  organization        Organization?           @relation("OrgUsers", fields: [organizationId], references: [id])
+  profile             Profile                 @relation(fields: [profileId], references: [id])
 
+  @@index([organizationId], map: "users_organization_id_fkey")
+  @@index([profileId], map: "users_profileId_fkey")
   @@map("users")
 }
 
 model LoginLog {
   id        Int      @id @default(autoincrement())
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
   ip        String?
   userAgent String?
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 
+  @@index([userId], map: "login_logs_userId_fkey")
   @@map("login_logs")
 }
 
 model Organization {
-  id             String    @id @default(cuid())
-  name           String
-  employeesCount Int       @map("employees_count")
-  country        String
-  city           String
-  nicheId        String    @map("niche_id")
-  niche          Niche     @relation(fields: [nicheId], references: [id])
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt      @map("updated_at")
+  id              String            @id @default(cuid())
+  name            String
+  employeesCount  Int               @map("employees_count")
+  country         String
+  city            String
+  nicheId         String            @map("niche_id")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  branches        Branch[]
+  checkoutsession checkoutsession[]
+  niche           Niche             @relation(fields: [nicheId], references: [id])
+  users           User[]            @relation("OrgUsers")
 
-  users          User[]    @relation("OrgUsers")
-  branches       Branch[]
-  checkoutSessions CheckoutSession[]
-
+  @@index([nicheId], map: "organizations_niche_id_fkey")
   @@map("organizations")
 }
 
 model Niche {
   id            String         @id @default(cuid())
   name          String         @unique
-  description   String?        @db.Text
   createdAt     DateTime       @default(now()) @map("created_at")
-  updatedAt     DateTime       @updatedAt      @map("updated_at")
-
+  description   String?        @db.Text
+  updatedAt     DateTime       @updatedAt @map("updated_at")
   organizations Organization[]
 
   @@map("niches")
 }
 
 model Branch {
-  id             String       @id @default(cuid())
-  name           String
-  organizationId String       @map("organization_id")
-  organization   Organization @relation(fields: [organizationId], references: [id])
-  createdAt      DateTime     @default(now()) @map("created_at")
-  updatedAt      DateTime     @updatedAt      @map("updated_at")
-  wizardCompleted Boolean     @default(false) @map("wizard_completed")
+  id              String        @id @default(cuid())
+  name            String
+  organizationId  String        @map("organization_id")
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  wizardCompleted Boolean       @default(false) @map("wizard_completed")
+  organization    Organization  @relation(fields: [organizationId], references: [id])
+  checklists      Checklist[]
+  departments     Department[]
+  environments    Environment[]
 
-  departments    Department[]
-  environments   Environment[]
-  checklists     Checklist[]
-
+  @@index([organizationId], map: "branches_organization_id_fkey")
   @@map("branches")
 }
 
 model Department {
-  id        String                  @id @default(cuid())
-  name      String
-  branchId  String                  @map("branch_id")
-  branch    Branch                  @relation(fields: [branchId], references: [id])
-  createdAt DateTime                @default(now()) @map("created_at")
-  updatedAt DateTime                @updatedAt      @map("updated_at")
-
-  responsibles DepartmentResponsible[]
+  id             String                  @id @default(cuid())
+  name           String
+  createdAt      DateTime                @default(now()) @map("created_at")
+  updatedAt      DateTime                @updatedAt @map("updated_at")
+  branchId       String                  @map("branch_id")
   checklistItems ChecklistItem[]
+  responsibles   DepartmentResponsible[]
+  branch         Branch                  @relation(fields: [branchId], references: [id])
 
+  @@index([branchId], map: "departments_branch_id_fkey")
   @@map("departments")
 }
 
 model DepartmentResponsible {
   departmentId String     @map("department_id")
-  department   Department @relation(fields: [departmentId], references: [id])
   userId       String     @map("user_id")
-  user         User       @relation(fields: [userId], references: [id])
   assignedAt   DateTime   @default(now()) @map("assigned_at")
+  department   Department @relation(fields: [departmentId], references: [id])
+  user         User       @relation(fields: [userId], references: [id])
 
   @@id([departmentId, userId])
+  @@index([userId], map: "department_responsibles_user_id_fkey")
   @@map("department_responsibles")
 }
 
 model Environment {
-  id        String   @id @default(cuid())
-  name      String
-  branchId  String   @map("branch_id")
-  branch    Branch   @relation(fields: [branchId], references: [id])
-  position  Int?
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt      @map("updated_at")
-
+  id         String      @id @default(cuid())
+  name       String
+  position   Int?
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
+  branchId   String      @map("branch_id")
   checklists Checklist[]
+  branch     Branch      @relation(fields: [branchId], references: [id])
 
+  @@index([branchId], map: "environments_branch_id_fkey")
   @@map("environments")
 }
 
 model Plan {
-  id               String         @id @default(cuid())
-  name             String         @unique
-  price            Decimal
-  includedUnits    Int            @map("included_units")
-  maxUsers         Int            @map("max_users")
-  extraUserPrice   Decimal?       @map("extra_user_price")
-  maxChecklists    Int?           @map("max_checklists")
-  extraUnitPrice   Decimal?       @map("extra_unit_price")
-  isCustom         Boolean        @default(false) @map("is_custom")
-  createdAt        DateTime       @default(now()) @map("created_at")
-  updatedAt        DateTime       @updatedAt      @map("updated_at")
-
-  subscriptions    Subscription[]
-  checkoutSessions CheckoutSession[]
+  id              String            @id @default(cuid())
+  name            String            @unique
+  price           Decimal
+  includedUnits   Int               @map("included_units")
+  maxUsers        Int               @map("max_users")
+  extraUserPrice  Decimal?          @map("extra_user_price")
+  maxChecklists   Int?              @map("max_checklists")
+  extraUnitPrice  Decimal?          @map("extra_unit_price")
+  isCustom        Boolean           @default(false) @map("is_custom")
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+  checkoutsession checkoutsession[]
+  subscriptions   Subscription[]
 
   @@map("plans")
+}
+
+model Subscription {
+  id        String             @id @default(cuid())
+  userId    String             @map("user_id")
+  planId    String             @map("plan_id")
+  startDate DateTime           @default(now()) @map("start_date")
+  endDate   DateTime?          @map("end_date")
+  status    SubscriptionStatus @default(ACTIVE)
+  createdAt DateTime           @default(now()) @map("created_at")
+  updatedAt DateTime           @updatedAt @map("updated_at")
+  invoices  Invoice[]
+  payments  Payment[]
+  plan      Plan               @relation(fields: [planId], references: [id])
+  user      User               @relation(fields: [userId], references: [id])
+
+  @@index([planId], map: "subscriptions_plan_id_fkey")
+  @@index([userId], map: "subscriptions_user_id_fkey")
+  @@map("subscriptions")
+}
+
+model Invoice {
+  id             String        @id @default(cuid())
+  subscriptionId String        @map("subscription_id")
+  period         String        @map("period")
+  amount         Decimal       @map("amount")
+  issuedAt       DateTime      @default(now()) @map("issued_at")
+  dueDate        DateTime      @map("due_date")
+  paidAt         DateTime?     @map("paid_at")
+  status         InvoiceStatus @default(PENDING)
+  createdAt      DateTime      @default(now()) @map("created_at")
+  updatedAt      DateTime      @updatedAt @map("updated_at")
+  paymentId      String?       @unique @map("payment_id")
+  payment        Payment?      @relation("InvoicePayment", fields: [paymentId], references: [id])
+  subscription   Subscription  @relation(fields: [subscriptionId], references: [id])
+
+  @@unique([subscriptionId, period])
+  @@map("invoices")
+}
+
+model Payment {
+  id                    String        @id @default(cuid())
+  userId                String        @map("user_id")
+  subscriptionId        String?       @map("subscription_id")
+  stripePaymentIntentId String        @map("stripe_payment_intent_id")
+  amount                Decimal       @map("amount")
+  currency              String        @default("BRL")
+  status                PaymentStatus @default(REQUIRES_PAYMENT_METHOD)
+  paidAt                DateTime?     @map("paid_at")
+  createdAt             DateTime      @default(now()) @map("created_at")
+  updatedAt             DateTime      @updatedAt @map("updated_at")
+  error                 String?       @map("error")
+  invoice               Invoice?      @relation("InvoicePayment")
+  subscription          Subscription? @relation(fields: [subscriptionId], references: [id])
+  user                  User          @relation(fields: [userId], references: [id])
+
+  @@index([subscriptionId], map: "payments_subscription_id_fkey")
+  @@index([userId], map: "payments_user_id_fkey")
+  @@map("payments")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "password_reset_tokens_userId_fkey")
+  @@map("password_reset_tokens")
+}
+
+enum ChecklistFrequency {
+  DAILY
+  WEEKLY
+  MONTHLY
+  SEMESTRAL
+  ANNUAL
+}
+
+model ChecklistUser {
+  checklistId String  @map("checklist_id")
+  userId      String  @map("user_id")
+
+  assignedAt  DateTime @default(now()) @map("assigned_at")
+
+  checklist   Checklist @relation(fields: [checklistId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+
+  @@id([checklistId, userId])
+  @@index([userId], map: "checklist_users_user_id_idx")
+  @@map("checklist_users")
+}
+
+model Checklist {
+  id            String               @id @default(cuid())
+  name          String
+  description   String?
+  branchId      String               @map("branch_id")
+  environmentId String               @map("environment_id")
+  frequency     ChecklistFrequency   @default(DAILY)
+  time          String               
+  daysOfWeek    Json?                
+  actived       Boolean              @default(true)
+  createdAt     DateTime             @default(now()) @map("created_at")
+  updatedAt     DateTime             @updatedAt      @map("updated_at")
+  executions    ChecklistExecution[]
+  sections      ChecklistSection[]
+  checklistUsers ChecklistUser[]
+  branch        Branch               @relation(fields: [branchId], references: [id])
+  environment   Environment          @relation(fields: [environmentId], references: [id])
+
+  @@index([branchId], map: "checklists_branch_id_fkey")
+  @@index([environmentId], map: "checklists_environment_id_fkey")
+  @@map("checklists")
+}
+
+
+model ChecklistSection {
+  id          String          @id @default(cuid())
+  name        String
+  checklistId String          @map("checklist_id")
+  position    Int?
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+  items       ChecklistItem[]
+  checklist   Checklist       @relation(fields: [checklistId], references: [id])
+
+  @@index([checklistId], map: "checklist_sections_checklist_id_fkey")
+  @@map("checklist_sections")
+}
+
+model ChecklistItem {
+  id                      String                   @id @default(cuid())
+  name                    String
+  description             String?
+  checklistSectionId      String                   @map("checklist_section_id")
+  position                Int?
+  departmentId            String?                  @map("department_id")
+  checklistResponseTypeId String                   @map("checklist_response_type_id")
+  allowNotApplicable      Boolean                  @default(true)
+  createdAt               DateTime                 @default(now()) @map("created_at")
+  updatedAt               DateTime                 @updatedAt @map("updated_at")
+  executionItems          ChecklistExecutionItem[]
+  checklistResponseType   ChecklistResponseType    @relation(fields: [checklistResponseTypeId], references: [id])
+  checklistSection        ChecklistSection         @relation(fields: [checklistSectionId], references: [id])
+  department              Department?              @relation(fields: [departmentId], references: [id])
+
+  @@index([checklistResponseTypeId], map: "checklist_items_checklist_response_type_id_fkey")
+  @@index([checklistSectionId], map: "checklist_items_checklist_section_id_fkey")
+  @@index([departmentId], map: "checklist_items_department_id_fkey")
+  @@map("checklist_items")
+}
+
+model ChecklistResponseType {
+  id             String          @id @default(cuid())
+  name           String
+  positiveLabel  String
+  negativeLabel  String
+  description    String?
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  checklistItems ChecklistItem[]
+
+  @@map("checklist_response_types")
+}
+
+model ChecklistExecution {
+  id            String                   @id @default(cuid())
+  checklistId   String                   @map("checklist_id")
+  performedById String                   @map("performed_by_id")
+  status        ExecutionStatus          @default(IN_PROGRESS)
+  startedAt     DateTime                 @default(now()) @map("started_at")
+  completedAt   DateTime?                @map("completed_at")
+  createdAt     DateTime                 @default(now()) @map("created_at")
+  updatedAt     DateTime                 @updatedAt @map("updated_at")
+  items         ChecklistExecutionItem[]
+  checklist     Checklist                @relation(fields: [checklistId], references: [id])
+  performedBy   User                     @relation(fields: [performedById], references: [id])
+
+  @@index([checklistId], map: "checklist_executions_checklist_id_fkey")
+  @@index([performedById], map: "checklist_executions_performed_by_id_fkey")
+  @@map("checklist_executions")
+}
+
+model ChecklistExecutionItem {
+  id                   String             @id @default(cuid())
+  checklistExecutionId String             @map("checklist_execution_id")
+  checklistItemId      String             @map("checklist_item_id")
+  isPositive           Boolean
+  note                 String?            @db.Text
+  photoUrl             String?            @map("photo_url")
+  createdAt            DateTime           @default(now()) @map("created_at")
+  updatedAt            DateTime           @updatedAt @map("updated_at")
+  checklistExecution   ChecklistExecution @relation(fields: [checklistExecutionId], references: [id])
+  checklistItem        ChecklistItem      @relation(fields: [checklistItemId], references: [id])
+
+  @@index([checklistExecutionId], map: "checklist_execution_items_checklist_execution_id_fkey")
+  @@index([checklistItemId], map: "checklist_execution_items_checklist_item_id_fkey")
+  @@map("checklist_execution_items")
+}
+
+model checkoutsession {
+  id             String       @id
+  status         String
+  amount         Float
+  currency       String
+  customerId     String
+  organizationId String
+  planId         String
+  paymentMethod  String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime
+  users          User         @relation(fields: [customerId], references: [id], map: "CheckoutSession_customerId_fkey")
+  organizations  Organization @relation(fields: [organizationId], references: [id], map: "CheckoutSession_organizationId_fkey")
+  plans          Plan         @relation(fields: [planId], references: [id], map: "CheckoutSession_planId_fkey")
+
+  @@index([customerId], map: "CheckoutSession_customerId_idx")
+  @@index([organizationId], map: "CheckoutSession_organizationId_idx")
+  @@index([planId], map: "CheckoutSession_planId_idx")
+}
+
+model webhookevent {
+  id        String   @id
+  type      String
+  stripeId  String   @unique(map: "WebhookEvent_stripeId_key")
+  data      String   @db.LongText
+  processed Boolean  @default(false)
+  error     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+
+  @@index([processed], map: "WebhookEvent_processed_idx")
+  @@index([type], map: "WebhookEvent_type_idx")
 }
 
 enum SubscriptionStatus {
@@ -170,47 +408,10 @@ enum SubscriptionStatus {
   EXPIRED
 }
 
-model Subscription {
-  id            String             @id @default(cuid())
-  userId        String             @map("user_id")
-  user          User               @relation(fields: [userId], references: [id])
-  planId        String             @map("plan_id")
-  plan          Plan               @relation(fields: [planId], references: [id])
-  startDate     DateTime           @default(now()) @map("start_date")
-  endDate       DateTime?          @map("end_date")
-  status        SubscriptionStatus @default(ACTIVE)
-  createdAt     DateTime           @default(now()) @map("created_at")
-  updatedAt     DateTime           @updatedAt      @map("updated_at")
-
-  invoices      Invoice[]
-  payments      Payment[]
-
-  @@map("subscriptions")
-}
-
 enum InvoiceStatus {
   PENDING
   PAID
   OVERDUE
-}
-
-model Invoice {
-  id              String        @id @default(cuid())
-  subscriptionId  String        @map("subscription_id")
-  subscription    Subscription  @relation(fields: [subscriptionId], references: [id])
-  period          String        @map("period")
-  amount          Decimal       @map("amount")
-  issuedAt        DateTime      @default(now()) @map("issued_at")
-  dueDate         DateTime      @map("due_date")
-  paidAt          DateTime?     @map("paid_at")
-  status          InvoiceStatus @default(PENDING)
-  paymentId       String?       @map("payment_id") @unique
-  payment         Payment?      @relation("InvoicePayment", fields: [paymentId], references: [id])
-  createdAt       DateTime      @default(now()) @map("created_at")
-  updatedAt       DateTime      @updatedAt      @map("updated_at")
-
-  @@unique([subscriptionId, period])
-  @@map("invoices")
 }
 
 enum PaymentStatus {
@@ -219,190 +420,8 @@ enum PaymentStatus {
   FAILED
 }
 
-model Payment {
-  id                    String         @id @default(cuid())
-  userId                String         @map("user_id")
-  user                  User           @relation(fields: [userId], references: [id])
-  subscriptionId        String?        @map("subscription_id")
-  subscription          Subscription?  @relation(fields: [subscriptionId], references: [id])
-  stripePaymentIntentId String         @map("stripe_payment_intent_id")
-  amount                Decimal        @map("amount")
-  currency              String         @default("BRL")
-  status                PaymentStatus  @default(REQUIRES_PAYMENT_METHOD)
-  error                 String?        @map("error")
-  paidAt                DateTime?      @map("paid_at")
-  createdAt             DateTime       @default(now()) @map("created_at")
-  updatedAt             DateTime       @updatedAt      @map("updated_at")
-  invoice               Invoice?       @relation("InvoicePayment")
-
-  @@map("payments")
-}
-
-model CheckoutSession {
-  id             String   @id @default(cuid())
-  status         String   // pending, completed, failed
-  amount         Float
-  currency       String
-  customerId     String
-  organizationId String
-  planId         String
-  paymentMethod  String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  customer     User         @relation(fields: [customerId], references: [id])
-  organization Organization @relation(fields: [organizationId], references: [id])
-  plan         Plan         @relation(fields: [planId], references: [id])
-
-  @@index([customerId])
-  @@index([organizationId])
-  @@index([planId])
-}
-
-model WebhookEvent {
-  id          String   @id @default(uuid())
-  type        String   // Tipo do evento (ex: checkout.session.completed)
-  stripeId    String   @unique // ID do evento no Stripe
-  data        Json     // Dados completos do evento
-  processed   Boolean  @default(false) // Se o evento foi processado com sucesso
-  error       String?  // Mensagem de erro, se houver
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@index([type])
-  @@index([processed])
-}
-
-model PasswordResetToken {
-  id        String   @id @default(cuid())
-  token     String   @unique
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("password_reset_tokens")
-}
-
-model Checklist {
-  id          String            @id @default(cuid())
-  name        String
-  description String?
-  
-  branchId    String            @map("branch_id")
-  branch      Branch            @relation(fields: [branchId], references: [id])
-
-  environmentId String          @map("environment_id")
-  environment   Environment     @relation(fields: [environmentId], references: [id])
-
-  actived     Boolean           @default(true)
-
-  sections    ChecklistSection[]
-  executions  ChecklistExecution[]
-
-  createdAt   DateTime          @default(now()) @map("created_at")
-  updatedAt   DateTime          @updatedAt      @map("updated_at")
-
-  @@map("checklists")
-}
-
-model ChecklistSection {
-  id           String           @id @default(cuid())
-  name         String
-  checklistId  String           @map("checklist_id")
-  checklist    Checklist        @relation(fields: [checklistId], references: [id])
-
-  items        ChecklistItem[]
-
-  position     Int?
-
-  createdAt    DateTime         @default(now()) @map("created_at")
-  updatedAt    DateTime         @updatedAt      @map("updated_at")
-
-  @@map("checklist_sections")
-}
-
-model ChecklistItem {
-  id                     String                  @id @default(cuid())
-  name                   String
-  description            String?
-  checklistSectionId     String                  @map("checklist_section_id")
-  checklistSection       ChecklistSection        @relation(fields: [checklistSectionId], references: [id])
-
-  position               Int?
-  departmentId           String?                 @map("department_id")
-  department             Department?             @relation(fields: [departmentId], references: [id])
-
-  checklistResponseTypeId String                 @map("checklist_response_type_id")
-  checklistResponseType   ChecklistResponseType  @relation(fields: [checklistResponseTypeId], references: [id])
-
-  allowNotApplicable     Boolean                 @default(true)
-
-  executionItems         ChecklistExecutionItem[]
-
-  createdAt              DateTime                @default(now()) @map("created_at")
-  updatedAt              DateTime                @updatedAt      @map("updated_at")
-
-  @@map("checklist_items")
-}
-
-model ChecklistResponseType {
-  id             String          @id @default(cuid())
-  name           String          // Ex.: "Sim/Não", "Conforme/Não conforme"
-  positiveLabel  String          // Label da resposta positiva (ex.: "Sim")
-  negativeLabel  String          // Label da resposta negativa (ex.: "Não")
-  description    String?
-
-  createdAt      DateTime        @default(now()) @map("created_at")
-  updatedAt      DateTime        @updatedAt      @map("updated_at")
-
-  checklistItems ChecklistItem[]
-
-  @@map("checklist_response_types")
-}
-
 enum ExecutionStatus {
   IN_PROGRESS
   COMPLETED
   CANCELED
-}
-
-model ChecklistExecution {
-  id               String             @id @default(cuid())
-  checklistId      String             @map("checklist_id")
-  checklist        Checklist          @relation(fields: [checklistId], references: [id])
-
-  performedById    String             @map("performed_by_id")
-  performedBy      User               @relation(fields: [performedById], references: [id])
-
-  status           ExecutionStatus    @default(IN_PROGRESS)
-
-  items            ChecklistExecutionItem[]
-
-  startedAt        DateTime           @default(now()) @map("started_at")
-  completedAt      DateTime?          @map("completed_at")
-  createdAt        DateTime           @default(now()) @map("created_at")
-  updatedAt        DateTime           @updatedAt      @map("updated_at")
-
-  @@map("checklist_executions")
-}
-
-model ChecklistExecutionItem {
-  id                     String                @id @default(cuid())
-  checklistExecutionId    String                @map("checklist_execution_id")
-  checklistExecution      ChecklistExecution   @relation(fields: [checklistExecutionId], references: [id])
-
-  checklistItemId         String               @map("checklist_item_id")
-  checklistItem           ChecklistItem        @relation(fields: [checklistItemId], references: [id])
-
-  isPositive              Boolean              // true = resposta positiva, false = negativa
-
-  note                    String?              @db.Text
-  photoUrl                String?              @map("photo_url")
-
-  createdAt               DateTime             @default(now()) @map("created_at")
-  updatedAt               DateTime             @updatedAt      @map("updated_at")
-
-  @@map("checklist_execution_items")
 }

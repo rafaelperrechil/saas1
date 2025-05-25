@@ -318,6 +318,9 @@ async function main() {
         },
       },
       actived: true,
+      frequency: 'DAILY',
+      daysOfWeek: JSON.stringify([1, 2, 3, 4, 5]), // Segunda a Sexta
+      time: '08:00'
     },
   });
   console.log('Checklist criado com sucesso!');
