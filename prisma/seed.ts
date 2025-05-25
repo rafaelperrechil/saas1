@@ -373,8 +373,9 @@ async function main() {
     throw new Error('Tipo de resposta "Sim/Não" não encontrado');
   }
 
+  const createdItems = [];
   for (let i = 0; i < checklistItems.length; i++) {
-    await prisma.checklistItem.create({
+    const item = await prisma.checklistItem.create({
       data: {
         name: checklistItems[i],
         description: null,
@@ -397,9 +398,53 @@ async function main() {
         allowNotApplicable: true,
       },
     });
+    createdItems.push(item);
   }
 
   console.log('Itens do checklist criados com sucesso!');
+
+  // Criar uma execução do checklist
+  console.log('Criando execução do checklist...');
+  const checklistExecution = await prisma.checklistExecution.create({
+    data: {
+      checklist: {
+        connect: {
+          id: checklist.id,
+        },
+      },
+      performedBy: {
+        connect: {
+          id: brunoUser.id,
+        },
+      },
+      status: 'COMPLETED',
+      startedAt: new Date(),
+      completedAt: new Date(),
+    },
+  });
+
+  // Criar itens da execução
+  console.log('Criando itens da execução...');
+  for (const item of createdItems) {
+    await prisma.checklistExecutionItem.create({
+      data: {
+        checklistExecution: {
+          connect: {
+            id: checklistExecution.id,
+          },
+        },
+        checklistItem: {
+          connect: {
+            id: item.id,
+          },
+        },
+        isPositive: true,
+        note: 'Item verificado e em conformidade',
+      },
+    });
+  }
+
+  console.log('Execução do checklist criada com sucesso!');
 
   console.log('Seed concluído com sucesso!');
 }

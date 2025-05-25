@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { ChecklistFrequency } from '@prisma/client';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -12,21 +12,18 @@ export async function GET() {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-    });
+    // Pega o branchId da query string
+    const { searchParams } = new URL(request.url);
+    const branchId = searchParams.get('branchId');
 
-    if (!user) {
-      return NextResponse.json({ error: 'Usuário não encontrado' }, { status: 404 });
+    if (!branchId) {
+      return NextResponse.json({ error: 'branchId não informado' }, { status: 400 });
     }
 
-    const checklists = await prisma.checklist.findMany({
+    // Busca checklists do branch
+    const checklistsByBranch = await prisma.checklist.findMany({
       where: {
-        checklistUsers: {
-          some: {
-            userId: user.id,
-          },
-        },
+        branchId: branchId,
       },
       include: {
         sections: {
@@ -42,7 +39,57 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json(checklists);
+    // Busca checklists vinculados ao usuário
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+
+    let checklistsByUser: any[] = [];
+    if (user) {
+      checklistsByUser = await prisma.checklist.findMany({
+        where: {
+          checklistUsers: {
+            some: {
+              userId: user.id,
+            },
+          },
+        },
+        include: {
+          sections: {
+            include: {
+              items: true,
+            },
+          },
+          _count: {
+            select: {
+              executions: true,
+            },
+          },
+        },
+      });
+    }
+
+    // Unir ambos, sem duplicados (por id)
+    const allChecklistsMap = new Map();
+    for (const checklist of [...checklistsByBranch, ...checklistsByUser]) {
+      allChecklistsMap.set(checklist.id, checklist);
+    }
+    let allChecklists = Array.from(allChecklistsMap.values());
+
+    // Adicionar campos itemCount e completedExecutionsCount para cada checklist
+    allChecklists = allChecklists.map((checklist: any) => {
+      const itemCount = (checklist.sections || []).reduce(
+        (acc: number, section: any) => acc + (section.items ? section.items.length : 0),
+        0
+      );
+      return {
+        ...checklist,
+        itemCount,
+        completedExecutionsCount: checklist._count?.executions || 0,
+      };
+    });
+
+    return NextResponse.json({ data: allChecklists });
   } catch (error) {
     console.error('Erro ao buscar checklists:', error);
     return NextResponse.json({ error: 'Erro ao buscar checklists' }, { status: 500 });

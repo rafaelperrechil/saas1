@@ -406,7 +406,17 @@ export default function EditChecklistPage({ params }: { params: Promise<{ id: st
         setExecutionTime(data.time);
         setWeekdays(data.daysOfWeek || []);
         setSelectedEnvironment(data.environmentId);
-        setResponsibles(data.responsibles || []);
+        let responsaveis: User[] = [];
+        if (data.checklistUsers && Array.isArray(data.checklistUsers)) {
+          responsaveis = data.checklistUsers.map((cu: any) => ({
+            id: cu.user.id,
+            name: cu.user.name,
+            email: cu.user.email,
+          }));
+        } else if (Array.isArray(data.responsibles)) {
+          responsaveis = data.responsibles;
+        }
+        setResponsibles(responsaveis);
 
         // Transformar as seções do formato do banco para o formato da interface
         const transformedSections = data.sections.map((section: any) => ({

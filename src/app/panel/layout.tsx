@@ -58,7 +58,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const handleItemClick = (route: string) => {
     if (!open) {
-      setOpen(true);
+      router.push(route);
     } else {
       router.push(route);
     }

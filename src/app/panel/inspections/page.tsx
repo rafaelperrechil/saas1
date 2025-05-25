@@ -63,12 +63,14 @@ export default function InspectionsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedExecution, setSelectedExecution] = useState<Execution | null>(null);
+  const branchId = session?.user?.branch?.id;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        if (!branchId) return;
         const [checklistsResponse, executionsResponse] = await Promise.all([
-          fetch('/api/checklists'),
+          fetch(`/api/checklists?branchId=${branchId}`),
           fetch('/api/checklists/executions'),
         ]);
 
@@ -81,8 +83,14 @@ export default function InspectionsPage() {
           executionsResponse.json(),
         ]);
 
-        setChecklists(checklistsData);
-        setExecutions(executionsData);
+        setChecklists(checklistsData.data || []);
+        if (Array.isArray(executionsData)) {
+          setExecutions(executionsData);
+        } else if (executionsData && Array.isArray(executionsData.data)) {
+          setExecutions(executionsData.data);
+        } else {
+          setExecutions([]);
+        }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Erro ao carregar dados');
       } finally {
@@ -91,7 +99,7 @@ export default function InspectionsPage() {
     };
 
     fetchData();
-  }, []);
+  }, [branchId]);
 
   const handleOpenExecutionDetails = (execution: Execution) => {
     setSelectedExecution(execution);
