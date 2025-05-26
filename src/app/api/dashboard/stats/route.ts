@@ -11,36 +11,30 @@ export async function GET() {
       return NextResponse.json({ error: 'Usuário não autenticado' }, { status: 401 });
     }
 
-    // Buscar o usuário com sua organização
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      include: {
-        organization: true,
-      },
-    });
-
-    if (!user?.organization) {
+    // Buscar o organizationId da organização selecionada na sessão
+    const organizationId = session.user.organization?.id;
+    if (!organizationId) {
       return NextResponse.json({ error: 'Organização não encontrada' }, { status: 404 });
     }
 
     // Buscar estatísticas
     const stats = {
-      totalUsers: await prisma.user.count({
+      totalUsers: await prisma.organizationUser.count({
         where: {
-          organizationId: user.organization.id,
+          organizationId: organizationId,
         },
       }),
       totalDepartments: await prisma.department.count({
         where: {
           branch: {
-            organizationId: user.organization.id,
+            organizationId: organizationId,
           },
         },
       }),
       totalEnvironments: await prisma.environment.count({
         where: {
           branch: {
-            organizationId: user.organization.id,
+            organizationId: organizationId,
           },
         },
       }),

@@ -11,36 +11,17 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
-    // Buscar o usuário com sua organização e branch
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      include: {
-        organization: {
-          include: {
-            branches: {
-              include: {
-                environments: {
-                  orderBy: {
-                    position: 'asc'
-                  }
-                },
-              },
-            },
-          },
-        },
-      },
+    const branchId = session.user.branch?.id;
+    if (!branchId) {
+      return NextResponse.json({ error: 'Filial não selecionada' }, { status: 400 });
+    }
+
+    const environments = await prisma.environment.findMany({
+      where: { branchId },
+      orderBy: { position: 'asc' },
     });
 
-    if (!user?.organization) {
-      return NextResponse.json({ error: 'Organização não encontrada' }, { status: 404 });
-    }
-
-    const branch = user.organization.branches[0];
-    if (!branch) {
-      return NextResponse.json({ error: 'Branch não encontrado' }, { status: 404 });
-    }
-
-    return NextResponse.json({ data: branch.environments });
+    return NextResponse.json({ data: environments });
   } catch (error: any) {
     console.error('Erro ao buscar ambientes:', error);
     return NextResponse.json(
@@ -58,40 +39,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
+    const branchId = session.user.branch?.id;
+    if (!branchId) {
+      return NextResponse.json({ error: 'Filial não selecionada' }, { status: 400 });
+    }
+
     const data = await req.json();
 
-    // Buscar o usuário com sua organização e branch
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      include: {
-        organization: {
-          include: {
-            branches: {
-              include: {
-                environments: {
-                  orderBy: {
-                    position: 'asc'
-                  }
-                },
-              },
-            },
-          },
-        },
-      },
+    // Buscar o último position para o branch
+    const lastEnvironment = await prisma.environment.findFirst({
+      where: { branchId },
+      orderBy: { position: 'desc' },
     });
-
-    if (!user?.organization) {
-      return NextResponse.json({ error: 'Organização não encontrada' }, { status: 404 });
-    }
-
-    const branch = user.organization.branches[0];
-    if (!branch) {
-      return NextResponse.json({ error: 'Branch não encontrado' }, { status: 404 });
-    }
-
-    // Se não for especificada uma posição, coloca no final
     if (!data.position) {
-      const lastEnvironment = branch.environments[branch.environments.length - 1];
       data.position = lastEnvironment ? lastEnvironment.position + 1 : 1;
     }
 
@@ -99,7 +59,7 @@ export async function POST(req: NextRequest) {
       data: {
         name: data.name,
         position: data.position,
-        branchId: branch.id,
+        branchId: branchId,
       },
     });
 

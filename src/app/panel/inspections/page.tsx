@@ -16,6 +16,7 @@ import {
   ListItemText,
   Divider,
   CircularProgress,
+  Paper,
 } from '@mui/material';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
@@ -127,140 +128,170 @@ export default function InspectionsPage() {
         Inspeções
       </Typography>
 
-      <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
+      <Typography variant="h6" sx={{ mt: 4, mb: 2 }}>
         Checklists Disponíveis
       </Typography>
-
-      <Grid container spacing={3}>
-        {checklists.map((checklist) => {
-          const totalQuestions = checklist.sections.reduce(
-            (sum, section) => sum + section.items.length,
-            0
-          );
-          return (
-            <Grid item xs={12} sm={6} md={4} key={checklist.id}>
-              <Card
-                sx={{ height: '100%', display: 'flex', flexDirection: 'column', minHeight: 240 }}
-              >
-                <CardContent
-                  sx={{
-                    flexGrow: 1,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                  }}
+      {checklists.length === 0 ? (
+        <Paper
+          sx={{
+            p: 3,
+            textAlign: 'center',
+            bgcolor: '#f5f5f5',
+            border: '1px dashed #ccc',
+            mb: 3,
+          }}
+        >
+          <Typography color="textSecondary">
+            Nenhum checklist disponível para esta filial.
+          </Typography>
+        </Paper>
+      ) : (
+        <Grid container spacing={3}>
+          {checklists.map((checklist) => {
+            const totalQuestions = checklist.sections.reduce(
+              (sum, section) => sum + section.items.length,
+              0
+            );
+            return (
+              <Grid item xs={12} sm={6} md={4} key={checklist.id}>
+                <Card
+                  sx={{ height: '100%', display: 'flex', flexDirection: 'column', minHeight: 240 }}
                 >
-                  <div>
-                    <Typography variant="h6" gutterBottom>
-                      {checklist.name}
-                    </Typography>
-                    {checklist.description && (
-                      <Typography color="text.secondary" paragraph>
-                        {checklist.description}
-                      </Typography>
-                    )}
-                  </div>
-                  <Box
+                  <CardContent
                     sx={{
+                      flexGrow: 1,
                       display: 'flex',
+                      flexDirection: 'column',
                       justifyContent: 'space-between',
-                      alignItems: 'center',
-                      mt: 2,
                     }}
                   >
-                    <Chip
-                      label={`${totalQuestions} perguntas`}
-                      color="secondary"
-                      variant="outlined"
-                      sx={{ mr: 1 }}
-                    />
-                    <Chip
-                      label={`${checklist._count.executions} execuções`}
-                      color="primary"
-                      variant="outlined"
-                    />
-                  </Box>
-                  <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => router.push(`/panel/inspections/${checklist.id}`)}
+                    <div>
+                      <Typography variant="h6" gutterBottom>
+                        {checklist.name}
+                      </Typography>
+                      {checklist.description && (
+                        <Typography color="text.secondary" paragraph>
+                          {checklist.description}
+                        </Typography>
+                      )}
+                    </div>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        mt: 2,
+                      }}
                     >
-                      Iniciar Inspeção
-                    </Button>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-          );
-        })}
-      </Grid>
+                      <Chip
+                        label={`${totalQuestions} perguntas`}
+                        color="secondary"
+                        variant="outlined"
+                        sx={{ mr: 1 }}
+                      />
+                      <Chip
+                        label={`${checklist._count.executions} execuções`}
+                        color="primary"
+                        variant="outlined"
+                      />
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => router.push(`/panel/inspections/${checklist.id}`)}
+                      >
+                        Iniciar Inspeção
+                      </Button>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            );
+          })}
+        </Grid>
+      )}
 
-      <Typography variant="h5" gutterBottom sx={{ mb: 3, mt: 4 }}>
+      <Typography variant="h6" sx={{ mt: 4, mb: 2 }}>
         Últimas Inspeções realizadas
       </Typography>
+      {executions.length === 0 ? (
+        <Paper
+          sx={{
+            p: 3,
+            textAlign: 'center',
+            bgcolor: '#f5f5f5',
+            border: '1px dashed #ccc',
+            mb: 3,
+          }}
+        >
+          <Typography color="textSecondary">
+            Nenhuma inspeção realizada para esta filial.
+          </Typography>
+        </Paper>
+      ) : (
+        <Grid container spacing={3} sx={{ mb: 6 }}>
+          {executions.map((execution) => {
+            const totalItems = execution.items.length;
+            const positiveItems = execution.items.filter((item) => item.isPositive).length;
+            const negativeItems = totalItems - positiveItems;
+            const positivePercentage = ((positiveItems / totalItems) * 100).toFixed(1);
+            const negativePercentage = ((negativeItems / totalItems) * 100).toFixed(1);
 
-      <Grid container spacing={3} sx={{ mb: 6 }}>
-        {executions.map((execution) => {
-          const totalItems = execution.items.length;
-          const positiveItems = execution.items.filter((item) => item.isPositive).length;
-          const negativeItems = totalItems - positiveItems;
-          const positivePercentage = ((positiveItems / totalItems) * 100).toFixed(1);
-          const negativePercentage = ((negativeItems / totalItems) * 100).toFixed(1);
-
-          return (
-            <Grid item xs={12} sm={12} md={12} key={execution.id}>
-              <Card
-                sx={{
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    boxShadow: 6,
-                  },
-                }}
-                onClick={() => handleOpenExecutionDetails(execution)}
-              >
-                <CardContent>
-                  <Box
-                    sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
-                  >
-                    <Box>
-                      <Typography variant="h6" gutterBottom>
-                        {execution.checklist.name}
-                      </Typography>
-                      <Typography color="text.secondary" gutterBottom>
-                        {new Date(execution.createdAt).toLocaleDateString('pt-BR', {
-                          day: '2-digit',
-                          month: '2-digit',
-                          year: 'numeric',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
-                      </Typography>
+            return (
+              <Grid item xs={12} sm={12} md={12} key={execution.id}>
+                <Card
+                  sx={{
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    cursor: 'pointer',
+                    '&:hover': {
+                      boxShadow: 6,
+                    },
+                  }}
+                  onClick={() => handleOpenExecutionDetails(execution)}
+                >
+                  <CardContent>
+                    <Box
+                      sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+                    >
+                      <Box>
+                        <Typography variant="h6" gutterBottom>
+                          {execution.checklist.name}
+                        </Typography>
+                        <Typography color="text.secondary" gutterBottom>
+                          {new Date(execution.createdAt).toLocaleDateString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Chip
+                          icon={<CheckCircleIcon />}
+                          label={`${positiveItems} (${positivePercentage}%)`}
+                          color="success"
+                          variant="outlined"
+                        />
+                        <Chip
+                          icon={<CancelIcon />}
+                          label={`${negativeItems} (${negativePercentage}%)`}
+                          color="error"
+                          variant="outlined"
+                        />
+                      </Box>
                     </Box>
-                    <Box sx={{ display: 'flex', gap: 1 }}>
-                      <Chip
-                        icon={<CheckCircleIcon />}
-                        label={`${positiveItems} (${positivePercentage}%)`}
-                        color="success"
-                        variant="outlined"
-                      />
-                      <Chip
-                        icon={<CancelIcon />}
-                        label={`${negativeItems} (${negativePercentage}%)`}
-                        color="error"
-                        variant="outlined"
-                      />
-                    </Box>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-          );
-        })}
-      </Grid>
+                  </CardContent>
+                </Card>
+              </Grid>
+            );
+          })}
+        </Grid>
+      )}
 
       <Modal
         open={!!selectedExecution}

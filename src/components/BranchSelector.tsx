@@ -2,7 +2,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useSession, signIn } from 'next-auth/react';
-import { FormControl, Select, MenuItem, SelectChangeEvent } from '@mui/material';
+import { FormControl, Select, MenuItem, SelectChangeEvent, ListSubheader } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
 
@@ -12,52 +12,86 @@ interface Branch {
   wizardCompleted: boolean;
 }
 
+interface Organization {
+  id: string;
+  name: string;
+  profile: { id: string; name: string };
+  branches: Branch[];
+}
+
 export default function BranchSelector() {
   const { t } = useTranslation();
   const router = useRouter();
   const { data: session } = useSession();
-  const [branches, setBranches] = useState<Branch[]>([]);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [selectedBranch, setSelectedBranch] = useState<string>('');
+  const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
+  const [selectedBranchObj, setSelectedBranchObj] = useState<Branch | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchBranches = async () => {
+    const fetchOrganizations = async () => {
       try {
         const response = await fetch('/api/branches/organization');
         const result = await response.json();
 
         if (result.error) {
-          console.error('Erro ao carregar filiais:', result.error);
+          console.error('Erro ao carregar organizações:', result.error);
           return;
         }
 
-        const branchesData = result.data || [];
-        setBranches(branchesData);
+        const orgsData: Organization[] = result.data || [];
+        setOrganizations(orgsData);
 
-        // Só define a filial selecionada depois que as filiais forem carregadas
-        const currentBranchId = session?.user?.branch?.id;
-        if (
-          currentBranchId &&
-          branchesData.some((branch: Branch) => branch.id === currentBranchId)
-        ) {
-          console.log('Definindo filial inicial:', currentBranchId);
-          setSelectedBranch(currentBranchId);
+        // Seleciona o branch atual da sessão, ou o primeiro disponível
+        let branchId = session?.user?.branch?.id;
+        let branchObj = null;
+        let orgObj = null;
+        if (!branchId && orgsData.length > 0) {
+          orgObj = orgsData[0];
+          branchObj = orgObj.branches[0];
+          branchId = branchObj?.id;
+        } else {
+          for (const org of orgsData) {
+            const found = org.branches.find((b) => b.id === branchId);
+            if (found) {
+              branchObj = found;
+              orgObj = org;
+              break;
+            }
+          }
         }
+        setSelectedBranch(branchId || '');
+        setSelectedBranchObj(branchObj);
+        setSelectedOrg(orgObj);
       } catch (error) {
-        console.error('Erro ao carregar filiais:', error);
+        console.error('Erro ao carregar organizações:', error);
       } finally {
         setLoading(false);
       }
     };
 
     if (session?.user) {
-      fetchBranches();
+      fetchOrganizations();
     }
+    // eslint-disable-next-line
   }, [session]);
 
   const handleBranchChange = async (event: SelectChangeEvent<string>) => {
     const branchId = event.target.value;
     setSelectedBranch(branchId);
+    let branchObj = null;
+    let orgObj = null;
+    for (const org of organizations) {
+      const found = org.branches.find((b) => b.id === branchId);
+      if (found) {
+        branchObj = found;
+        orgObj = org;
+        break;
+      }
+    }
+    setSelectedBranchObj(branchObj);
+    setSelectedOrg(orgObj);
 
     try {
       const response = await fetch('/api/branches/select', {
@@ -75,7 +109,8 @@ export default function BranchSelector() {
       // Atualiza o JWT/session do NextAuth
       await signIn('credentials', {
         redirect: false,
-        branch,
+        email: session?.user?.email,
+        branchId: branchObj?.id,
         trigger: 'update',
       });
 
@@ -86,34 +121,30 @@ export default function BranchSelector() {
     }
   };
 
-  if (loading) {
-    return null;
-  }
-
-  if (branches.length === 0) {
+  if (loading || organizations.length === 0) {
     return null;
   }
 
   return (
-    <FormControl size="small" sx={{ minWidth: 200 }}>
+    <FormControl size="small" sx={{ minWidth: 250 }}>
       <Select
         value={selectedBranch}
         onChange={handleBranchChange}
         displayEmpty
-        sx={{
-          '& .MuiSelect-select': {
-            py: 1,
-          },
-        }}
+        renderValue={() =>
+          selectedBranchObj && selectedOrg
+            ? `${selectedBranchObj.name} — ${selectedOrg.name} (${selectedOrg.profile.name})`
+            : t('Selecione uma filial')
+        }
       >
-        <MenuItem value="" disabled>
-          {t('Selecione uma filial')}
-        </MenuItem>
-        {branches.map((branch) => (
-          <MenuItem key={branch.id} value={branch.id}>
-            {branch.name}
-          </MenuItem>
-        ))}
+        {organizations.map((org) => [
+          <ListSubheader key={org.id}>{`${org.name} (${org.profile.name})`}</ListSubheader>,
+          org.branches.map((branch) => (
+            <MenuItem key={branch.id} value={branch.id} sx={{ pl: 4 }}>
+              {branch.name}
+            </MenuItem>
+          )),
+        ])}
       </Select>
     </FormControl>
   );

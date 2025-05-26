@@ -11,9 +11,76 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: 'Email', type: 'text' },
         password: { label: 'Password', type: 'password' },
+        branchId: { label: 'BranchId', type: 'text', optional: true },
+        trigger: { label: 'Trigger', type: 'text', optional: true },
       },
       async authorize(credentials, _req) {
         try {
+          // Se for uma atualização de sessão (trigger: 'update'), não precisa de senha
+          if (credentials?.trigger === 'update' && credentials?.email) {
+            const user = await prisma.user.findUnique({
+              where: { email: credentials.email },
+              include: {
+                profile: true,
+              },
+            });
+
+            if (!user) {
+              console.log('[Auth] Usuário não encontrado na atualização');
+              return null;
+            }
+
+            // Buscar todas as organizações do usuário via OrganizationUser
+            const orgUsers = await prisma.organizationUser.findMany({
+              where: { userId: user.id },
+              include: {
+                organization: {
+                  include: {
+                    branches: true,
+                  },
+                },
+                profile: true,
+              },
+            });
+
+            // Montar lista de organizações com branches e perfil do usuário em cada
+            const organizations = orgUsers.map((orgUser) => ({
+              id: orgUser.organization.id,
+              name: orgUser.organization.name,
+              profile: orgUser.profile,
+              branches: orgUser.organization.branches.map((branch) => ({
+                id: branch.id,
+                name: branch.name,
+                organizationId: orgUser.organization.id,
+                wizardCompleted: branch.wizardCompleted,
+              })),
+            }));
+
+            // Encontrar a organização e branch selecionados
+            const selectedBranchId = credentials.branchId;
+            let selectedBranch = null;
+            let selectedOrg = null;
+            for (const org of organizations) {
+              const found = org.branches.find(b => b.id === selectedBranchId);
+              if (found) {
+                selectedBranch = found;
+                selectedOrg = org;
+                break;
+              }
+            }
+
+            return {
+              id: user.id,
+              email: user.email,
+              name: user.name || '',
+              profile: user.profile,
+              organizations,
+              organization: selectedOrg,
+              branch: selectedBranch,
+            } as any;
+          }
+
+          // Autenticação normal (login)
           if (!credentials?.email || !credentials?.password) {
             console.log('[Auth] Credenciais faltando:', {
               email: !!credentials?.email,
@@ -29,11 +96,6 @@ export const authOptions: NextAuthOptions = {
             where: { email: credentials.email },
             include: {
               profile: true,
-              organization: {
-                include: {
-                  branches: true,
-                },
-              },
             },
           });
 
@@ -67,27 +129,50 @@ export const authOptions: NextAuthOptions = {
             return null;
           }
 
-          if (!user.profile) {
+          if (!user?.profile) {
             console.log('[Auth] Perfil não encontrado para:', credentials.email);
             return null;
           }
 
-          // Pega a primeira branch da organização (se existir)
-          const branch = user.organization?.branches[0];
+          // Buscar todas as organizações do usuário via OrganizationUser
+          const orgUsers = await prisma.organizationUser.findMany({
+            where: { userId: user.id },
+            include: {
+              organization: {
+                include: {
+                  branches: true,
+                },
+              },
+              profile: true,
+            },
+          });
 
-          // console.log('[Auth] Login bem sucedido:', {
-          //   userId: user.id,
-          //   hasBranch: !!branch,
-          //   branchId: branch?.id,
-          // });
+          // Montar lista de organizações com branches e perfil do usuário em cada
+          const organizations = orgUsers.map((orgUser) => ({
+            id: orgUser.organization.id,
+            name: orgUser.organization.name,
+            profile: orgUser.profile, // perfil do usuário nesta organização
+            branches: orgUser.organization.branches.map((branch) => ({
+              id: branch.id,
+              name: branch.name,
+              organizationId: orgUser.organization.id,
+              wizardCompleted: branch.wizardCompleted,
+            })),
+          }));
+
+          // Selecionar organização e branch padrão (primeira da lista)
+          const defaultOrg = organizations[0];
+          const defaultBranch = defaultOrg?.branches[0];
 
           return {
             id: user.id,
             email: user.email,
             name: user.name || '',
             profile: user.profile as AppProfile,
-            branch: branch || undefined,
-          };
+            organizations,
+            organization: defaultOrg,
+            branch: defaultBranch,
+          } as any;
         } catch (error) {
           console.error('[Auth] Erro na autenticação:', error);
           if (error instanceof Error) {
@@ -104,36 +189,29 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user, trigger, session }) {
       if (user) {
-        // console.log('[Auth] Atualizando token com dados do usuário:', {
-        //   userId: user.id,
-        //   hasProfile: !!user.profile,
-        //   hasBranch: !!user.branch,
-        // });
         token.id = user.id;
         token.profile = user.profile;
-        token.branch = user.branch || undefined;
+        (token as any).organizations = (user as any).organizations;
+        (token as any).organization = (user as any).organization;
+        token.branch = (user as any).branch || undefined;
       }
 
       if (trigger === 'update' && session?.user?.branch) {
-        console.log('[Auth] Atualizando branch no token');
         token.branch = session.user.branch;
+        (token as any).organization = (session.user as any).organization;
       }
 
       return token;
     },
     async session({ session, token }) {
-      // console.log('[Auth] Atualizando sessão com dados do token:', {
-      //   userId: token.id,
-      //   hasProfile: !!token.profile,
-      //   hasBranch: !!token.branch,
-      // });
-
       session.user = {
         ...session.user,
         id: token.id as string,
         profile: token.profile as AppProfile,
+        organizations: (token as any).organizations,
+        organization: (token as any).organization,
         branch: token.branch as AppBranch | undefined,
-      };
+      } as any;
       return session;
     },
   },

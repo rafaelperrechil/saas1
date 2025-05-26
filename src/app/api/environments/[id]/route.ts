@@ -45,39 +45,17 @@ export async function DELETE(req: NextRequest, context: { params: { id: string }
     const params = await context.params;
     const id = params.id;
 
-    // Buscar o usuário com sua organização e branch
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      include: {
-        organization: {
-          include: {
-            branches: {
-              include: {
-                environments: {
-                  orderBy: {
-                    position: 'asc',
-                  },
-                },
-              },
-            },
-          },
-        },
-      },
+    const branchId = session.user.branch?.id;
+    if (!branchId) {
+      return NextResponse.json({ error: 'Filial não selecionada' }, { status: 400 });
+    }
+
+    // Verificar se o ambiente pertence ao branch selecionado
+    const environment = await prisma.environment.findUnique({
+      where: { id },
     });
-
-    if (!user?.organization) {
-      return NextResponse.json({ error: 'Organização não encontrada' }, { status: 404 });
-    }
-
-    const branch = user.organization.branches[0];
-    if (!branch) {
-      return NextResponse.json({ error: 'Branch não encontrado' }, { status: 404 });
-    }
-
-    // Verificar se o ambiente pertence ao branch do usuário
-    const environment = branch.environments.find((env) => env.id === id);
-    if (!environment) {
-      return NextResponse.json({ error: 'Ambiente não encontrado' }, { status: 404 });
+    if (!environment || environment.branchId !== branchId) {
+      return NextResponse.json({ error: 'Ambiente não encontrado ou não pertence à filial selecionada' }, { status: 404 });
     }
 
     // Excluir o ambiente

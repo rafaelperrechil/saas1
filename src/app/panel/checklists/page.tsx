@@ -87,8 +87,18 @@ export default function ChecklistListPage() {
         </Alert>
       )}
       {!isLoading && checklists.length === 0 && (
-        <Paper sx={{ p: 3, textAlign: 'center', mb: 2 }}>
-          <Typography color="text.secondary">{t('checklists.noChecklists')}</Typography>
+        <Paper
+          sx={{
+            p: 3,
+            textAlign: 'center',
+            bgcolor: '#f5f5f5',
+            border: '1px dashed #ccc',
+            mt: 2,
+          }}
+        >
+          <Typography color="textSecondary">
+            Nenhum checklist cadastrado para esta filial.
+          </Typography>
         </Paper>
       )}
       {!isLoading && checklists.length > 0 && (

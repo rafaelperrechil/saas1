@@ -13,6 +13,7 @@ model Profile {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   users     User[]
+  organizationUsers  OrganizationUser[]
 
   @@map("profiles")
 }
@@ -31,10 +32,10 @@ model User {
   emailVerified       DateTime?
   image               String?
   phone               String?
-  organizationId      String?                 @map("organization_id")
   status              String                  @default("ACTIVE")
   country             String?
   timezone            String?
+  organizationUsers   OrganizationUser[]
   checklistUsers      ChecklistUser[]
   checklistExecutions ChecklistExecution[]
   checkoutsession     checkoutsession[]
@@ -43,10 +44,8 @@ model User {
   passwordResetTokens PasswordResetToken[]
   payments            Payment[]
   subscriptions       Subscription[]
-  organization        Organization?           @relation("OrgUsers", fields: [organizationId], references: [id])
   profile             Profile                 @relation(fields: [profileId], references: [id])
 
-  @@index([organizationId], map: "users_organization_id_fkey")
   @@index([profileId], map: "users_profileId_fkey")
   @@map("users")
 }
@@ -75,11 +74,29 @@ model Organization {
   branches        Branch[]
   checkoutsession checkoutsession[]
   niche           Niche             @relation(fields: [nicheId], references: [id])
-  users           User[]            @relation("OrgUsers")
-
+  organizationUsers  OrganizationUser[]
+  
   @@index([nicheId], map: "organizations_niche_id_fkey")
   @@map("organizations")
 }
+
+model OrganizationUser {
+  organizationId String @map("organization_id")
+  userId         String @map("user_id")
+  profileId      String @map("profile_id")
+
+  assignedAt     DateTime @default(now()) @map("assigned_at")
+
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  user           User         @relation(fields: [userId], references: [id])
+  profile        Profile      @relation(fields: [profileId], references: [id])
+
+  @@id([organizationId, userId])
+  @@index([userId], map: "organization_users_user_id_idx")
+  @@index([profileId], map: "organization_users_profile_id_idx")
+  @@map("organization_users")
+}
+
 
 model Niche {
   id            String         @id @default(cuid())

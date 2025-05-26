@@ -340,11 +340,11 @@ export default function DepartmentsPage() {
 
       <TableContainer component={Paper} sx={{ mb: 3 }}>
         <Table>
-          <TableHead sx={{ bgcolor: '#f5f5f5' }}>
-            <TableRow>
-              <TableCell>{t('departments.name')}</TableCell>
-              <TableCell>{t('departments.responsibles')}</TableCell>
-              <TableCell width="120px" align="right">
+          <TableHead>
+            <TableRow sx={{ backgroundColor: 'primary.dark' }}>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>{t('departments.name')}</TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>{t('departments.responsibles')}</TableCell>
+              <TableCell width="120px" align="right" sx={{ color: 'white', fontWeight: 'bold' }}>
                 {t('departments.actions')}
               </TableCell>
             </TableRow>

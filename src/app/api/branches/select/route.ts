@@ -18,11 +18,16 @@ export async function POST(request: Request) {
     }
 
     // Busca a filial e verifica se pertence à organização do usuário
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      include: { organization: { include: { branches: true } } },
+    const orgUser = await prisma.organizationUser.findFirst({
+      where: { userId: session.user.id },
+      include: {
+        organization: {
+          include: { branches: true }
+        }
+      }
     });
-    if (!user?.organization?.branches.some((b) => b.id === branchId)) {
+
+    if (!orgUser?.organization?.branches.some((b) => b.id === branchId)) {
       return NextResponse.json(
         { error: 'Filial não encontrada ou não pertence à sua organização' },
         { status: 403 }
@@ -30,7 +35,7 @@ export async function POST(request: Request) {
     }
 
     // Busca os dados da branch selecionada
-    const branch = user.organization.branches.find((b) => b.id === branchId);
+    const branch = orgUser.organization.branches.find((b) => b.id === branchId);
     if (!branch) {
       return NextResponse.json({ error: 'Filial não encontrada' }, { status: 404 });
     }

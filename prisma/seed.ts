@@ -19,6 +19,7 @@ async function main() {
   await prisma.subscription.deleteMany();
   await prisma.loginLog.deleteMany();
   await prisma.passwordResetToken.deleteMany();
+  await prisma.organizationUser.deleteMany();
   await prisma.branch.deleteMany();
   await prisma.organization.deleteMany();
   await prisma.user.deleteMany();
@@ -40,25 +41,20 @@ async function main() {
     },
   });
 
-  //const userProfile = await prisma.profile.findFirst({ where: { name: 'Usuário' } });
-
   console.log('Perfis criados com sucesso!');
 
-  // Criar usuário
-  console.log('Criando usuário...');
+  // Criar usuários
+  console.log('Criando usuários...');
   const hashedPassword = await bcrypt.hash('123123', 10);
-
   const user = await prisma.user.create({
     data: {
       email: 'rafaelperrechil@hotmail.com',
       name: 'Rafael Perrechil',
       password: hashedPassword,
-      profileId: userProfile.id,
+      profileId: adminProfile.id,
     },
   });
 
-  // Criar usuário Bruno
-  console.log('Criando usuário Bruno...');
   const hashedPasswordBruno = await bcrypt.hash('123123', 10);
   const brunoUser = await prisma.user.create({
     data: {
@@ -119,31 +115,27 @@ async function main() {
           id: technologyNiche.id,
         },
       },
-      users: {
-        connect: {
-          id: user.id,
-        },
-      },
     },
   });
   console.log('Organização criada com sucesso!');
 
-  // Atualizar usuários com a organização
-  console.log('Atualizando usuários com a organização...');
-  await prisma.user.update({
-    where: { email: 'rafaelperrechil@hotmail.com' },
+  // Vincular usuários à organização via OrganizationUser
+  console.log('Vinculando usuários à organização...');
+  await prisma.organizationUser.create({
     data: {
       organizationId: organization.id,
+      userId: user.id,
+      profileId: adminProfile.id, // Rafael é Admin nesta organização
     },
   });
-
-  await prisma.user.update({
-    where: { email: 'bruno@bol.com' },
+  await prisma.organizationUser.create({
     data: {
       organizationId: organization.id,
+      userId: brunoUser.id,
+      profileId: userProfile.id, // Bruno é User nesta organização
     },
   });
-  console.log('Usuários atualizados com sucesso!');
+  console.log('Usuários vinculados à organização com sucesso!');
 
   // Criar filial
   console.log('Criando filial...');
@@ -445,6 +437,44 @@ async function main() {
   }
 
   console.log('Execução do checklist criada com sucesso!');
+
+  // Criar filial Ubatuba
+  console.log('Criando filial Ubatuba...');
+  const branchUbatuba = await prisma.branch.create({
+    data: {
+      name: 'Ubatuba',
+      wizardCompleted: true,
+      organization: {
+        connect: {
+          id: organization.id,
+        },
+      },
+    },
+  });
+  console.log('Filial Ubatuba criada com sucesso!');
+
+  // Criar departamento Marketing na filial Ubatuba
+  console.log('Criando departamento Marketing na filial Ubatuba...');
+  await prisma.department.create({
+    data: {
+      name: 'Marketing',
+      branch: {
+        connect: {
+          id: branchUbatuba.id,
+        },
+      },
+      responsibles: {
+        create: {
+          user: {
+            connect: {
+              id: brunoUser.id, 
+            },
+          },
+        },
+      },
+    },
+  });
+  console.log('Departamento Marketing criado com sucesso!');
 
   console.log('Seed concluído com sucesso!');
 }

@@ -141,11 +141,12 @@ function SortableTableRow({
 export default function EnvironmentsPage() {
   const { t } = useTranslation();
   const { data: session } = useSession();
+  const branchId = session?.user?.branch?.id;
   const {
     data: environments = [],
     error: environmentsError,
     mutate: mutateEnvironments,
-  } = useSWR<Environment[]>('/api/environments', fetcher);
+  } = useSWR<Environment[]>(branchId ? ['/api/environments', branchId] : null, fetcher);
 
   const [openDialog, setOpenDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -389,16 +390,35 @@ export default function EnvironmentsPage() {
               </TableRow>
             </TableHead>
             <TableBody>
-              <SortableContext items={environments.map((env) => env.id)}>
-                {environments.map((environment) => (
-                  <SortableTableRow
-                    key={environment.id}
-                    environment={environment}
-                    onEdit={handleOpenDialog}
-                    onDelete={handleOpenDeleteDialog}
-                  />
-                ))}
-              </SortableContext>
+              {environments.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={2}>
+                    <Paper
+                      sx={{
+                        p: 3,
+                        textAlign: 'center',
+                        bgcolor: '#f5f5f5',
+                        border: '1px dashed #ccc',
+                      }}
+                    >
+                      <Typography color="textSecondary">
+                        Nenhum ambiente encontrado. Clique no botão 'Novo Ambiente' para adicionar.
+                      </Typography>
+                    </Paper>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                <SortableContext items={environments.map((env) => env.id)}>
+                  {environments.map((environment) => (
+                    <SortableTableRow
+                      key={environment.id}
+                      environment={environment}
+                      onEdit={handleOpenDialog}
+                      onDelete={handleOpenDeleteDialog}
+                    />
+                  ))}
+                </SortableContext>
+              )}
             </TableBody>
           </Table>
         </TableContainer>

@@ -11,9 +11,9 @@ export async function GET() {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
-    // Busca o usuário com sua organização e branch
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
+    // Buscar todas as organizações do usuário via OrganizationUser
+    const orgUsers = await prisma.organizationUser.findMany({
+      where: { userId: session.user.id },
       include: {
         organization: {
           include: {
@@ -41,34 +41,47 @@ export async function GET() {
       },
     });
 
-    if (!user?.organization) {
+    if (!orgUsers || orgUsers.length === 0) {
       return NextResponse.json({ hasCompletedWizard: false });
     }
 
-    const branch = user.organization.branches[0];
-    if (!branch) {
+    // Procurar por uma organização e branch com wizardCompleted = true
+    let foundOrg = null;
+    let foundBranch = null;
+    for (const orgUser of orgUsers) {
+      const org = orgUser.organization;
+      if (!org) continue;
+      const branch = org.branches.find((b) => b.wizardCompleted);
+      if (branch) {
+        foundOrg = org;
+        foundBranch = branch;
+        break;
+      }
+    }
+
+    if (!foundOrg || !foundBranch) {
       return NextResponse.json({ hasCompletedWizard: false });
     }
 
     return NextResponse.json({
-      hasCompletedWizard: branch.wizardCompleted,
+      hasCompletedWizard: true,
       organizationData: {
-        name: user.organization.name,
-        employeesCount: user.organization.employeesCount.toString(),
-        country: user.organization.country,
-        city: user.organization.city,
-        nicheId: user.organization.nicheId,
+        name: foundOrg.name,
+        employeesCount: foundOrg.employeesCount.toString(),
+        country: foundOrg.country,
+        city: foundOrg.city,
+        nicheId: foundOrg.nicheId,
         branch: {
-          name: branch.name,
+          name: foundBranch.name,
         },
-        departments: branch.departments.map((dept) => ({
+        departments: foundBranch.departments.map((dept) => ({
           name: dept.name,
           responsibles: dept.responsibles.map((resp) => ({
             email: resp.user.email,
             status: resp.user.status,
           })),
         })),
-        environments: branch.environments.map((env) => ({
+        environments: foundBranch.environments.map((env) => ({
           name: env.name,
           position: env.position,
         })),
