@@ -5,6 +5,12 @@ const prisma = new PrismaClient();
 
 async function main() {
   // Limpar dados existentes na ordem correta
+  await prisma.ticketLabelOnTicket.deleteMany();
+  await prisma.ticketStatusHistory.deleteMany();
+  await prisma.ticketComment.deleteMany();
+  await prisma.ticketAttachment.deleteMany();
+  await prisma.ticket.deleteMany();
+  await prisma.ticketLabel.deleteMany();
   await prisma.checklistExecutionItem.deleteMany();
   await prisma.checklistExecution.deleteMany();
   await prisma.checklistItem.deleteMany();
@@ -351,7 +357,6 @@ async function main() {
   console.log('Seção criada com sucesso!');
 
   // Criar itens do checklist
-  console.log('Criando itens do checklist...');
   const checklistItems = [
     'Computadores estão funcionando?',
     'Internet está operando normalmente?',
@@ -430,13 +435,97 @@ async function main() {
             id: item.id,
           },
         },
-        isPositive: true,
-        note: 'Item verificado e em conformidade',
+        isPositive: ![1, 2].includes(createdItems.indexOf(item)), // as perguntas 2 e 3 são negativas
+        note: [1, 2].includes(createdItems.indexOf(item))
+          ? 'Problema identificado'
+          : 'Item verificado e em conformidade',
       },
     });
   }
 
-  console.log('Execução do checklist criada com sucesso!');
+  // Marcar duas perguntas como negativas e criar tickets após execução criada
+  const checklistItemsDb = await prisma.checklistItem.findMany({
+    where: { checklistSectionId: section.id },
+    orderBy: { position: 'asc' },
+    include: { checklistSection: true },
+  });
+
+  const negativeItems = [checklistItemsDb[1], checklistItemsDb[2]];
+
+  // Criar alguns ticket_labels
+  const urgenteLabel = await prisma.ticketLabel.create({
+    data: {
+      name: 'Urgente',
+      color: '#FF0000',
+      organization: { connect: { id: organization.id } },
+    },
+  });
+  const infraestruturaLabel = await prisma.ticketLabel.create({
+    data: {
+      name: 'Infraestrutura',
+      color: '#1976D2',
+      organization: { connect: { id: organization.id } },
+    },
+  });
+
+  for (const item of negativeItems) {
+    // Buscar a execução do checklist relacionada ao item
+    const execution = await prisma.checklistExecution.findFirst({
+      where: { checklistId: item.checklistSection.checklistId },
+      orderBy: { startedAt: 'desc' },
+    });
+
+    if (!execution) {
+      throw new Error(
+        `Nenhuma execução encontrada para o checklistId: ${item.checklistSection.checklistId}`
+      );
+    }
+
+    // Buscar o ChecklistExecutionItem correspondente ao item
+    const executionItem = await prisma.checklistExecutionItem.findFirst({
+      where: {
+        checklistItemId: item.id,
+        checklistExecutionId: execution.id,
+      },
+    });
+
+    if (!executionItem) {
+      throw new Error(
+        `Nenhum ChecklistExecutionItem encontrado para itemId: ${item.id} e executionId: ${execution.id}`
+      );
+    }
+
+    // Criar o ticket
+    const ticket = await prisma.ticket.create({
+      data: {
+        title: `Problema: ${item.name}`,
+        description: `Foi identificado um problema no item: ${item.name}`,
+        status: 'OPEN',
+        priority: 'HIGH',
+        openedBy: { connect: { id: user.id } },
+        organization: { connect: { id: organization.id } },
+        branch: { connect: { id: branch.id } },
+        environment: { connect: { id: escritorio01.id } },
+        checklistExecution: { connect: { id: execution.id } },
+        checklistExecutionItem: { connect: { id: executionItem.id } },
+        labels: {
+          create: [
+            { label: { connect: { id: urgenteLabel.id } } },
+            { label: { connect: { id: infraestruturaLabel.id } } },
+          ],
+        },
+      },
+    });
+
+    // Adicionar um comentário ao ticket
+    await prisma.ticketComment.create({
+      data: {
+        ticket: { connect: { id: ticket.id } },
+        user: { connect: { id: user.id } },
+        content: `Comentário automático: problema reportado em ${item.name}`,
+      },
+    });
+  }
 
   // Criar filial Ubatuba
   console.log('Criando filial Ubatuba...');
@@ -467,7 +556,7 @@ async function main() {
         create: {
           user: {
             connect: {
-              id: brunoUser.id, 
+              id: brunoUser.id,
             },
           },
         },
@@ -475,6 +564,170 @@ async function main() {
     },
   });
   console.log('Departamento Marketing criado com sucesso!');
+
+  console.log('#### SEGUNDO USUARIO ####');
+
+  // ==== USUÁRIO FICTÍCIO DE HOTEL ====
+  // Criar usuário gerente do hotel
+  const hashedPasswordGerente = await bcrypt.hash('123123', 10);
+  const gerenteHotel = await prisma.user.create({
+    data: {
+      email: 'gerente@hotelparaiso.com',
+      name: 'Gerente Hotel Paraíso',
+      password: hashedPasswordGerente,
+      profileId: userProfile.id,
+    },
+  });
+
+  // Criar organização Hotel Paraíso
+  const hotelNiche = await prisma.niche.findFirst({ where: { name: 'Hotelaria e Turismo' } });
+  const hotelOrg = await prisma.organization.create({
+    data: {
+      name: 'Hotel Paraíso',
+      employeesCount: 10,
+      country: 'Brasil',
+      city: 'Rio de Janeiro',
+      niche: { connect: { id: hotelNiche.id } },
+    },
+  });
+
+  // Vincular gerente à organização
+  await prisma.organizationUser.create({
+    data: {
+      organizationId: hotelOrg.id,
+      userId: gerenteHotel.id,
+      profileId: adminProfile.id,
+    },
+  });
+
+  // Vincular o usuário principal à organização do Hotel Paraíso como perfil de usuário comum
+  await prisma.organizationUser.create({
+    data: {
+      organizationId: hotelOrg.id,
+      userId: user.id,
+      profileId: userProfile.id, // perfil de usuário comum
+    },
+  });
+  console.log('Usuário principal vinculado ao Hotel Paraíso como usuário!');
+
+  // Criar filial Matriz Hotel Paraíso
+  const hotelBranch = await prisma.branch.create({
+    data: {
+      name: 'Matriz Hotel Paraíso',
+      wizardCompleted: true,
+      organization: { connect: { id: hotelOrg.id } },
+    },
+  });
+
+  // Criar departamento Recepção
+  const hotelDept = await prisma.department.create({
+    data: {
+      name: 'Recepção',
+      branch: { connect: { id: hotelBranch.id } },
+      responsibles: {
+        create: {
+          user: { connect: { id: gerenteHotel.id } },
+        },
+      },
+    },
+  });
+
+  // Criar ambiente Recepção Principal
+  const hotelEnv = await prisma.environment.create({
+    data: {
+      name: 'Recepção Principal',
+      branch: { connect: { id: hotelBranch.id } },
+    },
+  });
+
+  // Criar checklist de recepção
+  const checklistHotel = await prisma.checklist.create({
+    data: {
+      name: 'Checklist de Recepção',
+      description: 'Checklist diário da recepção do hotel',
+      branch: { connect: { id: hotelBranch.id } },
+      environment: { connect: { id: hotelEnv.id } },
+      actived: true,
+      frequency: 'DAILY',
+      daysOfWeek: JSON.stringify([1, 2, 3, 4, 5, 6, 7]),
+      time: '07:00',
+    },
+  });
+
+  // Vincular gerente ao checklist
+  await prisma.checklistUser.create({
+    data: {
+      checklistId: checklistHotel.id,
+      userId: gerenteHotel.id,
+    },
+  });
+
+  // Criar seção do checklist
+  const hotelSection = await prisma.checklistSection.create({
+    data: {
+      name: 'Recepção Geral',
+      checklist: { connect: { id: checklistHotel.id } },
+      position: 1,
+    },
+  });
+
+  // Usar tipo de resposta Sim/Não já criado
+  const simNaoType = responseTypes.find((rt) => rt.name === 'Sim/Não');
+
+  // Criar itens do checklist
+  const hotelChecklistItems = [
+    'Balcão limpo e organizado?',
+    'Computador ligado?',
+    'Telefone funcionando?',
+    'Material de registro disponível?',
+    'Chaves organizadas?',
+  ];
+  for (let i = 0; i < hotelChecklistItems.length; i++) {
+    await prisma.checklistItem.create({
+      data: {
+        name: hotelChecklistItems[i],
+        description: null,
+        checklistSection: { connect: { id: hotelSection.id } },
+        position: i + 1,
+        checklistResponseType: { connect: { id: simNaoType.id } },
+        department: { connect: { id: hotelDept.id } },
+        allowNotApplicable: true,
+      },
+    });
+  }
+
+  // Criar execução do checklist para o gerente do hotel
+  console.log('Criando execução do checklist do Hotel Paraíso...');
+  const checklistExecutionHotel = await prisma.checklistExecution.create({
+    data: {
+      checklist: { connect: { id: checklistHotel.id } },
+      performedBy: { connect: { id: gerenteHotel.id } },
+      status: 'COMPLETED',
+      startedAt: new Date(),
+      completedAt: new Date(),
+    },
+  });
+
+  // Buscar os itens do checklist do hotel
+  const createdHotelItems = await prisma.checklistItem.findMany({
+    where: { checklistSectionId: hotelSection.id },
+  });
+
+  // Criar itens da execução
+  for (const item of createdHotelItems) {
+    await prisma.checklistExecutionItem.create({
+      data: {
+        checklistExecution: { connect: { id: checklistExecutionHotel.id } },
+        checklistItem: { connect: { id: item.id } },
+        isPositive: true,
+        note: 'Item verificado e em conformidade',
+      },
+    });
+  }
+
+  console.log('Execução do checklist do Hotel Paraíso criada com sucesso!');
+
+  console.log('Usuário fictício de hotel criado com sucesso!');
 
   console.log('Seed concluído com sucesso!');
 }

@@ -2,9 +2,17 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useSession, signIn } from 'next-auth/react';
-import { FormControl, Select, MenuItem, SelectChangeEvent, ListSubheader } from '@mui/material';
+import {
+  FormControl,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
+  ListSubheader,
+  Box,
+} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useRouter } from 'next/navigation';
+import LoadingScreen from '@/components/common/LoadingScreen';
 
 interface Branch {
   id: string;
@@ -78,6 +86,7 @@ export default function BranchSelector() {
   }, [session]);
 
   const handleBranchChange = async (event: SelectChangeEvent<string>) => {
+    setLoading(true);
     const branchId = event.target.value;
     setSelectedBranch(branchId);
     let branchObj = null;
@@ -116,10 +125,35 @@ export default function BranchSelector() {
 
       // Recarrega a página para atualizar o estado global
       router.refresh();
+
+      // Redireciona para o dashboard
+      router.push('/panel/dashboard');
     } catch (error) {
+      setLoading(false);
       console.error('Erro ao atualizar filial:', error);
     }
   };
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          bgcolor: 'primary.dark',
+          zIndex: 99999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <LoadingScreen />
+      </Box>
+    );
+  }
 
   if (loading || organizations.length === 0) {
     return null;

@@ -342,9 +342,13 @@ export default function DepartmentsPage() {
         <Table>
           <TableHead>
             <TableRow sx={{ backgroundColor: 'primary.dark' }}>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>{t('departments.name')}</TableCell>
-              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>{t('departments.responsibles')}</TableCell>
-              <TableCell width="120px" align="right" sx={{ color: 'white', fontWeight: 'bold' }}>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>
+                {t('departments.name')}
+              </TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>
+                {t('departments.responsibles')}
+              </TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold', width: 160 }} align="right">
                 {t('departments.actions')}
               </TableCell>
             </TableRow>
@@ -424,7 +428,7 @@ export default function DepartmentsPage() {
                       </Typography>
                     )}
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell align="right" sx={{ width: 160 }}>
                     <Tooltip title={t('departments.tooltips.addResponsible')}>
                       <IconButton
                         onClick={() => handleOpenResponsibleDialog(department)}

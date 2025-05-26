@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import useSWR from 'swr';
 import {
@@ -18,10 +18,18 @@ import {
   Snackbar,
   Tooltip,
   IconButton,
+  Modal,
+  Card,
+  CardContent,
+  Divider,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import Link from 'next/link';
-import { getChecklistsByBranch, toggleChecklistStatus } from '@/services/checklist.service';
+import {
+  getChecklistsByBranch,
+  toggleChecklistStatus,
+  getChecklistById,
+} from '@/services/checklist.service';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
@@ -39,6 +47,10 @@ export default function ChecklistListPage() {
   const { t } = useTranslation();
   const { data: session } = useSession();
   const branchId = session?.user?.branch?.id;
+  const [selectedChecklist, setSelectedChecklist] = useState<any>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [loadingChecklist, setLoadingChecklist] = useState(false);
+
   const {
     data: checklists = [],
     error,
@@ -49,6 +61,26 @@ export default function ChecklistListPage() {
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const [successMessage, setSuccessMessage] = React.useState<string | null>(null);
   const router = useRouter();
+
+  const handleChecklistClick = async (checklistId: string) => {
+    try {
+      setLoadingChecklist(true);
+      const checklist = await getChecklistById(checklistId);
+      setSelectedChecklist(checklist);
+      setModalOpen(true);
+    } catch (error) {
+      console.error('Erro ao carregar detalhes do checklist:', error);
+      setErrorMessage(t('checklists.error.loadDetailsError'));
+    } finally {
+      setLoadingChecklist(false);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setSelectedChecklist(null);
+  };
+
   const handleToggleStatus = async (checklistId: string) => {
     try {
       await toggleChecklistStatus(checklistId);
@@ -127,12 +159,12 @@ export default function ChecklistListPage() {
               {checklists.map((checklist: any) => (
                 <TableRow key={checklist.id}>
                   <TableCell>
-                    <Link
-                      href={`/panel/checklists/edit/${checklist.id}`}
-                      style={{ textDecoration: 'none', color: 'inherit' }}
+                    <Button
+                      onClick={() => handleChecklistClick(checklist.id)}
+                      sx={{ textTransform: 'none', color: 'inherit' }}
                     >
                       {checklist.name}
-                    </Link>
+                    </Button>
                   </TableCell>
                   <TableCell>{checklist.description}</TableCell>
                   <TableCell align="center">{checklist.itemCount}</TableCell>
@@ -179,6 +211,82 @@ export default function ChecklistListPage() {
           </Table>
         </TableContainer>
       )}
+
+      <Modal open={modalOpen} onClose={handleCloseModal} aria-labelledby="checklist-details-modal">
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '80%',
+            maxWidth: 800,
+            maxHeight: '80vh',
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+            overflow: 'auto',
+          }}
+        >
+          {loadingChecklist ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+              <CircularProgress />
+            </Box>
+          ) : selectedChecklist ? (
+            <>
+              <Typography variant="h5" gutterBottom>
+                {t('checklists.details.title')}
+              </Typography>
+              {selectedChecklist.description && (
+                <Typography color="text.secondary" paragraph>
+                  {selectedChecklist.description}
+                </Typography>
+              )}
+              <Divider sx={{ my: 2 }} />
+              {selectedChecklist.sections.map((section: any) => (
+                <Box key={section.id} sx={{ mb: 3 }}>
+                  <Typography variant="h6" sx={{ mb: 2 }}>
+                    {section.name}
+                  </Typography>
+                  {section.items.map((item: any) => (
+                    <Card key={item.id} sx={{ mb: 1 }}>
+                      <CardContent
+                        sx={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Box>
+                          <Typography variant="body1">{item.name}</Typography>
+                          {item.description && (
+                            <Typography variant="body2" color="text.secondary">
+                              {item.description}
+                            </Typography>
+                          )}
+                        </Box>
+                        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                          <Typography variant="body2" color="success.main">
+                            {item.checklistResponseType.positiveLabel}
+                          </Typography>
+                          <Typography variant="body2" color="error.main">
+                            {item.checklistResponseType.negativeLabel}
+                          </Typography>
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </Box>
+              ))}
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                <Button onClick={handleCloseModal}>{t('checklists.details.close')}</Button>
+              </Box>
+            </>
+          ) : null}
+        </Box>
+      </Modal>
+
       <Snackbar
         open={!!errorMessage}
         autoHideDuration={6000}

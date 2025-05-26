@@ -35,6 +35,7 @@ model User {
   status              String                  @default("ACTIVE")
   country             String?
   timezone            String?
+  
   organizationUsers   OrganizationUser[]
   checklistUsers      ChecklistUser[]
   checklistExecutions ChecklistExecution[]
@@ -45,6 +46,10 @@ model User {
   payments            Payment[]
   subscriptions       Subscription[]
   profile             Profile                 @relation(fields: [profileId], references: [id])
+  openedTickets       Ticket[]                @relation("OpenedTickets")
+  assignedTickets     Ticket[]                @relation("AssignedTickets")
+  ticketComments      TicketComment[]
+  changedTicketStatuses TicketStatusHistory[] @relation("ChangedTicketStatuses")
 
   @@index([profileId], map: "users_profileId_fkey")
   @@map("users")
@@ -75,6 +80,8 @@ model Organization {
   checkoutsession checkoutsession[]
   niche           Niche             @relation(fields: [nicheId], references: [id])
   organizationUsers  OrganizationUser[]
+  tickets           Ticket[]
+  ticketLabels      TicketLabel[]
   
   @@index([nicheId], map: "organizations_niche_id_fkey")
   @@map("organizations")
@@ -120,6 +127,7 @@ model Branch {
   checklists      Checklist[]
   departments     Department[]
   environments    Environment[]
+  tickets           Ticket[]
 
   @@index([organizationId], map: "branches_organization_id_fkey")
   @@map("branches")
@@ -160,6 +168,7 @@ model Environment {
   branchId   String      @map("branch_id")
   checklists Checklist[]
   branch     Branch      @relation(fields: [branchId], references: [id])
+  tickets           Ticket[]
 
   @@index([branchId], map: "environments_branch_id_fkey")
   @@map("environments")
@@ -362,6 +371,7 @@ model ChecklistExecution {
   items         ChecklistExecutionItem[]
   checklist     Checklist                @relation(fields: [checklistId], references: [id])
   performedBy   User                     @relation(fields: [performedById], references: [id])
+  tickets       Ticket[]
 
   @@index([checklistId], map: "checklist_executions_checklist_id_fkey")
   @@index([performedById], map: "checklist_executions_performed_by_id_fkey")
@@ -379,6 +389,7 @@ model ChecklistExecutionItem {
   updatedAt            DateTime           @updatedAt @map("updated_at")
   checklistExecution   ChecklistExecution @relation(fields: [checklistExecutionId], references: [id])
   checklistItem        ChecklistItem      @relation(fields: [checklistItemId], references: [id])
+  tickets              Ticket[]
 
   @@index([checklistExecutionId], map: "checklist_execution_items_checklist_execution_id_fkey")
   @@index([checklistItemId], map: "checklist_execution_items_checklist_item_id_fkey")
@@ -418,6 +429,123 @@ model webhookevent {
   @@index([processed], map: "WebhookEvent_processed_idx")
   @@index([type], map: "WebhookEvent_type_idx")
 }
+
+model Ticket {
+  id                      String                 @id @default(cuid())
+  title                   String
+  description             String                 @db.Text
+  status                  TicketStatus           @default(OPEN)
+  priority                TicketPriority         @default(MEDIUM)
+
+  openedById              String                 @map("opened_by_id")
+  openedBy                User                   @relation("OpenedTickets", fields: [openedById], references: [id])
+
+  assignedToId            String?                @map("assigned_to_id")
+  assignedTo              User?                  @relation("AssignedTickets", fields: [assignedToId], references: [id])
+
+  organizationId          String                 @map("organization_id")
+  organization            Organization           @relation(fields: [organizationId], references: [id])
+
+  branchId                String?                @map("branch_id")
+  branch                  Branch?                @relation(fields: [branchId], references: [id])
+
+  environmentId           String?                @map("environment_id")
+  environment             Environment?           @relation(fields: [environmentId], references: [id])
+
+  checklistExecutionId    String?                @map("checklist_execution_id")
+  checklistExecution      ChecklistExecution?    @relation(fields: [checklistExecutionId], references: [id])
+
+  checklistExecutionItemId String?               @map("checklist_execution_item_id")
+  checklistExecutionItem  ChecklistExecutionItem? @relation(fields: [checklistExecutionItemId], references: [id])
+
+  comments                TicketComment[]
+  attachments             TicketAttachment[]
+  labels                  TicketLabelOnTicket[]
+  statusHistory           TicketStatusHistory[]
+
+  createdAt               DateTime               @default(now()) @map("created_at")
+  finishedAt              DateTime?               @map("finished_at")
+  updatedAt               DateTime               @updatedAt      @map("updated_at")
+
+  @@map("tickets")
+}
+
+model TicketComment {
+  id         String   @id @default(cuid())
+  ticketId   String   @map("ticket_id")
+  ticket     Ticket   @relation(fields: [ticketId], references: [id])
+  userId     String   @map("user_id")
+  user       User     @relation(fields: [userId], references: [id])
+  content    String   @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("ticket_comments")
+}
+
+model TicketAttachment {
+  id         String   @id @default(cuid())
+  ticketId   String   @map("ticket_id")
+  ticket     Ticket   @relation(fields: [ticketId], references: [id])
+  url        String
+  filename   String
+  mimeType   String
+  size       Int
+  uploadedAt DateTime @default(now()) @map("uploaded_at")
+
+  @@map("ticket_attachments")
+}
+
+model TicketLabel {
+  id        String   @id @default(cuid())
+  name      String
+  color     String?  // HEX ex: #FF0000
+  organizationId String @map("organization_id")
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  tickets   TicketLabelOnTicket[]
+
+  @@map("ticket_labels")
+}
+
+model TicketLabelOnTicket {
+  ticketId String @map("ticket_id")
+  labelId  String @map("label_id")
+
+  ticket   Ticket @relation(fields: [ticketId], references: [id])
+  label    TicketLabel @relation(fields: [labelId], references: [id])
+
+  @@id([ticketId, labelId])
+  @@map("ticket_labels_on_tickets")
+}
+
+model TicketStatusHistory {
+  id        String      @id @default(cuid())
+  ticketId  String      @map("ticket_id")
+  ticket    Ticket      @relation(fields: [ticketId], references: [id])
+  oldStatus TicketStatus
+  newStatus TicketStatus
+  changedById String    @map("changed_by_id")
+  changedBy  User       @relation("ChangedTicketStatuses", fields: [changedById], references: [id])
+  changedAt  DateTime   @default(now()) @map("changed_at")
+
+  @@map("ticket_status_history")
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  ON_HOLD
+  COMPLETED
+  CANCELED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
 
 enum SubscriptionStatus {
   ACTIVE

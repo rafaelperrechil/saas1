@@ -457,7 +457,12 @@
     },
     "error": {
       "loadError": "Erro ao carregar checklists",
-      "statusUpdateError": "Erro ao atualizar status do checklist"
+      "statusUpdateError": "Erro ao atualizar status do checklist",
+      "loadDetailsError": "Erro ao carregar detalhes do checklist"
+    },
+    "details": {
+      "title": "Detalhes do Checklist",
+      "close": "Fechar"
     },
     "edit": { "title": "Editar Checklist" },
     "steps": {
