@@ -240,7 +240,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 placement="right"
                 componentsProps={tooltipStyles}
               >
-                <ListItemButton onClick={() => handleItemClick('/panel/departments')}>
+                <ListItemButton onClick={() => handleItemClick('/panel/tickets')}>
                   <ListItemIcon>
                     <BugReportIcon sx={{ color: '#FFFFFF' }} />
                   </ListItemIcon>
