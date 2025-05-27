@@ -20,6 +20,8 @@ interface Plan {
   extraUnitPrice: number | null;
   isCustom: boolean;
   action?: 'current' | 'upgrade';
+  maxTickets?: number | null;
+  maxInspections?: number | null;
 }
 
 export default function PricingPlans({
@@ -150,18 +152,41 @@ export default function PricingPlans({
                       </Typography>
                     </Box>
                   )}
+                  {plan.maxInspections !== null && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <CheckCircleIcon sx={{ mr: 1, color: 'primary.main' }} fontSize="small" />
+                      <Typography>
+                        {t('pricing.maxInspections')}: <strong>{plan.maxInspections}</strong>
+                      </Typography>
+                    </Box>
+                  )}
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                     <CheckCircleIcon sx={{ mr: 1, color: 'primary.main' }} fontSize="small" />
                     <Typography>
                       {t('pricing.maxUsers')}: <strong>{plan.maxUsers}</strong>
                     </Typography>
                   </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                  {plan.maxTickets !== null && (
+                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                      <CheckCircleIcon sx={{ mr: 1, color: 'primary.main' }} fontSize="small" />
+                      <Typography>
+                        {t('pricing.maxTickets')}: <strong>{plan.maxTickets}</strong>
+                      </Typography>
+                    </Box>
+                  )}
+
+                  {/* <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                     <CheckCircleIcon sx={{ mr: 1, color: 'primary.main' }} fontSize="small" />
                     <Typography>
                       {t('pricing.includedUnits')}: <strong>{plan.includedUnits}</strong>
                     </Typography>
                   </Box>
+
+                  {plan.extraUserPrice !== null && plan.extraUnitPrice !== null && (
+                    <Typography variant="h6" sx={{ mt: 2, mb: 1, textAlign: 'center' }}>
+                      Extras
+                    </Typography>
+                  )}
                   {plan.extraUserPrice !== null && (
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <CheckCircleIcon sx={{ mr: 1, color: 'primary.main' }} fontSize="small" />
@@ -174,12 +199,12 @@ export default function PricingPlans({
                   {plan.extraUnitPrice !== null && (
                     <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                       <CheckCircleIcon sx={{ mr: 1, color: 'primary.main' }} fontSize="small" />
-                      <Typography>
+                      <Typography variant="body2" color="textSecondary">
                         {t('pricing.extraUnitPrice')}:{' '}
                         <strong>{formatCurrency(plan.extraUnitPrice)}</strong>
                       </Typography>
                     </Box>
-                  )}
+                  )} */}
                 </Box>
               </CardContent>
               <Box sx={{ p: 2 }}>

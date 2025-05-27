@@ -10,12 +10,12 @@ export async function GET() {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
-    const checkoutSessions = await prisma.checkoutSession.findMany({
+    const checkoutSessions = await prisma.checkoutsession.findMany({
       where: {
         customerId: session.user.id,
       },
       include: {
-        plan: true,
+        plans: true,
       },
       orderBy: {
         createdAt: 'desc',

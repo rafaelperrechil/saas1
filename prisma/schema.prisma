@@ -179,9 +179,11 @@ model Plan {
   name            String            @unique
   price           Decimal
   includedUnits   Int               @map("included_units")
-  maxUsers        Int               @map("max_users")
-  extraUserPrice  Decimal?          @map("extra_user_price")
+  maxUsers        Int?               @map("max_users")
+  maxInspections  Int?              @map("max_inspections")
   maxChecklists   Int?              @map("max_checklists")
+  maxTickets      Int?              @map("max_tickets")
+  extraUserPrice  Decimal?          @map("extra_user_price")
   extraUnitPrice  Decimal?          @map("extra_unit_price")
   isCustom        Boolean           @default(false) @map("is_custom")
   createdAt       DateTime          @default(now()) @map("created_at")

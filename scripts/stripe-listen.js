@@ -10,7 +10,7 @@ const crypto = require('crypto');
 
 // Configurações
 const PORT = 4242;
-const LOCAL_WEBHOOK_URL = 'http://localhost:3000/api/webhook'; // Ajuste para seu endpoint
+const LOCAL_WEBHOOK_URL = 'http://localhost:3003/api/webhook'; // Ajuste para seu endpoint
 const SECRET_KEY = process.argv[2]; // Passe sua chave secreta do Stripe como argumento
 
 // Verificar se a chave foi fornecida

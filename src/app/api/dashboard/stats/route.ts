@@ -17,6 +17,13 @@ export async function GET() {
       return NextResponse.json({ error: 'Organização não encontrada' }, { status: 404 });
     }
 
+    // Buscar todos os branchIds da organização
+    const branches = await prisma.branch.findMany({
+      where: { organizationId },
+      select: { id: true },
+    });
+    const branchIds = branches.map((b) => b.id);
+
     // Buscar estatísticas
     const stats = {
       totalUsers: await prisma.organizationUser.count({
@@ -24,18 +31,21 @@ export async function GET() {
           organizationId: organizationId,
         },
       }),
-      totalDepartments: await prisma.department.count({
+      totalChecklists: await prisma.checklist.count({
         where: {
-          branch: {
-            organizationId: organizationId,
+          branchId: { in: branchIds },
+        },
+      }),
+      totalInspections: await prisma.checklistExecution.count({
+        where: {
+          checklist: {
+            branchId: { in: branchIds },
           },
         },
       }),
-      totalEnvironments: await prisma.environment.count({
+      totalTickets: await prisma.ticket.count({
         where: {
-          branch: {
-            organizationId: organizationId,
-          },
+          branchId: { in: branchIds },
         },
       }),
     };

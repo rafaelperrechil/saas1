@@ -9,7 +9,7 @@ const crypto = require('crypto');
 const fs = require('fs');
 
 // URL do webhook (ajuste conforme necessário)
-const webhookUrl = 'http://localhost:3000/api/webhook';
+const webhookUrl = 'http://localhost:3003/api/webhook';
 
 // Gerar ID aleatório para o teste
 const generateId = (prefix) => `${prefix}_${crypto.randomBytes(12).toString('hex')}`;

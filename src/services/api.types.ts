@@ -103,6 +103,9 @@ export interface DashboardStats {
   totalLogins: number;
   totalOrganizations: number;
   totalBranches: number;
+  totalChecklists: number;
+  totalInspections: number;
+  totalTickets: number;
 }
 
 // Tipos de nicho

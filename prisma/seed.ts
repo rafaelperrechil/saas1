@@ -207,39 +207,47 @@ async function main() {
       includedUnits: 1,
       maxUsers: 2,
       extraUserPrice: null,
-      maxChecklists: 1,
+      maxChecklists: 3,
       extraUnitPrice: null,
       isCustom: false,
+      maxInspections: 20,
+      maxTickets: 20,
     },
     {
       name: 'Starter',
-      price: 49,
+      price: 19,
       includedUnits: 1,
-      maxUsers: 5,
-      extraUserPrice: 9,
-      maxChecklists: 5,
+      maxUsers: 10,
+      extraUserPrice: 5,
+      maxChecklists: 15,
       extraUnitPrice: 19,
       isCustom: false,
+      maxInspections: 150,
+      maxTickets: 300,
     },
     {
       name: 'Business',
-      price: 119,
+      price: 49,
       includedUnits: 1,
-      maxUsers: 15,
-      extraUserPrice: 7,
-      maxChecklists: 15,
+      maxUsers: 40,
+      extraUserPrice: 4,
+      maxChecklists: 50,
       extraUnitPrice: 29,
       isCustom: false,
+      maxInspections: 500,
+      maxTickets: 1500,
     },
     {
       name: 'Platinum',
-      price: 249,
+      price: 129,
       includedUnits: 1,
-      maxUsers: 50,
-      extraUserPrice: 5,
-      maxChecklists: null, // Ilimitado
-      extraUnitPrice: 49,
+      maxUsers: 100,
+      extraUserPrice: 2,
+      maxChecklists: 200,
+      extraUnitPrice: 39,
       isCustom: false,
+      maxInspections: 1500,
+      maxTickets: 3500,
     },
   ];
 
@@ -250,6 +258,29 @@ async function main() {
   }
 
   console.log('Planos criados com sucesso!');
+
+  // Buscar o plano Free
+  const freePlan = await prisma.plan.findFirst({
+    where: {
+      name: 'Free',
+    },
+  });
+
+  if (!freePlan) {
+    throw new Error('Plano Free não encontrado');
+  }
+
+  // Criar assinatura do plano Free para o usuário
+  await prisma.subscription.create({
+    data: {
+      userId: user.id,
+      planId: freePlan.id,
+      status: 'ACTIVE',
+      startDate: new Date(),
+    },
+  });
+
+  console.log('Assinatura do plano Free criada com sucesso!');
 
   console.log('Criando tipos de resposta...');
   const responseTypesData = [

@@ -13,7 +13,7 @@ class Api {
     // Em desenvolvimento, usa a URL base do servidor
     this.baseUrl =
       process.env.NEXT_PUBLIC_API_URL ||
-      (typeof window === 'undefined' ? 'http://localhost:3000' : '');
+      (typeof window === 'undefined' ? 'http://localhost:3003' : '');
   }
 
   private getFullUrl(endpoint: string): string {

@@ -9,7 +9,7 @@ const nextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   server: {
-    port: 3000,
+    port: 3003,
   },
 };
 

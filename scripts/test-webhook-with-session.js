@@ -15,7 +15,7 @@ const crypto = require('crypto');
 const prisma = new PrismaClient();
 
 // URL do webhook (ajuste conforme necessário)
-const webhookUrl = 'http://localhost:3000/api/webhook';
+const webhookUrl = 'http://localhost:3003/api/webhook';
 
 // Gerar ID aleatório para o teste
 const generateId = (prefix) => `${prefix}_${crypto.randomBytes(12).toString('hex')}`;
@@ -106,7 +106,7 @@ async function runTest() {
     await sendWebhookEvent(testEvent);
 
     // 7. Esperar um pouco para o webhook processar
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    await new Promise((resolve) => setTimeout(resolve, 3003));
 
     // 8. Verificar se o pagamento foi atualizado
     console.log('Verificando se o pagamento foi atualizado...');

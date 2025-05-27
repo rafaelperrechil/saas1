@@ -10,6 +10,8 @@ import StatsCard from '@/components/account/StatsCard';
 import BillingHistoryCard from '@/components/account/BillingHistoryCard';
 import { checkoutService, planService } from '@/services';
 import { CheckoutSession, Plan } from '@/services/api.types';
+import { dashboardService } from '@/services/dashboard.service';
+import { DashboardStats } from '@/services/api.types';
 
 export default function BillingPage() {
   const { t } = useTranslation();
@@ -19,6 +21,7 @@ export default function BillingPage() {
   const [currentPlan, setCurrentPlan] = useState<Plan | null>(null);
   const [payments, setPayments] = useState<CheckoutSession[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [stats, setStats] = useState<DashboardStats | null>(null);
 
   useEffect(() => {
     // Verificar se o usuário está autenticado
@@ -46,6 +49,15 @@ export default function BillingPage() {
           const paymentsResponse = await checkoutService.getCheckoutSessions();
           if (paymentsResponse.data) {
             setPayments(paymentsResponse.data);
+          }
+
+          // Buscar estatísticas
+          const statsResponse = await dashboardService.getStats();
+          if (statsResponse.data) {
+            setStats(statsResponse.data.data);
+            console.log('statsResponse.data', statsResponse.data);
+          } else if (statsResponse.error) {
+            setError(statsResponse.error);
           }
         } catch (error) {
           console.error('Erro ao carregar dados:', error);
@@ -111,6 +123,16 @@ export default function BillingPage() {
           <StatsCard
             translations={{
               statistics: 'Estatísticas',
+            }}
+            stats={{
+              totalUsers: stats?.totalUsers || 0,
+              maxUsers: currentPlan?.maxUsers,
+              totalChecklists: stats?.totalChecklists || 0,
+              maxChecklists: currentPlan?.maxChecklists || undefined,
+              totalInspections: stats?.totalInspections || 0,
+              totalTickets: stats?.totalTickets || 0,
+              maxInspections: currentPlan?.maxInspections || undefined,
+              maxTickets: currentPlan?.maxTickets || undefined,
             }}
           />
         </Box>

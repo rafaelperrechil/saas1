@@ -7,7 +7,7 @@ const http = require('http');
 const crypto = require('crypto');
 
 // URL do webhook local
-const WEBHOOK_URL = 'http://localhost:3000/api/webhook';
+const WEBHOOK_URL = 'http://localhost:3003/api/webhook';
 
 // Obter o webhook secret do argumento de linha de comando ou usar o padrão
 const WEBHOOK_SECRET =
