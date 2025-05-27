@@ -46,9 +46,9 @@ jest.mock('react-i18next', () => ({
         'wizard.environments.errors.emptyNames': 'Preencha todos os nomes',
         'wizard.environments.errors.duplicateNames': 'Nome duplicado',
         'wizard.environments.errors.noEnvironments': 'Adicione pelo menos um ambiente',
-        'wizard.common.saving': 'Salvando...',
-        'wizard.common.back': 'Voltar',
-        'wizard.common.finish': 'Finalizar',
+        'common.saving': 'Salvando...',
+        'common.back': 'Voltar',
+        'common.finish': 'Finalizar',
       };
       return translations[key] || key;
     },

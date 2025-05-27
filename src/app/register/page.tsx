@@ -129,7 +129,7 @@ export default function RegisterPage() {
       }
 
       if (loginResponse.data) {
-        router.replace('/panel/dashboard');
+        router.replace('/panel/wizard');
       } else {
         setError(t('auth.register.error.loginAfterRegister'));
       }
@@ -252,7 +252,11 @@ export default function RegisterPage() {
               sx={{ mt: 3, mb: 2, p: 2 }}
               disabled={isLoading || isCheckingEmail || emailExists}
             >
-              {isLoading ? <CircularProgress size={24} /> : t('auth.register.submit')}
+              {isLoading ? (
+                <CircularProgress size={24} sx={{ color: 'white' }} />
+              ) : (
+                t('auth.register.submit')
+              )}
             </Button>
           </form>
 

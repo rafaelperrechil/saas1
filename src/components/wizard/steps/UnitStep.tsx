@@ -58,7 +58,7 @@ export default function UnitStep({ data, onChange, onBack, onNext }: UnitStepPro
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
         <Button variant="outlined" onClick={onBack} startIcon={<ArrowBack />}>
-          {t('wizard.common.back')}
+          {t('common.back')}
         </Button>
         <Button
           variant="contained"
@@ -72,7 +72,7 @@ export default function UnitStep({ data, onChange, onBack, onNext }: UnitStepPro
           }}
           data-testid="unit-step-next-button"
         >
-          {t('wizard.common.next')}
+          {t('common.next')}
         </Button>
       </Box>
     </Box>

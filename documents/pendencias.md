@@ -1,5 +1,5 @@
 - ao criar uma conta:
-  - criar um subscriptions para o user com o plano com o name igual a 'Free'
+  - [OK] criar um subscriptions para o user com o plano com o name igual a 'Free'
 - caracteristicas dos planos:
   - criar uma tabela characteristics com os campos id, descricao
   - criar uma tabela plans_characteristics com os campos plansid, characteristicid e hascharacteristic

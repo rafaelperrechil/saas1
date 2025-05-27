@@ -175,10 +175,15 @@ export default function OrganizationStep({
                 {...params}
                 label={t('wizard.organization.country')}
                 required
-                inputProps={{ 'data-testid': 'country' }}
+                inputProps={{
+                  ...params.inputProps,
+                  'data-testid': 'country',
+                }}
               />
             )}
             disabled={readOnly}
+            isOptionEqualToValue={(option, value) => option === value}
+            freeSolo
           />
         </Grid>
 
@@ -192,10 +197,15 @@ export default function OrganizationStep({
                 {...params}
                 label={t('wizard.organization.city')}
                 required
-                inputProps={{ 'data-testid': 'city' }}
+                inputProps={{
+                  ...params.inputProps,
+                  'data-testid': 'city',
+                }}
               />
             )}
             disabled={readOnly || !data.country}
+            isOptionEqualToValue={(option, value) => option === value}
+            freeSolo
           />
         </Grid>
 
@@ -230,7 +240,7 @@ export default function OrganizationStep({
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
         <Button variant="outlined" onClick={onBack} startIcon={<ArrowBack />}>
-          {t('wizard.common.back')}
+          {t('common.back')}
         </Button>
         <Button
           variant="contained"
@@ -244,7 +254,7 @@ export default function OrganizationStep({
           }}
           data-testid="organization-step-next-button"
         >
-          {t('wizard.common.next')}
+          {t('common.next')}
         </Button>
       </Box>
     </Box>

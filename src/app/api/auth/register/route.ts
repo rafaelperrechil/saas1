@@ -22,10 +22,10 @@ export async function POST(req: NextRequest) {
     // Hash da senha
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Criar perfil
-    const profile = await prisma.profile.create({
-      data: {
-        name: name,
+    // Buscar o perfil 'User'
+    const profile = await prisma.profile.findFirst({
+      where: {
+        name: 'User',
       },
     });
 
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
         name,
         email,
         password: hashedPassword,
-        profileId: profile.id,
+        profileId: profile?.id,
       },
     });
 
@@ -46,15 +46,11 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    if (!freePlan) {
-      throw new Error('Plano gratuito não encontrado');
-    }
-
     // Criar a assinatura gratuita
     await prisma.subscription.create({
       data: {
         userId: user.id,
-        planId: freePlan.id,
+        planId: freePlan?.id,
         status: 'ACTIVE',
         startDate: new Date(),
         endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 ano

@@ -334,13 +334,6 @@
       "emptyNames": "Todos os ambientes devem ter um nome",
       "duplicateNames": "Não pode haver ambientes com nomes duplicados",
       "noEnvironments": "Adicione pelo menos um ambiente"
-    },
-    "common": {
-      "next": "Próximo",
-      "back": "Voltar",
-      "finish": "Concluir",
-      "required": "Campo obrigatório",
-      "saving": "Salvando..."
     }
   },
   "menu": {
@@ -369,7 +362,12 @@
   },
   "common": {
     "saving": "Salvando...",
-    "save": "Salvar"
+    "save": "Salvar",
+    "add": "Adicionar",
+    "next": "Próximo",
+    "back": "Voltar",
+    "finish": "Concluir",
+    "required": "Campo obrigatório"
   },
   "environments": {
     "title": "Ambientes",

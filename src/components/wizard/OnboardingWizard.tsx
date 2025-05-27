@@ -10,6 +10,8 @@ import DepartmentsStep from './steps/DepartmentsStep';
 import EnvironmentsStep from './steps/EnvironmentsStep';
 import CompletionStep from './steps/CompletionStep';
 import api from '@/services/api';
+import { signIn, useSession } from 'next-auth/react';
+import { wizardService } from '@/services';
 
 interface OnboardingWizardProps {
   onComplete: () => void;
@@ -36,8 +38,8 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
   const [formData, setFormData] = useState({
     organization: {
       name: '',
-      employeesCount: '',
-      country: '',
+      employeesCount: 1,
+      country: 'Brasil',
       city: '',
       nicheId: '',
     },
@@ -54,6 +56,8 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
     environments: [] as Array<{ name: string; position: number }>,
   });
 
+  const { data: session } = useSession();
+
   useEffect(() => {
     const fetchOrganizationData = async () => {
       try {
@@ -61,18 +65,20 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
           requiresAuth: true,
         });
 
-        if (response.data?.hasCompletedWizard) {
-          setHasCompletedWizard(true);
-          setFormData((prev) => ({
-            ...prev,
-            organization: {
-              name: response.data.organizationData.name,
-              employeesCount: response.data.organizationData.employeesCount || '',
-              country: response.data.organizationData.country || '',
-              city: response.data.organizationData.city || '',
-              nicheId: response.data.organizationData.nicheId || '',
-            },
-          }));
+        if (response.data && 'hasCompletedWizard' in response.data) {
+          setHasCompletedWizard(response.data.hasCompletedWizard);
+          if (response.data.organizationData) {
+            setFormData((prev) => ({
+              ...prev,
+              organization: {
+                name: response.data.organizationData.name || '',
+                employeesCount: Number(response.data.organizationData.employeesCount) || 0,
+                country: response.data.organizationData.country || '',
+                city: response.data.organizationData.city || '',
+                nicheId: response.data.organizationData.nicheId || '',
+              },
+            }));
+          }
         }
       } catch (error) {
         console.error('Erro ao buscar dados da organização:', error);
@@ -85,16 +91,43 @@ export default function OnboardingWizard({ onComplete }: OnboardingWizardProps) 
   const handleNext = async () => {
     if (activeStep === steps.length - 1) {
       try {
-        const response = await api.post('/api/wizard', formData, {
-          requiresAuth: true,
-          requiresCSRF: true,
-        });
+        // Preparar os dados para salvar
+        const dataToSave = {
+          organization: {
+            ...formData.organization,
+            employeesCount: Number(formData.organization.employeesCount),
+          },
+          branch: formData.branch,
+          departments: formData.departments.map((dept) => ({
+            name: dept.name,
+            responsibles: dept.responsibles.map((resp) => ({
+              email: resp.email,
+              status: resp.status,
+            })),
+          })),
+          environments: formData.environments.map((env, index) => ({
+            name: env.name,
+            position: index,
+          })),
+        };
 
+        const response = await wizardService.saveWizardData(dataToSave);
+        console.log('saveWizardData', response);
         if (response.error) {
           throw new Error(response.error);
         }
 
         setCompleted(true);
+        // Atualiza a sessão do usuário para garantir que a organização esteja disponível
+        //if (session?.user?.email && response.data && 'branch' in response.data) {
+        if (session?.user?.email) {
+          await signIn('credentials', {
+            redirect: false,
+            email: session?.user?.email,
+            branchId: response?.data?.data?.branch?.id,
+            trigger: 'update',
+          });
+        }
         // Aguarda 2 segundos antes de redirecionar
         setTimeout(onComplete, 2000);
       } catch (error) {

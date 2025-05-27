@@ -51,15 +51,20 @@ export default function WizardPage() {
         display: 'flex',
         flexDirection: 'column',
         bgcolor: '#f8f9fa',
+        height: '100vh',
+        justifyContent: 'center',
+        alignItems: 'center',
       }}
     >
       <Container
         maxWidth="md"
         sx={{
           py: 4,
-          flex: 1,
           display: 'flex',
           flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: 'auto',
         }}
       >
         <Box
@@ -68,9 +73,13 @@ export default function WizardPage() {
             borderRadius: 2,
             boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
             overflow: 'hidden',
-            flex: 1,
             display: 'flex',
             flexDirection: 'column',
+            alignItems: 'center',
+            width: '100%',
+            maxWidth: 800,
+            px: { xs: 2, sm: 4 },
+            py: { xs: 2, sm: 4 },
           }}
         >
           <OnboardingWizard

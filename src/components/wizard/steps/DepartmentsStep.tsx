@@ -312,11 +312,11 @@ export default function DepartmentsStep({ data, onChange, onBack, onNext }: Depa
         fullWidth
         role="dialog"
       >
-        <DialogTitle>{t('wizard.departments.newDepartment')}</DialogTitle>
+        <DialogTitle>{t('departments.newDepartment')}</DialogTitle>
         <DialogContent>
           <TextField
             fullWidth
-            label={t('wizard.departments.name')}
+            label={t('departments.name')}
             value={newDepartmentName}
             onChange={(e) => {
               setNewDepartmentName(e.target.value);
@@ -326,59 +326,58 @@ export default function DepartmentsStep({ data, onChange, onBack, onNext }: Depa
             helperText={departmentNameError}
             sx={{ mb: 2 }}
           />
-          <TextField
-            fullWidth
-            label={t('wizard.departments.responsibleEmail')}
-            value={currentResponsibleEmail}
-            onChange={(e) => {
-              setCurrentResponsibleEmail(e.target.value);
-              if (responsibleEmailError) setResponsibleEmailError('');
-            }}
-            error={!!responsibleEmailError}
-            helperText={responsibleEmailError}
-            sx={{ mb: 2 }}
-            aria-label="E-mail do Responsável"
-          />
 
-          <Typography variant="subtitle1" sx={{ mt: 3, mb: 2 }}>
+          <Typography variant="h6" sx={{ mt: 2, mb: 2 }}>
             {t('wizard.departments.responsibles')}
           </Typography>
 
-          <Stack spacing={2}>
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              <Button
-                variant="contained"
-                onClick={() => addResponsibleToList()}
-                startIcon={<PersonAdd />}
-                aria-label="Adicionar"
-              >
-                {t('common.add')}
-              </Button>
-            </Box>
+          <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start', mb: 2 }}>
+            <TextField
+              fullWidth
+              label={t('departments.responsibleEmail')}
+              value={currentResponsibleEmail}
+              onChange={(e) => {
+                setCurrentResponsibleEmail(e.target.value);
+                if (responsibleEmailError) setResponsibleEmailError('');
+              }}
+              error={!!responsibleEmailError}
+              helperText={responsibleEmailError}
+              aria-label="E-mail do Responsável"
+              sx={{ mb: 0, flex: 1 }}
+            />
+            <Button
+              variant="contained"
+              onClick={() => addResponsibleToList()}
+              startIcon={<PersonAdd />}
+              aria-label="Adicionar"
+              sx={{ height: '56px', minWidth: '120px' }}
+            >
+              {t('common.add')}
+            </Button>
+          </Box>
 
-            {newResponsibles.length > 0 && (
-              <Paper variant="outlined" sx={{ p: 2 }}>
-                <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                  {t('wizard.departments.responsiblesAdded')}
-                </Typography>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-                  {newResponsibles.map((email) => (
-                    <Chip
-                      key={email}
-                      label={email}
-                      onDelete={() => removeResponsibleFromList(email)}
-                      color="primary"
-                      variant="outlined"
-                      size="small"
-                    />
-                  ))}
-                </Box>
-              </Paper>
-            )}
-          </Stack>
+          {newResponsibles.length > 0 && (
+            <Paper variant="outlined" sx={{ p: 2 }}>
+              <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                {t('wizard.departments.responsibles')}
+              </Typography>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+                {newResponsibles.map((email) => (
+                  <Chip
+                    key={email}
+                    label={email}
+                    onDelete={() => removeResponsibleFromList(email)}
+                    color="primary"
+                    variant="outlined"
+                    size="small"
+                  />
+                ))}
+              </Box>
+            </Paper>
+          )}
         </DialogContent>
         <DialogActions sx={{ p: 2, pt: 0 }}>
-          <Button onClick={handleCloseDepartmentDialog}>{t('wizard.common.back')}</Button>
+          <Button onClick={handleCloseDepartmentDialog}>{t('common.back')}</Button>
           <Button variant="contained" onClick={() => addDepartment(false)} aria-label="Salvar">
             {t('common.save')}
           </Button>

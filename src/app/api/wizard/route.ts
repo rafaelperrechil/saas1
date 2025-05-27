@@ -18,15 +18,29 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
     }
 
-    // Buscar o perfil do usuário atual
-    const currentUser = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      include: { profile: true },
+    // Verifica se o usuário já tem uma organização vinculada
+    const existingOrgUser = await prisma.organizationUser.findFirst({
+      where: { userId: session.user.id },
+    });
+    if (existingOrgUser) {
+      return NextResponse.json(
+        { error: 'Wizard já foi concluído para este usuário.' },
+        { status: 400 }
+      );
+    }
+
+    // Buscar o perfil 'User' e 'Administrador'
+    const profileUser = await prisma.profile.findFirst({
+      where: {
+        name: 'User',
+      },
     });
 
-    if (!currentUser?.profile) {
-      return NextResponse.json({ error: 'Perfil não encontrado' }, { status: 400 });
-    }
+    const profileAdmin = await prisma.profile.findFirst({
+      where: {
+        name: 'Administrador',
+      },
+    });
 
     const data = await req.json();
     console.log('Dados recebidos:', data);
@@ -65,20 +79,27 @@ export async function POST(req: Request) {
           // Depois criar os usuários responsáveis e vinculá-los ao departamento
           await Promise.all(
             dept.responsibles.map(async (resp: { email: string; status: string }) => {
-              // Criar o usuário com perfil
-              const user = await prisma.user.create({
-                data: {
-                  email: resp.email,
-                  name: resp.email.split('@')[0], // Nome temporário baseado no email
-                  password: '', // Senha temporária
-                  status: resp.status,
-                  profile: {
-                    connect: {
-                      id: currentUser.profile.id,
+              // Verificar se o usuário já existe
+              let user = await prisma.user.findUnique({
+                where: { email: resp.email },
+              });
+
+              if (!user) {
+                // Criar o usuário com perfil
+                user = await prisma.user.create({
+                  data: {
+                    email: resp.email,
+                    name: resp.email.split('@')[0], // Nome temporário baseado no email
+                    password: '', // Senha temporária
+                    status: resp.status,
+                    profile: {
+                      connect: {
+                        id: profileUser?.id,
+                      },
                     },
                   },
-                },
-              });
+                });
+              }
 
               // Vincular o usuário ao departamento
               await prisma.departmentResponsible.create({
@@ -110,15 +131,15 @@ export async function POST(req: Request) {
       })
     );
 
-    // Atualizar o usuário com a filial
-    await prisma.user.update({
-      where: { id: session.user.id },
+    // Criar vínculo do usuário logado com a organização na tabela intermediária
+    if (!profileAdmin?.id) {
+      throw new Error('Perfil Administrador não encontrado');
+    }
+    await prisma.organizationUser.create({
       data: {
-        organization: {
-          connect: {
-            id: organization.id,
-          },
-        },
+        organizationId: organization.id,
+        userId: session.user.id,
+        profileId: profileAdmin.id,
       },
     });
 

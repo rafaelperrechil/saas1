@@ -43,7 +43,7 @@ export default function WelcomeStep({ onNext }: WelcomeStepProps) {
         }}
         data-testid="welcome-step-next-button"
       >
-        {t('wizard.common.next')}
+        {t('common.next')}
       </Button>
     </Box>
   );

@@ -37,10 +37,9 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useRouter } from 'next/navigation';
-import { saveWizardData } from '@/lib/wizard/saveWizardData';
 import { useSession } from 'next-auth/react';
 import { useTranslation } from 'react-i18next';
-import { wizardService } from '@/services/wizard.service';
+import { wizardService } from '@/services';
 
 interface Environment {
   id: number;
@@ -236,38 +235,14 @@ export default function EnvironmentsStep({
           throw new Error('Usuário não autenticado');
         }
 
-        // Preparar os dados para salvar
-        const dataToSave = {
-          organization: wizardData.organization,
-          branch: wizardData.branch,
-          departments: wizardData.departments.map((dept) => ({
-            name: dept.name,
-            responsibles: dept.responsibles.map((resp) => ({
-              email: resp.email,
-              status: resp.status,
-            })),
-          })),
-          environments: data.map((env, index) => ({
-            name: env.name,
-            position: index,
-          })),
-        };
-
-        // Salvar os dados via serviço
-        const response = await wizardService.saveWizardData(dataToSave);
-
-        if (response.error) {
-          throw new Error(response.error);
-        }
-
-        // Chamar onNext após salvar com sucesso
+        // Chamar onNext após validação
         onNext();
       } catch (error) {
-        console.error('Erro ao salvar dados:', error);
+        console.error('Erro ao validar dados:', error);
         setError(
           error instanceof Error
             ? error.message
-            : 'Ocorreu um erro ao salvar os dados. Por favor, tente novamente.'
+            : 'Ocorreu um erro ao validar os dados. Por favor, tente novamente.'
         );
       } finally {
         setIsSaving(false);
@@ -334,7 +309,7 @@ export default function EnvironmentsStep({
 
       <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
         <Button variant="outlined" onClick={onBack} startIcon={<ArrowBack />} disabled={isSaving}>
-          {t('wizard.common.back')}
+          {t('common.back')}
         </Button>
         <Button
           variant="contained"
@@ -348,7 +323,7 @@ export default function EnvironmentsStep({
           }}
           data-testid="environments-step-next-button"
         >
-          {isSaving ? t('wizard.common.saving') : t('wizard.common.finish')}
+          {isSaving ? t('common.saving') : t('common.finish')}
         </Button>
       </Box>
     </Box>
